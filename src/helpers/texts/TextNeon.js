@@ -19,8 +19,8 @@ class TextNeon extends PureComponent {
                             text-shadow: none;
                         }
                         0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                            color: #FFF6A9;
-                            text-shadow: 0 0 ${size1}px #FFA500, 0 0 ${size2}px #FFA500, 0 0 ${size3}px #FFA500, 0 0 ${size4}px #FFA500, 0 0 ${size5}px #FF0000, 0 0 ${size6}px #FF8D00, 0 0 ${size7}px #FF0000;
+                            color: #FFFFFF;
+                            text-shadow: 0 0 ${size1}px #FF1000, 0 0 ${size2}px #FF1000, 0 0 ${size3}px #FF1000, 0 0 ${size4}px #FF1000, 0 0 ${size5}px #FF0000, 0 0 ${size6}px #FF8D00, 0 0 ${size7}px #FF0000;
                         }
                     }
                     @keyframes neon {
@@ -29,14 +29,14 @@ class TextNeon extends PureComponent {
                             text-shadow: none;
                         }
                         0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
-                            color: #FFF6A9;
-                            text-shadow: 0 0 ${size1}px #FFA500, 0 0 ${size2}px #FFA500, 0 0 ${size3}px #FFA500, 0 0 ${size4}px #FFA500, 0 0 ${size5}px #FF0000, 0 0 ${size6}px #FF8D00, 0 0 ${size7}px #FF0000;
+                            color: #FFFFFF;
+                            text-shadow: 0 0 ${size1}px #FF1000, 0 0 ${size2}px #FF1000, 0 0 ${size3}px #FF1000, 0 0 ${size4}px #FF1000, 0 0 ${size5}px #FF0000, 0 0 ${size6}px #FF8D00, 0 0 ${size7}px #FF0000;
                         }
                     }
                 `}</style>
                 <p className={this.props.className} style={{
-                    textShadow: "0 0 5px #FFA500, 0 0 15px #FFA500, 0 0 20px #FFA500, 0 0 40px #FFA500, 0 0 60px #FF0000, 0 0 10px #FF8D00, 0 0 98px #FF0000",
-                    color: "#FFF6A9",
+                    textShadow: "0 0 5px #FF1000, 0 0 15px #FF1000, 0 0 20px #FF1000, 0 0 40px #FF1000, 0 0 60px #FF0000, 0 0 10px #FF8D00, 0 0 98px #FF0000",
+                    color: "#FFFFFF",
                     WebkitAnimation: "neon 12s infinite",
                     MozAnimation: "neon 12s infinite",
                     animation: "neon 12s infinite",

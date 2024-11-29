@@ -1,14 +1,14 @@
 import React, {PureComponent} from "react";
 import AppRoutes from "./AppRoutes";
-import Web3 from "web3";
-import TruffleContract from "@truffle/contract";
 import Web3Context from "./contexts/Web3Context";
 import IsEmpty from "./helpers/IsEmpty";
 import ErrorNotDeployed from "./helpers/errors/ErrorNotDeployed";
+import Web3 from "web3";
+import TruffleContract from "@truffle/contract";
+import Token from "./contracts/BEP20Token.json";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min";
-import BEP20Token from "./contracts/BEP20Token.json";
 
 class App extends PureComponent {
     constructor(props) {
@@ -28,9 +28,25 @@ class App extends PureComponent {
     }
 
     componentDidMount() {
+        // this.setState({
+        //     loadWeb3: this.loadWeb3
+        // }, () => this.loadWeb3());
         this.setState({
-            loadWeb3: this.loadWeb3
-        }, () => this.loadWeb3());
+            loading: false
+        });
+    }
+
+    setLoading(value, callback) {
+        this.setState({
+            loading: value
+        }, () => {
+            if (!IsEmpty(callback) && typeof callback === "function") callback();
+        });
+    }
+
+    initAccounts(accounts) {
+        this.getAccounts(accounts);
+        this.getListeners();
     }
 
     loadWeb3() {
@@ -42,8 +58,7 @@ class App extends PureComponent {
                     web3: web3
                 }, () => {
                     window.ethereum.request({method: "eth_requestAccounts"}).then((accounts) => {
-                        this.getAccounts(accounts);
-                        this.getListeners();
+                        this.initAccounts(accounts);
                     }).catch((error) => {
                         this.errorGettingAccounts();
                     }).finally(() => {});
@@ -55,15 +70,14 @@ class App extends PureComponent {
                 }, () => {
                     if (!IsEmpty(window.ethereum)) {
                         window.ethereum.enable().then((accounts) => {
-                            this.getAccounts(accounts);
-                            this.getListeners();
+                            this.initAccounts(accounts);
                         }).catch((error) => {
                             this.errorGettingAccounts();
                         }).finally(() => {});
                     }
                 });
             } else {
-                window.alert("Non-Ethereum browser detected. You should consider tyring Metamask!");
+                window.alert("Non-EVM browser detected. You should consider tyring Metamask!");
             }
         });
     }
@@ -74,10 +88,6 @@ class App extends PureComponent {
                 account: accounts[0]
             }, () => {
                 this.getPrimaryBalance();
-            });
-        } else {
-            this.setState({
-                ...this.initialState
             });
         }
     }
@@ -91,7 +101,7 @@ class App extends PureComponent {
                     this.getBlockchainData();
                 });
             }).catch((error) => {
-                console.error(error);
+                console.error("Failed Get Primary Balance.", error);
             }).finally(() => {
                 this.setLoading(false);
             });
@@ -115,26 +125,28 @@ class App extends PureComponent {
     }
 
     listenNewBlockHeaders() {
-        let newBlockHeadersSubscription = this.state.web3.eth.subscribe("newBlockHeaders", (error, blockHeader) => {
-            if (IsEmpty(error)) {
-                this.getPrimaryBalance();
-            } else {
-                console.error(error);
-            }
-        }).on("connected", (subscriptionId) => {
-            //
-        }).on("data", (data) => {
-            //
-        }).on("error", (error) => {
-            console.error(error);
-        });
-        this.setState({
-            newBlockHeadersSubscription: newBlockHeadersSubscription
-        });
+        if (!IsEmpty(this.state.web3)) {
+            let newBlockHeadersSubscription = this.state.web3.eth.subscribe("newBlockHeaders", (error, blockHeader) => {
+                if (IsEmpty(error)) {
+                    this.getPrimaryBalance();
+                } else {
+                    console.error("Block Headers Subscription Error.", error);
+                }
+            }).on("connected", (subscriptionId) => {
+                console.info("Block Headers Subscription Connected :", subscriptionId);
+            }).on("data", (data) => {
+                console.info("Block Headers Subscription Data :", data);
+            }).on("error", (error) => {
+                console.error("Block Headers Subscription Error :", error);
+            });
+            this.setState({
+                newBlockHeadersSubscription: newBlockHeadersSubscription
+            });
+        }
     }
 
     errorGettingAccounts() {
-        console.error("Error getting account.");
+        console.warn("Not connected account.");
         this.setLoading(false);
     }
 
@@ -145,35 +157,27 @@ class App extends PureComponent {
     }
 
     getBlockchainData() {
-        this.loadBEP20Token();
+        this.loadToken();
     }
 
-    setLoading(value, callback) {
-        this.setState({
-            loading: value
-        }, () => {
-            if (!IsEmpty(callback) && typeof callback === "function") callback();
-        });
-    }
-
-    loadBEP20Token() {
-        const token = TruffleContract(BEP20Token);
+    loadToken() {
+        const token = TruffleContract(Token);
         token.setProvider(this.state.web3.currentProvider);
-        this.setState({
-            bep20Token: token
-        }, () => {
-            this.state.bep20Token.deployed().then((data) => {
-                data.balanceOf(this.state.account).then((result) => {
+        token.deployed().then(data => {
+            this.setState({
+                token: data
+            }, () => {
+                this.state.token.balanceOf(this.state.account).then((result) => {
                     this.setState({
-                        bep20Balance: this.state.web3.utils.fromWei(result, "ether")
+                        balance: this.state.web3.utils.fromWei(result, "ether")
                     });
                 }).catch((error) => {
-                    console.error(error);
+                    console.error("Failed Get Token Balance :", error);
                 }).finally(() => {});
-            }).catch((error) => {
-                ErrorNotDeployed(this.state.bep20Token, error);
-            }).finally(() => {});
-        });
+            });
+        }).catch((error) => {
+            ErrorNotDeployed(this.state.token, error);
+        }).finally(() => {});
     }
 
     render() {

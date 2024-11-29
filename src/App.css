@@ -93,5 +93,13 @@
 }
 
 .box-shadow-primary {
-    box-shadow: 0 0 20px 10px #0FF;
+    box-shadow: 0 0 15px 0 #2245EF;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.z-4 {
+    z-index: 4;
 }
