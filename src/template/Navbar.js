@@ -38,10 +38,10 @@ class Navbar extends PureComponent {
                             <div className="collapse navbar-collapse p-3 p-md-0" id="navbar-maelyn">
                                 <ul className="navbar-nav">
                                     <li className="nav-item">
-                                        <a className="nav-link text-white" href="#">Tokenomics</a>
+                                        <a className="nav-link text-white" href="#tokenomics">Tokenomics</a>
                                     </li>
                                     <li className="nav-item">
-                                        <a className="nav-link text-white" href="#">Roadmap</a>
+                                        <a className="nav-link text-white" href="#roadmap">Roadmap</a>
                                     </li>
                                 </ul>
                                 <div className="ms-auto mt-1 mt-md-0">

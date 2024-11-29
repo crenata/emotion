@@ -4,7 +4,7 @@ import "./Loading.css";
 class Loading extends PureComponent {
     render() {
         return (
-            <div className="position-absolute top-0 bottom-0 start-0 end-0 d-flex justify-content-center align-items-center bgc-1F1E30">
+            <div className="position-absolute top-0 bottom-0 start-0 end-0 d-flex justify-content-center align-items-center bgc-1F1E30 z-4">
                 <div className="preloader">
                     <div className="preloader__ring">
                         <div className="preloader__sector">L</div>
