@@ -51,6 +51,7 @@
 }
 
 ::-webkit-scrollbar {
+    display: none;
     width: 8px;
     height: 8px;
     background-color: #F5F5F5;
@@ -81,11 +82,19 @@
     background-color: #CBD3D5 !important;
 }
 
+.bgc-white-opacity-15 {
+    background-color: rgba(255, 255, 255, 0.15) !important;
+}
 .bgc-white-opacity-95 {
     background-color: rgba(255, 255, 255, 0.95) !important;
 }
 .bgc-1C152D-opacity-95 {
     background-color: rgba(28, 21, 45, 0.95) !important;
+}
+
+.form-control:focus {
+    border-color: unset !important;
+    box-shadow: none !important;
 }
 
 .border-radius-1rem {
@@ -102,4 +111,13 @@
 
 .z-4 {
     z-index: 4;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type=number] {
+    -moz-appearance: textfield;
 }

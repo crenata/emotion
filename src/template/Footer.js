@@ -8,14 +8,18 @@ class Footer extends PureComponent {
         return (
             <Web3Context.Consumer>
                 {(web3Context) => (
-                    <footer className="z-3">
+                    <footer className="container py-5 border-top z-3">
                         <div className="row">
                             <div className="col-12 col-md-3">
-                                <img
-                                    src={logo}
-                                    alt="Brand"
-                                    className="w-100"
-                                />
+                                <div className="d-flex align-items-center">
+                                    <img
+                                        src={logo}
+                                        alt="Brand"
+                                        width="64"
+                                    />
+                                    <p className="ms-3 mb-0 text-white">Maelyn</p>
+                                </div>
+                                <p className="mt-3 mb-0 text-white small">{new Date().getFullYear()} &copy; All Rights Reserved</p>
                             </div>
                         </div>
                     </footer>

@@ -21,10 +21,12 @@ class Template extends PureComponent {
                         >
                             {web3Context.loading ? <Loading /> : <BgOuterSpace className="app">
                                 <Navbar />
-                                <div className="position-absolute w-100 h-100 z-3">
-                                    {this.props.children}
+                                <div className="position-absolute w-100 app-content z-3">
+                                    <div className="pb-5">
+                                        {this.props.children}
+                                    </div>
+                                    <Footer />
                                 </div>
-                                <Footer />
                             </BgOuterSpace>}
                         </CSSTransition>
                     </TransitionGroup>

@@ -6,6 +6,7 @@ import Token from "../contracts/BEP20Token.json";
 import Presale from "../contracts/Presale.json";
 import ErrorNotDeployed from "../helpers/errors/ErrorNotDeployed";
 import IsEmpty from "../helpers/IsEmpty";
+import {PieChart} from "@mui/x-charts";
 import logo from "../images/logo.png";
 import bnb from "../images/bnb.png";
 
@@ -27,7 +28,54 @@ class Home extends PureComponent {
                 minutes: 0,
                 seconds: 0
             },
-            interval: null
+            interval: null,
+            tokenomics: [
+                {
+                    innerRadius: 30,
+                    outerRadius: 150,
+                    paddingAngle: 5,
+                    cornerRadius: 5,
+                    cx: 150,
+                    valueFormatter: (item) => `${item.value}%`,
+                    data: [
+                        {
+                            id: 1,
+                            value: 30,
+                            label: "Development",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#5320DB"
+                        },
+                        {
+                            id: 2,
+                            value: 8,
+                            label: "Team & Advisors",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#20DBA6"
+                        },
+                        {
+                            id: 3,
+                            value: 14,
+                            label: "Marketing",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#242D1B"
+                        },
+                        {
+                            id: 4,
+                            value: 18,
+                            label: "Liquidity",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#9D135B"
+                        },
+                        {
+                            id: 5,
+                            value: 30,
+                            label: "Presale",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#D27F73"
+                        }
+                    ]
+                }
+            ]
         };
     }
 
@@ -136,8 +184,8 @@ class Home extends PureComponent {
                         <h2 className="mt-3 mb-0 text-white">Leave Earth! and to the MOON!!!</h2>
                     </div>
                     <div className="row mt-5">
-                        <div className="col-12 col-md-5">
-                            <div className="border box-shadow-primary rounded-4 p-3">
+                        <div className="col-12 col-lg-6 col-xl-5">
+                            <div className="border box-shadow-primary rounded-4 p-4">
                                 <h4 className="m-0 text-white text-center">Presale Ending In :</h4>
                                 <div className="border box-shadow-primary rounded px-2 py-3 mt-3">
                                     <div className="row">
@@ -168,12 +216,12 @@ class Home extends PureComponent {
                                     </div>
                                 </div>
                                 <p className="mt-4 mb-0 text-white small">My Balance : {new Intl.NumberFormat().format(this.state.balance)} $MAE</p>
-                                <div className="d-flex align-items-center justify-content-center justify-content-md-between mt-4">
-                                    <div className="d-none d-md-block border-top w-25" />
-                                    <p className="d-block d-md-none m-0 text-white">♦</p>
+                                <div className="d-flex align-items-center justify-content-center justify-content-lg-between mt-4">
+                                    <div className="d-none d-lg-block border-top w-25" />
+                                    <p className="d-block d-lg-none m-0 text-white">♦</p>
                                     <p className="mx-2 mb-0 text-white">1 $MAE = 0.00001 $BNB</p>
-                                    <p className="d-block d-md-none m-0 text-white">♦</p>
-                                    <div className="d-none d-md-block border-top w-25" />
+                                    <p className="d-block d-lg-none m-0 text-white">♦</p>
+                                    <div className="d-none d-lg-block border-top w-25" />
                                 </div>
                                 <div className="row mt-4">
                                     <div className="col-12 col-md-6">
@@ -182,7 +230,7 @@ class Home extends PureComponent {
                                             <p className="m-0 text-info small cursor-pointer">Max</p>
                                         </div>
                                         <div className="input-group mt-1">
-                                            <div className="input-group-text">
+                                            <div className="input-group-text border-end-0 bgc-white-opacity-15">
                                                 <img
                                                     src={bnb}
                                                     alt="BNB"
@@ -192,10 +240,10 @@ class Home extends PureComponent {
                                             </div>
                                             <input
                                                 type="number"
-                                                className="form-control border-start-0"
+                                                className="form-control border-start-0 bgc-white-opacity-15 text-white"
                                                 min="1"
                                                 pattern="[0-9]"
-                                                value={this.state.amountPrimary}
+                                                value={Number(this.state.amountPrimary).toString()}
                                                 onChange={(event) => {
                                                     let value = Number(event.target.value);
                                                     this.setValue("amountPrimary", value);
@@ -207,7 +255,7 @@ class Home extends PureComponent {
                                     <div className="col-12 col-md-6">
                                         <p className="m-0 text-white small">You Receive</p>
                                         <div className="input-group mt-1">
-                                            <div className="input-group-text">
+                                            <div className="input-group-text border-end-0 bgc-white-opacity-15">
                                                 <img
                                                     src={logo}
                                                     alt="MAE"
@@ -217,10 +265,10 @@ class Home extends PureComponent {
                                             </div>
                                             <input
                                                 type="number"
-                                                className="form-control border-start-0"
+                                                className="form-control border-start-0 bgc-white-opacity-15 text-white"
                                                 min="1"
                                                 pattern="[0-9]"
-                                                value={this.state.amountToken}
+                                                value={Number(this.state.amountToken).toString()}
                                                 onChange={(event) => {
                                                     let value = Number(event.target.value);
                                                     this.setValue("amountToken", value);
@@ -235,6 +283,36 @@ class Home extends PureComponent {
                                         <button className="btn text-white bgc-FFA500 btn-bubble" onClick={this.context.loadWeb3}>Connect Wallet</button> :
                                         <button className="btn btn-success mt-3" onClick={event => this.buy()}>Buy MAE</button>
                                     }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="pt-5 mt-5">
+                        <h3 className="m-0 text-white text-center">Tokenomics</h3>
+                        <div className="row mt-5">
+                            <div className="col-12 col-md-4">
+                                <PieChart
+                                    series={this.state.tokenomics}
+                                    height={300}
+                                    legend={{
+                                        hidden: true
+                                    }}
+                                />
+                            </div>
+                            <div className="col-12 col-md-8">
+                                <div className="row g-4">
+                                    {this.state.tokenomics[0].data.map((value) => (
+                                        <div className="col-12 col-md-4">
+                                            <div className="box-shadow-primary p-3">
+                                                <div className="d-flex align-items-center justify-content-between">
+                                                    <h6 className="m-0 text-white">{value.label}</h6>
+                                                    <h6 className="m-0 text-white">{value.value}%</h6>
+                                                </div>
+                                                <div className="border-top my-3" />
+                                                <p className="m-0 text-white small">{value.description}</p>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>
