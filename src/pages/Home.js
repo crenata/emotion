@@ -1,25 +1,19 @@
 import React, {PureComponent} from "react";
 import Template from "../template/Template";
 import Web3Context from "../contexts/Web3Context";
-import TruffleContract from "@truffle/contract";
-import Token from "../contracts/BEP20Token.json";
-import Presale from "../contracts/Presale.json";
-import ErrorNotDeployed from "../helpers/errors/ErrorNotDeployed";
 import IsEmpty from "../helpers/IsEmpty";
 import {PieChart} from "@mui/x-charts";
+import toast from "react-hot-toast";
 import logo from "../images/logo.png";
 import bnb from "../images/bnb.png";
+import {LinearProgress} from "@mui/material";
 
 class Home extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
-            token: null,
-            presale: null,
-            price: 0.00001,
-            balance: 0,
-            amountPrimary: 0,
-            amountToken: 0,
+            amountPrimary: "",
+            amountToken: "",
             isEndSale: false,
             countdownDate: new Date("Dec 31, 2024 20:00:00").getTime(),
             countdown: {
@@ -77,13 +71,11 @@ class Home extends PureComponent {
                 }
             ]
         };
+        this.onAmountPrimary = this.onAmountPrimary.bind(this);
+        this.onAmountToken = this.onAmountToken.bind(this);
     }
 
     componentDidMount() {
-        // setTimeout(() => {
-        //     this.loadToken();
-        //     this.loadPresale();
-        // }, 1000);
         this.countdown();
     }
 
@@ -126,52 +118,83 @@ class Home extends PureComponent {
         });
     }
 
-    loadToken() {
-        const token = TruffleContract(Token);
-        token.setProvider(this.context.web3.currentProvider);
-        this.setState({
-            token: token
-        }, () => {
-            this.state.token.deployed().then((data) => {
-                data.balanceOf(this.context.account).then((result) => {
-                    this.setState({
-                        balance: this.context.web3.utils.fromWei(result, "ether")
-                    });
-                }).catch((error) => {
-                    console.error(error);
-                }).finally(() => {});
-            }).catch((error) => {
-                ErrorNotDeployed(this.state.token, error);
-            }).finally(() => {});
-        });
-    }
-
-    loadPresale() {
-        const presale = TruffleContract(Presale);
-        presale.setProvider(this.context.web3.currentProvider);
-        presale.deployed().then(data => {
-            this.setState({
-                presale: data
-            }, () => {
-                this.state.presale.tokenPrice().then(value => {
-                    this.setState({
-                        price: value
-                    });
-                })
-            });
-        });
-    }
-
     buy() {
-        this.state.presale.buyTokens(this.state.amountPrimary, {
-            from: this.context.account,
-            value: this.state.amountPrimary * this.state.price
-        });
+        if (Number(this.state.amountPrimary) <= Number(this.context.primaryBalance)) {
+            if (!IsEmpty(this.context.presale)) {
+                this.context.presale.buyTokens(Math.floor(this.state.amountToken).toString(), {
+                    from: this.context.account,
+                    value: this.context.web3.utils.toWei((Math.floor(this.state.amountToken) * Number(this.context.price)).toString(), "ether")
+                }).then((value) => {
+                    this.context.getPrimaryBalance();
+                }).catch((error) => {
+                    switch (error.code) {
+                        case undefined:
+                            toast.error("Please consider for gas fee.");
+                            break;
+                        default:
+                            toast.error(error.message);
+                            break;
+                    }
+                }).finally(() => {});
+            } else {
+                toast.error("Failed fetch presale contract.");
+            }
+        } else {
+            toast.error("You do not have enough BNB.");
+        }
     }
 
     end() {
-        this.state.presale.endSale({
-            from: this.context.account
+        if (!IsEmpty(this.context.presale)) {
+            this.context.presale.endSale({
+                from: this.context.account
+            }).then((value) => {
+                this.context.getPrimaryBalance();
+            }).catch((error) => {
+                toast.error(error.message);
+            }).finally(() => {});
+        } else {
+            toast.error("Failed fetch presale contract.");
+        }
+    }
+
+    inputFormat(event) {
+        let value = event.target.value;
+
+        let [, sign, integer, decimals] = value.replace(/[^\d.-]/g, "") // invalid characters
+            .replace(/(\..*?)\./g, "$1") // multiple dots
+            .replace(/(.+)-/g, "$1") // invalid signs
+            .match(/^(-?)(.*?)((?:\.\d*)?)$/);
+
+        // don't convert an empty string into a 0,
+        // unless there are decimal places following
+        if (integer || decimals) integer = +integer;
+
+        return sign + integer + decimals;
+    }
+
+    onAmountPrimary(event) {
+        let value = this.inputFormat(event);
+
+        this.setState({
+            amountPrimary: value,
+            amountToken: (value / this.context.price).toFixed(0)
+        });
+    }
+
+    onAmountToken(event) {
+        let value = this.inputFormat(event);
+
+        this.setState({
+            amountPrimary: (value * this.context.price).toFixed(5),
+            amountToken: value
+        });
+    }
+
+    setMaxAmount() {
+        this.setState({
+            amountPrimary: this.context.primaryBalance,
+            amountToken: (this.context.primaryBalance / this.context.price).toFixed(0)
         });
     }
 
@@ -215,7 +238,14 @@ class Home extends PureComponent {
                                         </div>
                                     </div>
                                 </div>
-                                <p className="mt-4 mb-0 text-white small">My Balance : {new Intl.NumberFormat().format(this.state.balance)} $MAE</p>
+                                <div className="border box-shadow-primary rounded p-3 mt-4">
+                                    <div className="d-flex align-items-center">
+                                        <p className="m-0 text-white small">{new Intl.NumberFormat().format(this.context.sold)}</p>
+                                        <LinearProgress variant="buffer" color="warning" value={this.context.sold / (this.context.tokenSupply * this.state.tokenomics[0].data.find((value) => value.label === "Presale").value / 100) * 100} valueBuffer={0} className="w-100 mx-3" />
+                                        <p className="m-0 text-white small">{new Intl.NumberFormat().format(this.context.tokenSupply * this.state.tokenomics[0].data.find((value) => value.label === "Presale").value / 100)}</p>
+                                    </div>
+                                </div>
+                                <p className="mt-4 mb-0 text-white small">My Balance : {new Intl.NumberFormat().format(this.context.balance)} $MAE</p>
                                 <div className="d-flex align-items-center justify-content-center justify-content-lg-between mt-4">
                                     <div className="d-none d-lg-block border-top w-25" />
                                     <p className="d-block d-lg-none m-0 text-white">♦</p>
@@ -227,7 +257,7 @@ class Home extends PureComponent {
                                     <div className="col-12 col-md-6">
                                         <div className="d-flex align-items-center justify-content-between">
                                             <p className="m-0 text-white small">You Pay</p>
-                                            <p className="m-0 text-info small cursor-pointer">Max</p>
+                                            <p className="m-0 text-info small cursor-pointer" onClick={event => this.setMaxAmount()}>Max</p>
                                         </div>
                                         <div className="input-group mt-1">
                                             <div className="input-group-text border-end-0 bgc-white-opacity-15">
@@ -239,16 +269,12 @@ class Home extends PureComponent {
                                                 />
                                             </div>
                                             <input
-                                                type="number"
+                                                type="text"
                                                 className="form-control border-start-0 bgc-white-opacity-15 text-white"
                                                 min="1"
                                                 pattern="[0-9]"
-                                                value={Number(this.state.amountPrimary).toString()}
-                                                onChange={(event) => {
-                                                    let value = Number(event.target.value);
-                                                    this.setValue("amountPrimary", value);
-                                                    this.setValue("amountToken", (value / this.state.price).toFixed(0));
-                                                }}
+                                                value={this.state.amountPrimary}
+                                                onChange={this.onAmountPrimary}
                                             />
                                         </div>
                                     </div>
@@ -264,24 +290,27 @@ class Home extends PureComponent {
                                                 />
                                             </div>
                                             <input
-                                                type="number"
+                                                type="text"
                                                 className="form-control border-start-0 bgc-white-opacity-15 text-white"
                                                 min="1"
                                                 pattern="[0-9]"
-                                                value={Number(this.state.amountToken).toString()}
-                                                onChange={(event) => {
-                                                    let value = Number(event.target.value);
-                                                    this.setValue("amountToken", value);
-                                                    this.setValue("amountPrimary", (value * this.state.price).toFixed(5));
-                                                }}
+                                                value={this.state.amountToken}
+                                                onChange={this.onAmountToken}
                                             />
                                         </div>
                                     </div>
                                 </div>
                                 <div className="d-grid mt-3">
                                     {IsEmpty(this.context.account) ?
-                                        <button className="btn text-white bgc-FFA500 btn-bubble" onClick={this.context.loadWeb3}>Connect Wallet</button> :
-                                        <button className="btn btn-success mt-3" onClick={event => this.buy()}>Buy MAE</button>
+                                        <button
+                                            className="btn text-white bgc-FFA500 btn-bubble"
+                                            onClick={this.context.loadWeb3}
+                                        >Connect Wallet</button> :
+                                        <button
+                                            className="btn btn-success"
+                                            onClick={event => this.buy()}
+                                            disabled={Number(this.state.amountPrimary) > Number(this.context.primaryBalance)}
+                                        >Buy MAE</button>
                                     }
                                 </div>
                             </div>
@@ -302,7 +331,7 @@ class Home extends PureComponent {
                             <div className="col-12 col-md-8">
                                 <div className="row g-4">
                                     {this.state.tokenomics[0].data.map((value) => (
-                                        <div className="col-12 col-md-4">
+                                        <div className="col-12 col-md-4" key={value.id}>
                                             <div className="box-shadow-primary p-3">
                                                 <div className="d-flex align-items-center justify-content-between">
                                                     <h6 className="m-0 text-white">{value.label}</h6>

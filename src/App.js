@@ -6,6 +6,8 @@ import ErrorNotDeployed from "./helpers/errors/ErrorNotDeployed";
 import Web3 from "web3";
 import TruffleContract from "@truffle/contract";
 import Token from "./contracts/BEP20Token.json";
+import Presale from "./contracts/Presale.json";
+import toast from "react-hot-toast";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min";
@@ -14,25 +16,33 @@ class App extends PureComponent {
     constructor(props) {
         super(props);
         this.initialState = {
-            loading: true,
+            loading: false,
             web3: null,
             newBlockHeadersSubscription: null,
             account: "",
             primaryBalance: 0,
-            loadWeb3: () => false
+            token: null,
+            tokenSupply: 0,
+            balance: 0,
+            presale: null,
+            price: 0.00001,
+            sold: 0,
+            loadWeb3: () => false,
+            getPrimaryBalance: () => false
         };
         this.state = {
             ...this.initialState
         };
         this.loadWeb3 = this.loadWeb3.bind(this);
+        this.getPrimaryBalance = this.getPrimaryBalance.bind(this);
     }
 
     componentDidMount() {
-        // this.setState({
-        //     loadWeb3: this.loadWeb3
-        // }, () => this.loadWeb3());
         this.setState({
-            loading: false
+            loadWeb3: this.loadWeb3,
+            getPrimaryBalance: this.getPrimaryBalance
+        }, () => {
+            this.loadWeb3();
         });
     }
 
@@ -94,14 +104,14 @@ class App extends PureComponent {
 
     getPrimaryBalance() {
         if (!IsEmpty(this.state.account)) {
-            this.state.web3.eth.getBalance(this.state.account).then((balance) => {
+            this.state.web3.eth.getBalance(this.state.account).then((value) => {
                 this.setState({
-                    primaryBalance: balance
+                    primaryBalance: this.state.web3.utils.fromWei(value, "ether")
                 }, () => {
                     this.getBlockchainData();
                 });
             }).catch((error) => {
-                console.error("Failed Get Primary Balance.", error);
+                toast.error("Failed fetch BNB balance.");
             }).finally(() => {
                 this.setLoading(false);
             });
@@ -146,38 +156,79 @@ class App extends PureComponent {
     }
 
     errorGettingAccounts() {
-        console.warn("Not connected account.");
+        toast.error("Not connected account.");
         this.setLoading(false);
     }
 
     getListeners() {
         this.listenAccountChanges();
         this.listenChainChanges();
-        this.listenNewBlockHeaders();
+        // this.listenNewBlockHeaders();
     }
 
     getBlockchainData() {
         this.loadToken();
+        this.loadPresale();
     }
 
     loadToken() {
-        const token = TruffleContract(Token);
-        token.setProvider(this.state.web3.currentProvider);
-        token.deployed().then(data => {
-            this.setState({
-                token: data
-            }, () => {
-                this.state.token.balanceOf(this.state.account).then((result) => {
-                    this.setState({
-                        balance: this.state.web3.utils.fromWei(result, "ether")
-                    });
-                }).catch((error) => {
-                    console.error("Failed Get Token Balance :", error);
-                }).finally(() => {});
-            });
-        }).catch((error) => {
-            ErrorNotDeployed(this.state.token, error);
-        }).finally(() => {});
+        if (!IsEmpty(this.state.web3)) {
+            const token = TruffleContract(Token);
+            token.setProvider(this.state.web3.currentProvider);
+            token.deployed().then((data) => {
+                this.setState({
+                    token: data
+                }, () => {
+                    this.state.token.balanceOf(this.state.account).then((value) => {
+                        this.setState({
+                            balance: this.state.web3.utils.fromWei(value, "ether")
+                        }, () => {
+                            this.state.token.totalSupply().then((value) => {
+                                this.setState({
+                                    tokenSupply: this.state.web3.utils.fromWei(value, "ether")
+                                });
+                            }).catch((error) => {
+                                toast.error("Failed fetch token supply.");
+                            }).finally(() => {});
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch token balance.");
+                    }).finally(() => {});
+                });
+            }).catch((error) => {
+                ErrorNotDeployed(token, error);
+            }).finally(() => {});
+        }
+    }
+
+    loadPresale() {
+        if (!IsEmpty(this.state.web3)) {
+            const presale = TruffleContract(Presale);
+            presale.setProvider(this.state.web3.currentProvider);
+            presale.deployed().then((data) => {
+                this.setState({
+                    presale: data
+                }, () => {
+                    this.state.presale.tokenPrice().then(value => {
+                        this.setState({
+                            price: this.state.web3.utils.fromWei(value, "ether")
+                        }, () => {
+                            this.state.presale.tokensSold().then(value => {
+                                this.setState({
+                                    sold: this.state.web3.utils.toNumber(value)
+                                });
+                            }).catch((error) => {
+                                toast.error("Failed fetch tokens sold.");
+                            }).finally(() => {});
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch token price.");
+                    }).finally(() => {});
+                });
+            }).catch((error) => {
+                ErrorNotDeployed(presale, error);
+            }).finally(() => {});
+        }
     }
 
     render() {

@@ -7,6 +7,7 @@ import Navbar from "./Navbar";
 import "./Template.css";
 import Footer from "./Footer";
 import BgOuterSpace from "../helpers/backgrounds/BgOuterSpace";
+import {Toaster} from "react-hot-toast";
 
 class Template extends PureComponent {
     render() {
@@ -20,6 +21,7 @@ class Template extends PureComponent {
                             classNames="fade-out"
                         >
                             {web3Context.loading ? <Loading /> : <BgOuterSpace className="app">
+                                <Toaster containerClassName="z-4" position="top-right" />
                                 <Navbar />
                                 <div className="position-absolute w-100 app-content z-3">
                                     <div className="pb-5">
