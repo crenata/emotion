@@ -121,3 +121,12 @@ input::-webkit-inner-spin-button {
 input[type=number] {
     -moz-appearance: textfield;
 }
+
+.x-small {
+    font-size: x-small;
+}
+
+.staking-box {
+    position: relative;
+    height: 12rem;
+}

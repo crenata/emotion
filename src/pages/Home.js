@@ -7,6 +7,9 @@ import toast from "react-hot-toast";
 import logo from "../images/logo.png";
 import bnb from "../images/bnb.png";
 import {LinearProgress} from "@mui/material";
+import Modal from "@mui/joy/Modal";
+import ModalClose from "@mui/joy/ModalClose";
+import Sheet from "@mui/joy/Sheet";
 
 class Home extends PureComponent {
     constructor(props) {
@@ -14,6 +17,7 @@ class Home extends PureComponent {
         this.state = {
             amountPrimary: "",
             amountToken: "",
+            amountStake: "",
             isEndSale: false,
             countdownDate: new Date("Dec 31, 2024 20:00:00").getTime(),
             countdown: {
@@ -69,7 +73,8 @@ class Home extends PureComponent {
                         }
                     ]
                 }
-            ]
+            ],
+            modalStake: false
         };
         this.onAmountPrimary = this.onAmountPrimary.bind(this);
         this.onAmountToken = this.onAmountToken.bind(this);
@@ -317,6 +322,67 @@ class Home extends PureComponent {
                         </div>
                     </div>
                     <div className="pt-5 mt-5">
+                        <h3 className="m-0 text-white text-center">Staking</h3>
+                        <p className="mt-3 mb-0 text-white text-center">The distribution of $MAE token rewards will occur at a rate of 608.82 $MAE tokens per BNB block.</p>
+                        <div className="row mt-5">
+                            <div className="col-12 col-md-3">
+                                <div className="box-shadow-primary border rounded staking-box">
+                                    <div className="p-3">
+                                        <p className="m-0 text-white">Your $MAE Staked</p>
+                                        <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(1000)} <span className="x-small">$MAE</span></p>
+                                    </div>
+                                    <div className="position-absolute w-100 bottom-0 p-3">
+                                        <div className="d-grid">
+                                            {IsEmpty(this.context.account) ?
+                                                <button
+                                                    className="btn text-white bgc-FFA500 btn-bubble"
+                                                    onClick={this.context.loadWeb3}
+                                                >Connect Wallet</button> :
+                                                <button
+                                                    className="btn btn-success"
+                                                    onClick={event => this.setValue("modalStake", true)}
+                                                >Stake</button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="col-12 col-md-3 mt-3 mt-md-0">
+                                <div className="box-shadow-primary border rounded staking-box p-3">
+                                    <p className="m-0 text-white">Total Staked</p>
+                                    <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(1000)} <span className="x-small">$MAE</span></p>
+                                </div>
+                            </div>
+                            <div className="col-12 col-md-3 mt-3 mt-md-0">
+                                <div className="box-shadow-primary border rounded staking-box p-3">
+                                    <p className="m-0 text-white">Reward Rate</p>
+                                    <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(1000)} %</p>
+                                </div>
+                            </div>
+                            <div className="col-12 col-md-3 mt-3 mt-md-0">
+                                <div className="box-shadow-primary border rounded staking-box">
+                                    <div className="p-3">
+                                        <p className="m-0 text-white">Total Current Rewards</p>
+                                        <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(1000)} <span className="x-small">$MAE</span></p>
+                                    </div>
+                                    <div className="position-absolute w-100 bottom-0 p-3">
+                                        <div className="d-grid">
+                                            {IsEmpty(this.context.account) ?
+                                                <button
+                                                    className="btn text-white bgc-FFA500 btn-bubble"
+                                                    onClick={this.context.loadWeb3}
+                                                >Connect Wallet</button> :
+                                                <button
+                                                    className="btn btn-success"
+                                                >Claim Rewards</button>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="pt-5 mt-5">
                         <h3 className="m-0 text-white text-center">Tokenomics</h3>
                         <div className="row mt-5">
                             <div className="col-12 col-md-4">
@@ -332,7 +398,7 @@ class Home extends PureComponent {
                                 <div className="row g-4">
                                     {this.state.tokenomics[0].data.map((value) => (
                                         <div className="col-12 col-md-4" key={value.id}>
-                                            <div className="box-shadow-primary p-3">
+                                            <div className="box-shadow-primary border rounded p-3">
                                                 <div className="d-flex align-items-center justify-content-between">
                                                     <h6 className="m-0 text-white">{value.label}</h6>
                                                     <h6 className="m-0 text-white">{value.value}%</h6>
@@ -347,6 +413,45 @@ class Home extends PureComponent {
                         </div>
                     </div>
                 </div>
+
+                <Modal
+                    open={this.state.modalStake}
+                    onClose={event => this.setValue("modalStake", false)}
+                    sx={{display: "flex", justifyContent: "center", alignItems: "center"}}
+                >
+                    <Sheet
+                        variant="outlined"
+                        className="bg-transparent"
+                        sx={{maxWidth: 500, borderRadius: "md", p: 2, boxShadow: "lg"}}
+                    >
+                        <ModalClose variant="plain" sx={{m: 1}} />
+                        <h5 className="m-0 text-white">Stake Your Tokens</h5>
+                        <p className="mt-3 mb-0 text-white">Lets stake your tokens and earn the rewards!!!</p>
+                        <div className="input-group mt-5">
+                            <div className="input-group-text border-end-0 bgc-white-opacity-15">
+                                <img
+                                    src={logo}
+                                    alt="MAE"
+                                    width="24"
+                                    height="24"
+                                />
+                            </div>
+                            <input
+                                type="text"
+                                className="form-control border-start-0 bgc-white-opacity-15 text-white"
+                                min="1"
+                                pattern="[0-9]"
+                                value={this.state.amountStake}
+                                onChange={event => this.setValue("amountStake", this.inputFormat(event))}
+                            />
+                        </div>
+                        <div className="d-grid mt-3">
+                            <button
+                                className="btn btn-success"
+                            >Stake</button>
+                        </div>
+                    </Sheet>
+                </Modal>
             </Template>
         );
     }

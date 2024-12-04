@@ -8,7 +8,9 @@ contract Presale is Context, Ownable {
     using SafeMath for uint256;
 
     address payable ownerAddress;
+
     BEP20Token public tokenContract;
+
     uint256 public tokenPrice;
     uint256 public tokensSold;
 
@@ -33,9 +35,9 @@ contract Presale is Context, Ownable {
      */
     function buyTokens(uint256 _numberOfTokens) public payable {
         uint256 inWei = _numberOfTokens.mul(1e18);
-        require(_msgValue() == _numberOfTokens.mul(tokenPrice));
-        require(tokenContract.balanceOf(address(this)) >= inWei);
-        require(tokenContract.transfer(_msgSender(), inWei));
+        require(_msgValue() == _numberOfTokens.mul(tokenPrice), "Value is not equal token value.");
+        require(tokenContract.balanceOf(address(this)) >= inWei, "Token value is greater than presale contract balance.");
+        require(tokenContract.transfer(_msgSender(), inWei), "Failed transfer token to sender.");
         tokensSold += _numberOfTokens;
         emit Sell(_msgSender(), _numberOfTokens);
     }
