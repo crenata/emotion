@@ -31,10 +31,10 @@ class Home extends PureComponent {
             tokenomics: [
                 {
                     innerRadius: 30,
-                    outerRadius: 150,
+                    outerRadius: 140,
                     paddingAngle: 5,
                     cornerRadius: 5,
-                    cx: 150,
+                    cx: 140,
                     valueFormatter: (item) => `${item.value}%`,
                     data: [
                         {
@@ -454,7 +454,7 @@ class Home extends PureComponent {
                             <div className="col-12 col-md-9 d-flex align-items-center">
                                 <p className="m-0 text-white">The distribution of ${this.context.symbol} token rewards will occur at a rate of {new Intl.NumberFormat().format(this.context.rewardRate)} ${this.context.symbol} tokens per BNB block.</p>
                             </div>
-                            <div className="col-12 col-md-3 d-flex align-items-center justify-content-end">
+                            <div className="col-12 col-md-3 d-flex align-items-center justify-content-start justify-content-md-end mt-3 mt-md-0">
                                 <button
                                     className="btn btn-success"
                                     onClick={event => this.setValue("modalWithdraw", true)}
@@ -534,7 +534,7 @@ class Home extends PureComponent {
                                     }}
                                 />
                             </div>
-                            <div className="col-12 col-md-8">
+                            <div className="col-12 col-md-8 mt-3 mt-md-0">
                                 <div className="row g-4">
                                     {this.state.tokenomics[0].data.map((value) => (
                                         <div className="col-12 col-md-4" key={value.id}>
