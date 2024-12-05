@@ -1,9 +1,10 @@
 import React, {PureComponent} from "react";
-import {BrowserRouter, Routes, Route, Outlet, Link} from "react-router-dom";
+import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Config from "./configs/Config";
 import RouteElement from "./helpers/RouteElement";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
+import Admin from "./pages/Admin";
 
 class AppRoutes extends PureComponent {
     render() {
@@ -11,16 +12,7 @@ class AppRoutes extends PureComponent {
             <BrowserRouter>
                 <Routes>
                     <Route path={Config.Routers.Home} element={<RouteElement component={Home} />} />
-                    <Route path={Config.Routers.Teams.Index} element={<Outlet />}>
-                        <Route index element={<div>
-                            <h1>Teams</h1>
-                            <Link to={Config.Links.Teams.Havea}>Go to Havea</Link>
-                        </div>} />
-                        <Route path={Config.Routers.Teams.Havea} element={<div>
-                            <h1>Havea</h1>
-                            <Link to={Config.Links.Teams.Index}>Back</Link>
-                        </div>} />
-                    </Route>
+                    <Route path={Config.Routers.Admin} element={<RouteElement component={Admin} />} />
                     <Route path={Config.Routers.NotFound} element={<RouteElement component={NotFound} />} />
                 </Routes>
             </BrowserRouter>

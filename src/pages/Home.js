@@ -1,6 +1,8 @@
 import React, {PureComponent} from "react";
 import Template from "../template/Template";
 import Web3Context from "../contexts/Web3Context";
+import ErrorCallContract from "../helpers/errors/ErrorCallContract";
+import InputFormat from "../helpers/InputFormat";
 import IsEmpty from "../helpers/IsEmpty";
 import {PieChart} from "@mui/x-charts";
 import toast from "react-hot-toast";
@@ -132,23 +134,8 @@ class Home extends PureComponent {
         });
     }
 
-    inputFormat(event) {
-        let value = event.target.value;
-
-        let [, sign, integer, decimals] = value.replace(/[^\d.-]/g, "") // invalid characters
-            .replace(/(\..*?)\./g, "$1") // multiple dots
-            .replace(/(.+)-/g, "$1") // invalid signs
-            .match(/^(-?)(.*?)((?:\.\d*)?)$/);
-
-        // don't convert an empty string into a 0,
-        // unless there are decimal places following
-        if (integer || decimals) integer = +integer;
-
-        return sign + integer + decimals;
-    }
-
     onAmountPrimary(event) {
-        let value = this.inputFormat(event);
+        let value = InputFormat(event);
 
         this.setState({
             amountPrimary: value,
@@ -157,7 +144,7 @@ class Home extends PureComponent {
     }
 
     onAmountToken(event) {
-        let value = this.inputFormat(event);
+        let value = InputFormat(event);
 
         this.setState({
             amountPrimary: (value * this.context.price).toFixed(5),
@@ -193,34 +180,13 @@ class Home extends PureComponent {
                 }).then((value) => {
                     this.context.getPrimaryBalance();
                 }).catch((error) => {
-                    switch (error.code) {
-                        case undefined:
-                            toast.error("Please consider for gas fee.");
-                            break;
-                        default:
-                            toast.error(error.message);
-                            break;
-                    }
+                    ErrorCallContract(error);
                 }).finally(() => {});
             } else {
                 toast.error("Failed fetch presale contract.");
             }
         } else {
             toast.error("You do not have enough BNB.");
-        }
-    }
-
-    end() {
-        if (!IsEmpty(this.context.presale)) {
-            this.context.presale.endSale({
-                from: this.context.account
-            }).then((value) => {
-                this.context.getPrimaryBalance();
-            }).catch((error) => {
-                toast.error(error.message);
-            }).finally(() => {});
-        } else {
-            toast.error("Failed fetch presale contract.");
         }
     }
 
@@ -245,24 +211,10 @@ class Home extends PureComponent {
                                 this.context.getPrimaryBalance();
                             });
                         }).catch((error) => {
-                            switch (error.code) {
-                                case undefined:
-                                    toast.error("Please consider for gas fee.");
-                                    break;
-                                default:
-                                    toast.error(error.message);
-                                    break;
-                            }
+                            ErrorCallContract(error);
                         }).finally(() => {});
                     }).catch((error) => {
-                        switch (error.code) {
-                            case undefined:
-                                toast.error("Please consider for gas fee.");
-                                break;
-                            default:
-                                toast.error(error.message);
-                                break;
-                        }
+                        ErrorCallContract(error);
                     }).finally(() => {});
                 } else {
                     toast.error("Failed fetch staking contract.");
@@ -288,14 +240,7 @@ class Home extends PureComponent {
                         this.context.getPrimaryBalance();
                     });
                 }).catch((error) => {
-                    switch (error.code) {
-                        case undefined:
-                            toast.error("Please consider for gas fee.");
-                            break;
-                        default:
-                            toast.error(error.message);
-                            break;
-                    }
+                    ErrorCallContract(error);
                 }).finally(() => {});
             } else {
                 toast.error("Failed fetch staking contract.");
@@ -313,14 +258,7 @@ class Home extends PureComponent {
                 }).then((value) => {
                     this.context.getPrimaryBalance();
                 }).catch((error) => {
-                    switch (error.code) {
-                        case undefined:
-                            toast.error("Please consider for gas fee.");
-                            break;
-                        default:
-                            toast.error(error.message);
-                            break;
-                    }
+                    ErrorCallContract(error);
                 }).finally(() => {});
             } else {
                 toast.error("Failed fetch staking contract.");
@@ -455,11 +393,17 @@ class Home extends PureComponent {
                                 <p className="m-0 text-white">The distribution of ${this.context.symbol} token rewards will occur at a rate of {new Intl.NumberFormat().format(this.context.rewardRate)} ${this.context.symbol} tokens per BNB block.</p>
                             </div>
                             <div className="col-12 col-md-3 d-flex align-items-center justify-content-start justify-content-md-end mt-3 mt-md-0">
-                                <button
-                                    className="btn btn-success"
-                                    onClick={event => this.setValue("modalWithdraw", true)}
-                                    disabled={Number(this.context.staked) <= 0}
-                                >Withdraw Staked Tokens</button>
+                                {IsEmpty(this.context.account) ?
+                                    <button
+                                        className="btn text-white bgc-FFA500 btn-bubble"
+                                        onClick={this.context.loadWeb3}
+                                    >Connect Wallet</button> :
+                                    <button
+                                        className="btn btn-success"
+                                        onClick={event => this.setValue("modalWithdraw", true)}
+                                        disabled={Number(this.context.staked) <= 0}
+                                    >Withdraw Staked Tokens</button>
+                                }
                             </div>
                         </div>
                         <div className="row mt-5">
@@ -586,7 +530,7 @@ class Home extends PureComponent {
                                 min="1"
                                 pattern="[0-9]"
                                 value={this.state.amountStake}
-                                onChange={event => this.setValue("amountStake", this.inputFormat(event))}
+                                onChange={event => this.setValue("amountStake", InputFormat(event))}
                             />
                         </div>
                         <div className="d-grid mt-3">
@@ -630,7 +574,7 @@ class Home extends PureComponent {
                                 min="1"
                                 pattern="[0-9]"
                                 value={this.state.amountWithdraw}
-                                onChange={event => this.setValue("amountWithdraw", this.inputFormat(event))}
+                                onChange={event => this.setValue("amountWithdraw", InputFormat(event))}
                             />
                         </div>
                         <div className="d-grid mt-3">

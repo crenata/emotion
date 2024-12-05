@@ -2,17 +2,11 @@ const Config = {
     Routers: {
         NotFound: "*",
         Home: "//*",
-        Teams: {
-            Index: "teams",
-            Havea: "havea",
-        }
+        Admin: "admin"
     },
     Links: {
         Home: "/",
-        Teams: {
-            Index: "/teams",
-            Havea: "/teams/havea",
-        }
+        Admin: "/admin"
     }
 };
 

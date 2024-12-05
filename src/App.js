@@ -30,6 +30,7 @@ class App extends PureComponent {
             price: 0.00001,
             sold: 0,
             staking: null,
+            stakingBalance: 0,
             staked: 0,
             totalStaked: 0,
             rewardRate: 0,
@@ -255,38 +256,46 @@ class App extends PureComponent {
                 this.setState({
                     staking: data
                 }, () => {
-                    this.state.staking.balanceOf(this.state.account).then(value => {
+                    this.state.token.balanceOf(this.state.staking.address).then(value => {
                         this.setState({
-                            staked: this.state.web3.utils.fromWei(value, "ether")
+                            stakingBalance: this.state.web3.utils.fromWei(value, "ether")
                         }, () => {
-                            this.state.staking.totalStaked().then(value => {
+                            this.state.staking.balanceOf(this.state.account).then(value => {
                                 this.setState({
-                                    totalStaked: this.state.web3.utils.fromWei(value, "ether")
+                                    staked: this.state.web3.utils.fromWei(value, "ether")
                                 }, () => {
-                                    this.state.staking.rewardRate().then(value => {
+                                    this.state.staking.totalStaked().then(value => {
                                         this.setState({
-                                            rewardRate: Number(this.state.web3.utils.fromWei(value, "ether")).toFixed(2)
+                                            totalStaked: this.state.web3.utils.fromWei(value, "ether")
                                         }, () => {
-                                            this.state.staking.earned({
-                                                from: this.state.account
-                                            }).then(value => {
+                                            this.state.staking.rewardRate().then(value => {
                                                 this.setState({
-                                                    totalCurrentRewards: this.state.web3.utils.fromWei(value, "ether")
+                                                    rewardRate: Number(this.state.web3.utils.fromWei(value, "ether")).toFixed(2)
+                                                }, () => {
+                                                    this.state.staking.earned({
+                                                        from: this.state.account
+                                                    }).then(value => {
+                                                        this.setState({
+                                                            totalCurrentRewards: this.state.web3.utils.fromWei(value, "ether")
+                                                        });
+                                                    }).catch((error) => {
+                                                        toast.error("Failed fetch total current rewards.");
+                                                    }).finally(() => {});
                                                 });
                                             }).catch((error) => {
-                                                toast.error("Failed fetch total current rewards.");
+                                                toast.error("Failed fetch staking rewards rate.");
                                             }).finally(() => {});
                                         });
                                     }).catch((error) => {
-                                        toast.error("Failed fetch staking rewards rate.");
+                                        toast.error("Failed fetch total token staked.");
                                     }).finally(() => {});
                                 });
                             }).catch((error) => {
-                                toast.error("Failed fetch total token staked.");
+                                toast.error("Failed fetch token staked.");
                             }).finally(() => {});
                         });
                     }).catch((error) => {
-                        toast.error("Failed fetch token staked.");
+                        toast.error("Failed fetch staking token balance.");
                     }).finally(() => {});
                 });
             }).catch((error) => {

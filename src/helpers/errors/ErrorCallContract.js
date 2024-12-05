@@ -1,0 +1,17 @@
+import toast from "react-hot-toast";
+
+const ErrorCallContract = (error) => {
+    console.log('asd', error.message.toString().replace("Internal JSON-RPC error.\n", ""))
+    if (error.message.toString().includes("Internal JSON-RPC error.")) {
+        try {
+            let json = JSON.parse(error.message.toString().replace("Internal JSON-RPC error.", ""));
+            toast.error(json.data.reason);
+        } catch (e) {
+            toast.error(error.message);
+        }
+    } else {
+        toast.error(error.message);
+    }
+};
+
+export default ErrorCallContract;
