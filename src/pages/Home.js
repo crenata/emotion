@@ -18,6 +18,7 @@ class Home extends PureComponent {
             amountPrimary: "",
             amountToken: "",
             amountStake: "",
+            amountWithdraw: "",
             isEndSale: false,
             countdownDate: new Date("Dec 31, 2024 20:00:00").getTime(),
             countdown: {
@@ -38,28 +39,28 @@ class Home extends PureComponent {
                     data: [
                         {
                             id: 1,
-                            value: 30,
+                            value: 20,
                             label: "Development",
                             description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
                             color: "#5320DB"
                         },
                         {
                             id: 2,
-                            value: 8,
+                            value: 7,
                             label: "Team & Advisors",
                             description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
                             color: "#20DBA6"
                         },
                         {
                             id: 3,
-                            value: 14,
+                            value: 10,
                             label: "Marketing",
                             description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
                             color: "#242D1B"
                         },
                         {
                             id: 4,
-                            value: 18,
+                            value: 13,
                             label: "Liquidity",
                             description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
                             color: "#9D135B"
@@ -70,11 +71,19 @@ class Home extends PureComponent {
                             label: "Presale",
                             description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
                             color: "#D27F73"
+                        },
+                        {
+                            id: 6,
+                            value: 20,
+                            label: "Staking",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#172F14"
                         }
                     ]
                 }
             ],
-            modalStake: false
+            modalStake: false,
+            modalWithdraw: false
         };
         this.onAmountPrimary = this.onAmountPrimary.bind(this);
         this.onAmountToken = this.onAmountToken.bind(this);
@@ -123,46 +132,6 @@ class Home extends PureComponent {
         });
     }
 
-    buy() {
-        if (Number(this.state.amountPrimary) <= Number(this.context.primaryBalance)) {
-            if (!IsEmpty(this.context.presale)) {
-                this.context.presale.buyTokens(Math.floor(this.state.amountToken).toString(), {
-                    from: this.context.account,
-                    value: this.context.web3.utils.toWei((Math.floor(this.state.amountToken) * Number(this.context.price)).toString(), "ether")
-                }).then((value) => {
-                    this.context.getPrimaryBalance();
-                }).catch((error) => {
-                    switch (error.code) {
-                        case undefined:
-                            toast.error("Please consider for gas fee.");
-                            break;
-                        default:
-                            toast.error(error.message);
-                            break;
-                    }
-                }).finally(() => {});
-            } else {
-                toast.error("Failed fetch presale contract.");
-            }
-        } else {
-            toast.error("You do not have enough BNB.");
-        }
-    }
-
-    end() {
-        if (!IsEmpty(this.context.presale)) {
-            this.context.presale.endSale({
-                from: this.context.account
-            }).then((value) => {
-                this.context.getPrimaryBalance();
-            }).catch((error) => {
-                toast.error(error.message);
-            }).finally(() => {});
-        } else {
-            toast.error("Failed fetch presale contract.");
-        }
-    }
-
     inputFormat(event) {
         let value = event.target.value;
 
@@ -201,6 +170,164 @@ class Home extends PureComponent {
             amountPrimary: this.context.primaryBalance,
             amountToken: (this.context.primaryBalance / this.context.price).toFixed(0)
         });
+    }
+
+    setMaxAmountToStake() {
+        this.setState({
+            amountStake: this.context.balance
+        });
+    }
+
+    setMaxAmountToWithdraw() {
+        this.setState({
+            amountWithdraw: this.context.staked
+        });
+    }
+
+    buy() {
+        if (Number(this.state.amountPrimary) <= Number(this.context.primaryBalance)) {
+            if (!IsEmpty(this.context.presale)) {
+                this.context.presale.buyTokens(this.context.web3.utils.toWei(Math.floor(this.state.amountToken).toString(), "ether"), {
+                    from: this.context.account,
+                    value: this.context.web3.utils.toWei((Math.floor(this.state.amountToken) * Number(this.context.price)).toString(), "ether")
+                }).then((value) => {
+                    this.context.getPrimaryBalance();
+                }).catch((error) => {
+                    switch (error.code) {
+                        case undefined:
+                            toast.error("Please consider for gas fee.");
+                            break;
+                        default:
+                            toast.error(error.message);
+                            break;
+                    }
+                }).finally(() => {});
+            } else {
+                toast.error("Failed fetch presale contract.");
+            }
+        } else {
+            toast.error("You do not have enough BNB.");
+        }
+    }
+
+    end() {
+        if (!IsEmpty(this.context.presale)) {
+            this.context.presale.endSale({
+                from: this.context.account
+            }).then((value) => {
+                this.context.getPrimaryBalance();
+            }).catch((error) => {
+                toast.error(error.message);
+            }).finally(() => {});
+        } else {
+            toast.error("Failed fetch presale contract.");
+        }
+    }
+
+    stake() {
+        if (Number(this.state.amountStake) <= Number(this.context.balance)) {
+            if (!IsEmpty(this.context.token)) {
+                if (!IsEmpty(this.context.staking)) {
+                    this.context.token.approve(
+                        this.context.staking.address,
+                        this.context.web3.utils.toWei(Math.floor(this.state.amountStake).toString(), "ether"),
+                        {
+                            from: this.context.account
+                        }
+                    ).then((value) => {
+                        this.context.staking.stake(this.context.web3.utils.toWei(Math.floor(this.state.amountStake).toString(), "ether"), {
+                            from: this.context.account
+                        }).then((value) => {
+                            this.setState({
+                                amountStake: "",
+                                modalStake: false
+                            }, () => {
+                                this.context.getPrimaryBalance();
+                            });
+                        }).catch((error) => {
+                            switch (error.code) {
+                                case undefined:
+                                    toast.error("Please consider for gas fee.");
+                                    break;
+                                default:
+                                    toast.error(error.message);
+                                    break;
+                            }
+                        }).finally(() => {});
+                    }).catch((error) => {
+                        switch (error.code) {
+                            case undefined:
+                                toast.error("Please consider for gas fee.");
+                                break;
+                            default:
+                                toast.error(error.message);
+                                break;
+                        }
+                    }).finally(() => {});
+                } else {
+                    toast.error("Failed fetch staking contract.");
+                }
+            } else {
+                toast.error("Failed fetch token contract.");
+            }
+        } else {
+            toast.error(`You do not have enough ${this.context.symbol}.`);
+        }
+    }
+
+    withdraw() {
+        if (Number(this.state.amountWithdraw) <= Number(this.context.staked)) {
+            if (!IsEmpty(this.context.staking)) {
+                this.context.staking.withdraw(this.context.web3.utils.toWei(Math.floor(this.state.amountWithdraw).toString(), "ether"), {
+                    from: this.context.account
+                }).then((value) => {
+                    this.setState({
+                        amountWithdraw: "",
+                        modalWithdraw: false
+                    }, () => {
+                        this.context.getPrimaryBalance();
+                    });
+                }).catch((error) => {
+                    switch (error.code) {
+                        case undefined:
+                            toast.error("Please consider for gas fee.");
+                            break;
+                        default:
+                            toast.error(error.message);
+                            break;
+                    }
+                }).finally(() => {});
+            } else {
+                toast.error("Failed fetch staking contract.");
+            }
+        } else {
+            toast.error(`You do not have enough ${this.context.symbol} to be withdrawn.`);
+        }
+    }
+
+    claim() {
+        if (Number(this.context.totalCurrentRewards) > 0) {
+            if (!IsEmpty(this.context.staking)) {
+                this.context.staking.claim({
+                    from: this.context.account
+                }).then((value) => {
+                    this.context.getPrimaryBalance();
+                }).catch((error) => {
+                    switch (error.code) {
+                        case undefined:
+                            toast.error("Please consider for gas fee.");
+                            break;
+                        default:
+                            toast.error(error.message);
+                            break;
+                    }
+                }).finally(() => {});
+            } else {
+                toast.error("Failed fetch staking contract.");
+            }
+        } else {
+            toast.error("Currently not available rewards can claimed.");
+        }
     }
 
     render() {
@@ -250,11 +377,11 @@ class Home extends PureComponent {
                                         <p className="m-0 text-white small">{new Intl.NumberFormat().format(this.context.tokenSupply * this.state.tokenomics[0].data.find((value) => value.label === "Presale").value / 100)}</p>
                                     </div>
                                 </div>
-                                <p className="mt-4 mb-0 text-white small">My Balance : {new Intl.NumberFormat().format(this.context.balance)} $MAE</p>
+                                <p className="mt-4 mb-0 text-white small">My Balance : {new Intl.NumberFormat().format(this.context.balance)} ${this.context.symbol}</p>
                                 <div className="d-flex align-items-center justify-content-center justify-content-lg-between mt-4">
                                     <div className="d-none d-lg-block border-top w-25" />
                                     <p className="d-block d-lg-none m-0 text-white">♦</p>
-                                    <p className="mx-2 mb-0 text-white">1 $MAE = 0.00001 $BNB</p>
+                                    <p className="mx-2 mb-0 text-white">1 ${this.context.symbol} = 0.00001 $BNB</p>
                                     <p className="d-block d-lg-none m-0 text-white">♦</p>
                                     <div className="d-none d-lg-block border-top w-25" />
                                 </div>
@@ -289,7 +416,7 @@ class Home extends PureComponent {
                                             <div className="input-group-text border-end-0 bgc-white-opacity-15">
                                                 <img
                                                     src={logo}
-                                                    alt="MAE"
+                                                    alt={this.context.symbol}
                                                     width="24"
                                                     height="24"
                                                 />
@@ -315,7 +442,7 @@ class Home extends PureComponent {
                                             className="btn btn-success"
                                             onClick={event => this.buy()}
                                             disabled={Number(this.state.amountPrimary) > Number(this.context.primaryBalance)}
-                                        >Buy MAE</button>
+                                        >Buy {this.context.symbol}</button>
                                     }
                                 </div>
                             </div>
@@ -323,13 +450,24 @@ class Home extends PureComponent {
                     </div>
                     <div className="pt-5 mt-5">
                         <h3 className="m-0 text-white text-center">Staking</h3>
-                        <p className="mt-3 mb-0 text-white text-center">The distribution of $MAE token rewards will occur at a rate of 608.82 $MAE tokens per BNB block.</p>
+                        <div className="row mt-3">
+                            <div className="col-12 col-md-9 d-flex align-items-center">
+                                <p className="m-0 text-white">The distribution of ${this.context.symbol} token rewards will occur at a rate of {new Intl.NumberFormat().format(this.context.rewardRate)} ${this.context.symbol} tokens per BNB block.</p>
+                            </div>
+                            <div className="col-12 col-md-3 d-flex align-items-center justify-content-end">
+                                <button
+                                    className="btn btn-success"
+                                    onClick={event => this.setValue("modalWithdraw", true)}
+                                    disabled={Number(this.context.staked) <= 0}
+                                >Withdraw Staked Tokens</button>
+                            </div>
+                        </div>
                         <div className="row mt-5">
                             <div className="col-12 col-md-3">
                                 <div className="box-shadow-primary border rounded staking-box">
                                     <div className="p-3">
-                                        <p className="m-0 text-white">Your $MAE Staked</p>
-                                        <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(1000)} <span className="x-small">$MAE</span></p>
+                                        <p className="m-0 text-white">Your ${this.context.symbol} Staked</p>
+                                        <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(this.context.staked)} <span className="x-small">${this.context.symbol}</span></p>
                                     </div>
                                     <div className="position-absolute w-100 bottom-0 p-3">
                                         <div className="d-grid">
@@ -350,20 +488,20 @@ class Home extends PureComponent {
                             <div className="col-12 col-md-3 mt-3 mt-md-0">
                                 <div className="box-shadow-primary border rounded staking-box p-3">
                                     <p className="m-0 text-white">Total Staked</p>
-                                    <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(1000)} <span className="x-small">$MAE</span></p>
+                                    <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(this.context.totalStaked)} <span className="x-small">${this.context.symbol}</span></p>
                                 </div>
                             </div>
                             <div className="col-12 col-md-3 mt-3 mt-md-0">
                                 <div className="box-shadow-primary border rounded staking-box p-3">
                                     <p className="m-0 text-white">Reward Rate</p>
-                                    <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(1000)} %</p>
+                                    <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(this.context.rewardRate)} <span className="x-small">${this.context.symbol}</span></p>
                                 </div>
                             </div>
                             <div className="col-12 col-md-3 mt-3 mt-md-0">
                                 <div className="box-shadow-primary border rounded staking-box">
                                     <div className="p-3">
                                         <p className="m-0 text-white">Total Current Rewards</p>
-                                        <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(1000)} <span className="x-small">$MAE</span></p>
+                                        <p className="mt-3 mb-0 text-white small">{new Intl.NumberFormat().format(this.context.totalCurrentRewards)} <span className="x-small">${this.context.symbol}</span></p>
                                     </div>
                                     <div className="position-absolute w-100 bottom-0 p-3">
                                         <div className="d-grid">
@@ -374,6 +512,8 @@ class Home extends PureComponent {
                                                 >Connect Wallet</button> :
                                                 <button
                                                     className="btn btn-success"
+                                                    onClick={event => this.claim()}
+                                                    disabled={Number(this.context.totalCurrentRewards) <= 0}
                                                 >Claim Rewards</button>
                                             }
                                         </div>
@@ -427,11 +567,15 @@ class Home extends PureComponent {
                         <ModalClose variant="plain" sx={{m: 1}} />
                         <h5 className="m-0 text-white">Stake Your Tokens</h5>
                         <p className="mt-3 mb-0 text-white">Lets stake your tokens and earn the rewards!!!</p>
-                        <div className="input-group mt-5">
+                        <div className="d-flex align-items-center justify-content-between mt-3">
+                            <p className="m-0 text-white small">Amount to Stake</p>
+                            <p className="m-0 text-info small cursor-pointer" onClick={event => this.setMaxAmountToStake()}>Max</p>
+                        </div>
+                        <div className="input-group mt-1">
                             <div className="input-group-text border-end-0 bgc-white-opacity-15">
                                 <img
                                     src={logo}
-                                    alt="MAE"
+                                    alt={this.context.symbol}
                                     width="24"
                                     height="24"
                                 />
@@ -448,7 +592,53 @@ class Home extends PureComponent {
                         <div className="d-grid mt-3">
                             <button
                                 className="btn btn-success"
+                                onClick={event => this.stake()}
+                                disabled={Number(this.state.amountStake) > Number(this.context.balance)}
                             >Stake</button>
+                        </div>
+                    </Sheet>
+                </Modal>
+                <Modal
+                    open={this.state.modalWithdraw}
+                    onClose={event => this.setValue("modalWithdraw", false)}
+                    sx={{display: "flex", justifyContent: "center", alignItems: "center"}}
+                >
+                    <Sheet
+                        variant="outlined"
+                        className="bg-transparent"
+                        sx={{maxWidth: 500, borderRadius: "md", p: 2, boxShadow: "lg"}}
+                    >
+                        <ModalClose variant="plain" sx={{m: 1}} />
+                        <h5 className="m-0 text-white">Withdraw Your Tokens</h5>
+                        <p className="mt-3 mb-0 text-white">See you later!!! :(</p>
+                        <div className="d-flex align-items-center justify-content-between mt-3">
+                            <p className="m-0 text-white small">Amount to Withdraw</p>
+                            <p className="m-0 text-info small cursor-pointer" onClick={event => this.setMaxAmountToWithdraw()}>Max</p>
+                        </div>
+                        <div className="input-group mt-1">
+                            <div className="input-group-text border-end-0 bgc-white-opacity-15">
+                                <img
+                                    src={logo}
+                                    alt={this.context.symbol}
+                                    width="24"
+                                    height="24"
+                                />
+                            </div>
+                            <input
+                                type="text"
+                                className="form-control border-start-0 bgc-white-opacity-15 text-white"
+                                min="1"
+                                pattern="[0-9]"
+                                value={this.state.amountWithdraw}
+                                onChange={event => this.setValue("amountWithdraw", this.inputFormat(event))}
+                            />
+                        </div>
+                        <div className="d-grid mt-3">
+                            <button
+                                className="btn btn-success"
+                                onClick={event => this.withdraw()}
+                                disabled={Number(this.state.amountWithdraw) > Number(this.context.staked)}
+                            >Withdraw</button>
                         </div>
                     </Sheet>
                 </Modal>

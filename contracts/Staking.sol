@@ -25,8 +25,8 @@ contract Staking is Context, Ownable {
     mapping(address => uint256) public balanceOf;
 
     /**
-     * @param address _stakingToken Staking token contract address.
-     * @param address _rewardToken Reward token contract address.
+     * @param _stakingToken Staking token contract address.
+     * @param _rewardToken Reward token contract address.
      */
     constructor(address _stakingToken, address _rewardToken) public {
         ownerAddress = _msgSender();
@@ -35,14 +35,14 @@ contract Staking is Context, Ownable {
     }
 
     /**
-     * @param address _account address.
+     * @param _account address.
      */
     modifier updateReward(address _account) {
         rewardPerTokenStored = rewardPerToken();
         updatedAt = lastTimeRewardApplicable();
 
         if (_account != address(0)) {
-            rewards[_account] = earned(_account);
+            rewards[_account] = earned();
             userRewardPerTokenPaid[_account] = rewardPerTokenStored;
         }
 
@@ -50,8 +50,9 @@ contract Staking is Context, Ownable {
     }
 
     /**
-     * @param uint256 x First param.
-     * @param uint256 y Second param.
+     * @param x First param.
+     * @param y Second param.
+     * @return uint256 Returns min value.
      */
     function _min(uint256 x, uint256 y) private pure returns (uint256) {
         return x <= y ? x : y;
@@ -59,6 +60,7 @@ contract Staking is Context, Ownable {
 
     /**
      * @dev Last time reward applicable.
+     * @return uint256 Returns min value between finished at and block timestamp.
      */
     function lastTimeRewardApplicable() public view returns (uint256) {
         return _min(finishedAt, block.timestamp);
@@ -66,6 +68,7 @@ contract Staking is Context, Ownable {
 
     /**
      * @dev Amount of reward per token staked.
+     * @return uint256 Returns calculated reward per token.
      */
     function rewardPerToken() public view returns (uint256) {
         if (totalStaked == 0) return rewardPerTokenStored;
@@ -78,7 +81,7 @@ contract Staking is Context, Ownable {
     }
 
     /**
-     * @param uint256 _amount Amount of token to be staked.
+     * @param _amount Amount of token to be staked.
      */
     function stake(uint256 _amount) external updateReward(_msgSender()) {
         require(_amount > 0, "Amount is equal or less than zero.");
@@ -88,7 +91,7 @@ contract Staking is Context, Ownable {
     }
 
     /**
-     * @param uint256 _amount Amount of token to be withdrawal.
+     * @param _amount Amount of token to be withdrawal.
      */
     function withdraw(uint256 _amount) external updateReward(_msgSender()) {
         require(_amount > 0, "Amount is equal or less than zero.");
@@ -100,6 +103,7 @@ contract Staking is Context, Ownable {
 
     /**
      * @dev Total token has been earned.
+     * @return uint256 Returns sender total earned.
      */
     function earned() public view returns (uint256) {
         return (
@@ -123,7 +127,7 @@ contract Staking is Context, Ownable {
     }
 
     /**
-     * @param uint256 _duration Duration of rewards to be paid out in seconds.
+     * @param _duration Duration of rewards to be paid out in seconds.
      */
     function setRewardDuration(uint256 _duration) external onlyOwner {
         require(finishedAt < block.timestamp, "Reward duration is not finished.");
@@ -131,7 +135,7 @@ contract Staking is Context, Ownable {
     }
 
     /**
-     * @param uint256 _amount Amount of token to be set as reward.
+     * @param _amount Amount of token to be set as reward.
      */
     function notifyRewardAmount(uint256 _amount) external onlyOwner updateReward(address(0)) {
         if (block.timestamp > finishedAt) {

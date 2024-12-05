@@ -34,10 +34,9 @@ contract Presale is Context, Ownable {
      * @param _numberOfTokens Token amount.
      */
     function buyTokens(uint256 _numberOfTokens) public payable {
-        uint256 inWei = _numberOfTokens.mul(1e18);
-        require(_msgValue() == _numberOfTokens.mul(tokenPrice), "Value is not equal token value.");
-        require(tokenContract.balanceOf(address(this)) >= inWei, "Token value is greater than presale contract balance.");
-        require(tokenContract.transfer(_msgSender(), inWei), "Failed transfer token to sender.");
+        require(_msgValue() == (_numberOfTokens.div(1e18)).mul(tokenPrice), "Value is not equal token value.");
+        require(tokenContract.balanceOf(address(this)) >= _numberOfTokens, "Token value is greater than presale contract balance.");
+        require(tokenContract.transfer(_msgSender(), _numberOfTokens), "Failed transfer token to sender.");
         tokensSold += _numberOfTokens;
         emit Sell(_msgSender(), _numberOfTokens);
     }

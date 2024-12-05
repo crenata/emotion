@@ -7,6 +7,7 @@ import Web3 from "web3";
 import TruffleContract from "@truffle/contract";
 import Token from "./contracts/BEP20Token.json";
 import Presale from "./contracts/Presale.json";
+import Staking from "./contracts/Staking.json";
 import toast from "react-hot-toast";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -23,10 +24,16 @@ class App extends PureComponent {
             primaryBalance: 0,
             token: null,
             tokenSupply: 0,
+            symbol: "",
             balance: 0,
             presale: null,
             price: 0.00001,
             sold: 0,
+            staking: null,
+            staked: 0,
+            totalStaked: 0,
+            rewardRate: 0,
+            totalCurrentRewards: 0,
             loadWeb3: () => false,
             getPrimaryBalance: () => false
         };
@@ -169,6 +176,7 @@ class App extends PureComponent {
     getBlockchainData() {
         this.loadToken();
         this.loadPresale();
+        this.loadStaking();
     }
 
     loadToken() {
@@ -186,6 +194,14 @@ class App extends PureComponent {
                             this.state.token.totalSupply().then((value) => {
                                 this.setState({
                                     tokenSupply: this.state.web3.utils.fromWei(value, "ether")
+                                }, () => {
+                                    this.state.token.symbol().then((value) => {
+                                        this.setState({
+                                            symbol: value
+                                        });
+                                    }).catch((error) => {
+                                        toast.error("Failed fetch token symbol.");
+                                    }).finally(() => {});
                                 });
                             }).catch((error) => {
                                 toast.error("Failed fetch token supply.");
@@ -215,7 +231,7 @@ class App extends PureComponent {
                         }, () => {
                             this.state.presale.tokensSold().then(value => {
                                 this.setState({
-                                    sold: this.state.web3.utils.toNumber(value)
+                                    sold: this.state.web3.utils.fromWei(value, "ether")
                                 });
                             }).catch((error) => {
                                 toast.error("Failed fetch tokens sold.");
@@ -227,6 +243,54 @@ class App extends PureComponent {
                 });
             }).catch((error) => {
                 ErrorNotDeployed(presale, error);
+            }).finally(() => {});
+        }
+    }
+
+    loadStaking() {
+        if (!IsEmpty(this.state.web3)) {
+            const staking = TruffleContract(Staking);
+            staking.setProvider(this.state.web3.currentProvider);
+            staking.deployed().then((data) => {
+                this.setState({
+                    staking: data
+                }, () => {
+                    this.state.staking.balanceOf(this.state.account).then(value => {
+                        this.setState({
+                            staked: this.state.web3.utils.fromWei(value, "ether")
+                        }, () => {
+                            this.state.staking.totalStaked().then(value => {
+                                this.setState({
+                                    totalStaked: this.state.web3.utils.fromWei(value, "ether")
+                                }, () => {
+                                    this.state.staking.rewardRate().then(value => {
+                                        this.setState({
+                                            rewardRate: Number(this.state.web3.utils.fromWei(value, "ether")).toFixed(2)
+                                        }, () => {
+                                            this.state.staking.earned({
+                                                from: this.state.account
+                                            }).then(value => {
+                                                this.setState({
+                                                    totalCurrentRewards: this.state.web3.utils.fromWei(value, "ether")
+                                                });
+                                            }).catch((error) => {
+                                                toast.error("Failed fetch total current rewards.");
+                                            }).finally(() => {});
+                                        });
+                                    }).catch((error) => {
+                                        toast.error("Failed fetch staking rewards rate.");
+                                    }).finally(() => {});
+                                });
+                            }).catch((error) => {
+                                toast.error("Failed fetch total token staked.");
+                            }).finally(() => {});
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch token staked.");
+                    }).finally(() => {});
+                });
+            }).catch((error) => {
+                ErrorNotDeployed(staking, error);
             }).finally(() => {});
         }
     }
