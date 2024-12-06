@@ -173,17 +173,26 @@ class Home extends PureComponent {
 
     buy() {
         if (Number(this.state.amountPrimary) <= Number(this.context.primaryBalance)) {
-            if (!IsEmpty(this.context.presale)) {
-                this.context.presale.buyTokens(this.context.web3.utils.toWei(Math.floor(this.state.amountToken).toString(), "ether"), {
-                    from: this.context.account,
-                    value: this.context.web3.utils.toWei((Math.floor(this.state.amountToken) * Number(this.context.price)).toString(), "ether")
-                }).then((value) => {
-                    this.context.getPrimaryBalance();
-                }).catch((error) => {
-                    ErrorCallContract(error);
-                }).finally(() => {});
+            if (Number(this.state.amountToken) > 0) {
+                if (!IsEmpty(this.context.presale)) {
+                    this.context.presale.buyTokens(this.context.web3.utils.toWei(Math.floor(this.state.amountToken).toString(), "ether"), {
+                        from: this.context.account,
+                        value: this.context.web3.utils.toWei((Math.floor(this.state.amountToken) * Number(this.context.price)).toString(), "ether")
+                    }).then((value) => {
+                        this.setState({
+                            amountPrimary: "",
+                            amountToken: ""
+                        }, () => {
+                            this.context.getPrimaryBalance();
+                        });
+                    }).catch((error) => {
+                        ErrorCallContract(error);
+                    }).finally(() => {});
+                } else {
+                    toast.error("Failed fetch presale contract.");
+                }
             } else {
-                toast.error("Failed fetch presale contract.");
+                toast.error("Please input amount you want to buy.");
             }
         } else {
             toast.error("You do not have enough BNB.");
@@ -279,7 +288,10 @@ class Home extends PureComponent {
                     <div className="row mt-5">
                         <div className="col-12 col-lg-6 col-xl-5">
                             <div className="border box-shadow-primary rounded-4 p-4">
-                                <h4 className="m-0 text-white text-center">Presale Ending In :</h4>
+                                {Number(this.context.presaleBalance) > 0 ?
+                                    <h4 className="m-0 text-white text-center">Presale Ending In :</h4> :
+                                    <h4 className="m-0 text-white text-center">Trading Begins In :</h4>
+                                }
                                 <div className="border box-shadow-primary rounded px-2 py-3 mt-3">
                                     <div className="row">
                                         <div className="col-3">
@@ -323,70 +335,79 @@ class Home extends PureComponent {
                                     <p className="d-block d-lg-none m-0 text-white">♦</p>
                                     <div className="d-none d-lg-block border-top w-25" />
                                 </div>
-                                <div className="row mt-4">
-                                    <div className="col-12 col-md-6">
-                                        <div className="d-flex align-items-center justify-content-between">
-                                            <p className="m-0 text-white small">You Pay</p>
-                                            <p className="m-0 text-info small cursor-pointer" onClick={event => this.setMaxAmount()}>Max</p>
-                                        </div>
-                                        <div className="input-group mt-1">
-                                            <div className="input-group-text border-end-0 bgc-white-opacity-15">
-                                                <img
-                                                    src={bnb}
-                                                    alt="BNB"
-                                                    width="24"
-                                                    height="24"
-                                                />
+                                <div className="mt-4">
+                                    {Number(this.context.presaleBalance) > 0 ?
+                                        <div className="">
+                                            <div className="row">
+                                                <div className="col-12 col-md-6">
+                                                    <div className="d-flex align-items-center justify-content-between">
+                                                        <p className="m-0 text-white small">You Pay</p>
+                                                        <p className="m-0 text-info small cursor-pointer" onClick={event => this.setMaxAmount()}>Max</p>
+                                                    </div>
+                                                    <div className="input-group mt-1">
+                                                        <div className="input-group-text border-end-0 bgc-white-opacity-15">
+                                                            <img
+                                                                src={bnb}
+                                                                alt="BNB"
+                                                                width="24"
+                                                                height="24"
+                                                            />
+                                                        </div>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control border-start-0 bgc-white-opacity-15 text-white"
+                                                            min="1"
+                                                            pattern="[0-9]"
+                                                            value={this.state.amountPrimary}
+                                                            onChange={this.onAmountPrimary}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="col-12 col-md-6">
+                                                    <p className="m-0 text-white small">You Receive</p>
+                                                    <div className="input-group mt-1">
+                                                        <div className="input-group-text border-end-0 bgc-white-opacity-15">
+                                                            <img
+                                                                src={logo}
+                                                                alt={this.context.symbol}
+                                                                width="24"
+                                                                height="24"
+                                                            />
+                                                        </div>
+                                                        <input
+                                                            type="text"
+                                                            className="form-control border-start-0 bgc-white-opacity-15 text-white"
+                                                            min="1"
+                                                            pattern="[0-9]"
+                                                            value={this.state.amountToken}
+                                                            onChange={this.onAmountToken}
+                                                        />
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <input
-                                                type="text"
-                                                className="form-control border-start-0 bgc-white-opacity-15 text-white"
-                                                min="1"
-                                                pattern="[0-9]"
-                                                value={this.state.amountPrimary}
-                                                onChange={this.onAmountPrimary}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="col-12 col-md-6">
-                                        <p className="m-0 text-white small">You Receive</p>
-                                        <div className="input-group mt-1">
-                                            <div className="input-group-text border-end-0 bgc-white-opacity-15">
-                                                <img
-                                                    src={logo}
-                                                    alt={this.context.symbol}
-                                                    width="24"
-                                                    height="24"
-                                                />
+                                            <div className="d-grid mt-3">
+                                                {IsEmpty(this.context.account) ?
+                                                    <button
+                                                        className="btn text-white bgc-FFA500 btn-bubble"
+                                                        onClick={this.context.loadWeb3}
+                                                    >Connect Wallet</button> :
+                                                    <button
+                                                        className="btn btn-success"
+                                                        onClick={event => this.buy()}
+                                                        disabled={Number(this.state.amountPrimary) > Number(this.context.primaryBalance)}
+                                                    >Buy {this.context.symbol}</button>
+                                                }
                                             </div>
-                                            <input
-                                                type="text"
-                                                className="form-control border-start-0 bgc-white-opacity-15 text-white"
-                                                min="1"
-                                                pattern="[0-9]"
-                                                value={this.state.amountToken}
-                                                onChange={this.onAmountToken}
-                                            />
+                                        </div> :
+                                        <div className="text-center">
+                                            <h4 className="m-0 text-white text-center">Presale Sold Out</h4>
                                         </div>
-                                    </div>
-                                </div>
-                                <div className="d-grid mt-3">
-                                    {IsEmpty(this.context.account) ?
-                                        <button
-                                            className="btn text-white bgc-FFA500 btn-bubble"
-                                            onClick={this.context.loadWeb3}
-                                        >Connect Wallet</button> :
-                                        <button
-                                            className="btn btn-success"
-                                            onClick={event => this.buy()}
-                                            disabled={Number(this.state.amountPrimary) > Number(this.context.primaryBalance)}
-                                        >Buy {this.context.symbol}</button>
                                     }
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div className="pt-5 mt-5">
+                    <div id="staking" className="pt-5 mt-5">
                         <h3 className="m-0 text-white text-center">Staking</h3>
                         <div className="row mt-3">
                             <div className="col-12 col-md-9 d-flex align-items-center">
@@ -466,7 +487,7 @@ class Home extends PureComponent {
                             </div>
                         </div>
                     </div>
-                    <div className="pt-5 mt-5">
+                    <div id="tokenomics" className="pt-5 mt-5">
                         <h3 className="m-0 text-white text-center">Tokenomics</h3>
                         <div className="row mt-5">
                             <div className="col-12 col-md-4">

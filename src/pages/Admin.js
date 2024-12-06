@@ -39,7 +39,7 @@ class Admin extends PureComponent {
             this.context.presale.endSale({
                 from: this.context.account
             }).then((value) => {
-                this.context.getPrimaryBalance();
+                toast.success("Successfully end presale.");
             }).catch((error) => {
                 ErrorCallContract(error);
             }).finally(() => {});
@@ -59,6 +59,28 @@ class Admin extends PureComponent {
             }).finally(() => {});
         } else {
             toast.error("Failed fetch staking contract.");
+        }
+    }
+
+    notifyReward() {
+        if (Number(this.context.stakingBalance) > 0) {
+            if (Number(this.state.amountToken) > 0) {
+                if (!IsEmpty(this.context.staking)) {
+                    this.context.staking.notifyRewardAmount(this.context.web3.utils.toWei(Math.floor(this.state.amountToken).toString(), "ether"), {
+                        from: this.context.account
+                    }).then((value) => {
+                        toast.success("Successfully notify reward.");
+                    }).catch((error) => {
+                        ErrorCallContract(error);
+                    }).finally(() => {});
+                } else {
+                    toast.error("Failed fetch staking contract.");
+                }
+            } else {
+                toast.error("Please input amount you want to set.");
+            }
+        } else {
+            toast.error("You have not transfer token to staking contract.");
         }
     }
 
@@ -165,7 +187,7 @@ class Admin extends PureComponent {
                                                 >Connect Wallet</button> :
                                                 <button
                                                     className="btn btn-success"
-                                                    onClick={event => this.end()}
+                                                    onClick={event => this.notifyReward()}
                                                 >Notify Reward</button>
                                             }
                                         </div>

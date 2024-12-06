@@ -10,6 +10,12 @@ import TextGlow from "../helpers/texts/TextGlow";
 import "./Navbar.css";
 
 class Navbar extends PureComponent {
+    scrollSmooth(selector) {
+        document.querySelector(selector)?.scrollIntoView({
+            behavior: "smooth"
+        });
+    }
+
     render() {
         return (
             <Web3Context.Consumer>
@@ -38,10 +44,13 @@ class Navbar extends PureComponent {
                             <div className="collapse navbar-collapse p-3 p-md-0" id="navbar-maelyn">
                                 <ul className="navbar-nav">
                                     <li className="nav-item">
-                                        <a className="nav-link text-white" href="#tokenomics">Tokenomics</a>
+                                        <button className="nav-link text-white" onClick={event => this.scrollSmooth("#staking")}>Staking</button>
                                     </li>
                                     <li className="nav-item">
-                                        <a className="nav-link text-white" href="#roadmap">Roadmap</a>
+                                        <button className="nav-link text-white" onClick={event => this.scrollSmooth("#tokenomics")}>Tokenomics</button>
+                                    </li>
+                                    <li className="nav-item">
+                                        <button className="nav-link text-white" onClick={event => this.scrollSmooth("#roadmap")}>Roadmap</button>
                                     </li>
                                 </ul>
                                 <div className="ms-auto mt-1 mt-md-0">

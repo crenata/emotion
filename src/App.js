@@ -28,6 +28,7 @@ class App extends PureComponent {
             balance: 0,
             presale: null,
             price: 0.00001,
+            presaleBalance: 0,
             sold: 0,
             staking: null,
             stakingBalance: 0,
@@ -226,20 +227,28 @@ class App extends PureComponent {
                 this.setState({
                     presale: data
                 }, () => {
-                    this.state.presale.tokenPrice().then(value => {
+                    this.state.token.balanceOf(this.state.presale.address).then((value) => {
                         this.setState({
-                            price: this.state.web3.utils.fromWei(value, "ether")
+                            presaleBalance: this.state.web3.utils.fromWei(value, "ether")
                         }, () => {
-                            this.state.presale.tokensSold().then(value => {
+                            this.state.presale.tokenPrice().then(value => {
                                 this.setState({
-                                    sold: this.state.web3.utils.fromWei(value, "ether")
+                                    price: this.state.web3.utils.fromWei(value, "ether")
+                                }, () => {
+                                    this.state.presale.tokensSold().then(value => {
+                                        this.setState({
+                                            sold: this.state.web3.utils.fromWei(value, "ether")
+                                        });
+                                    }).catch((error) => {
+                                        toast.error("Failed fetch tokens sold.");
+                                    }).finally(() => {});
                                 });
                             }).catch((error) => {
-                                toast.error("Failed fetch tokens sold.");
+                                toast.error("Failed fetch token price.");
                             }).finally(() => {});
                         });
                     }).catch((error) => {
-                        toast.error("Failed fetch token price.");
+                        toast.error("Failed fetch presale balance.");
                     }).finally(() => {});
                 });
             }).catch((error) => {
