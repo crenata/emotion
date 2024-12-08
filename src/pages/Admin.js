@@ -6,6 +6,8 @@ import InputFormat from "../helpers/InputFormat";
 import IsEmpty from "../helpers/IsEmpty";
 import toast from "react-hot-toast";
 import logo from "../images/logo.png";
+import CopyToClipboard from "../helpers/CopyToClipboard";
+import {Tooltip} from "@mui/material";
 
 class Admin extends PureComponent {
     constructor(props) {
@@ -194,6 +196,95 @@ class Admin extends PureComponent {
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div className="box-shadow-primary border rounded p-3 mt-4">
+                        <div className="table-responsive">
+                            <table className="table table-borderless table-transparent m-0">
+                                <tbody>
+                                <tr>
+                                    <td className="text-white text-nowrap p-0">Token Address</td>
+                                    <td className="text-white text-nowrap py-0 px-2">:</td>
+                                    <td className="text-white text-nowrap p-0 d-flex align-items-center">
+                                        <p className="m-0">{this.context.token?.address}</p>
+                                        <Tooltip title="Copy" arrow={true} placement="top" className="ms-1">
+                                            <button
+                                                className="btn btn-sm text-white"
+                                                onClick={event => CopyToClipboard(this.context.token?.address)}
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="16"
+                                                    height="16"
+                                                    fill="currentColor"
+                                                    className="bi bi-copy"
+                                                    viewBox="0 0 16 16"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </Tooltip>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className="text-white text-nowrap p-0">Presale Address</td>
+                                    <td className="text-white text-nowrap py-0 px-2">:</td>
+                                    <td className="text-white text-nowrap p-0 d-flex align-items-center">
+                                        <p className="m-0">{this.context.presale?.address}</p>
+                                        <Tooltip title="Copy" arrow={true} placement="top" className="ms-1">
+                                            <button
+                                                className="btn btn-sm text-white"
+                                                onClick={event => CopyToClipboard(this.context.presale?.address)}
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="16"
+                                                    height="16"
+                                                    fill="currentColor"
+                                                    className="bi bi-copy"
+                                                    viewBox="0 0 16 16"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </Tooltip>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td className="text-white text-nowrap p-0">Staking Address</td>
+                                    <td className="text-white text-nowrap py-0 px-2">:</td>
+                                    <td className="text-white text-nowrap p-0 d-flex align-items-center">
+                                        <p className="m-0">{this.context.staking?.address}</p>
+                                        <Tooltip title="Copy" arrow={true} placement="top" className="ms-1">
+                                            <button
+                                                className="btn btn-sm text-white"
+                                                onClick={event => CopyToClipboard(this.context.staking?.address)}
+                                            >
+                                                <svg
+                                                    xmlns="http://www.w3.org/2000/svg"
+                                                    width="16"
+                                                    height="16"
+                                                    fill="currentColor"
+                                                    className="bi bi-copy"
+                                                    viewBox="0 0 16 16"
+                                                >
+                                                    <path
+                                                        fillRule="evenodd"
+                                                        d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </Tooltip>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>

@@ -130,3 +130,7 @@ input[type=number] {
     position: relative;
     height: 12rem;
 }
+
+.table-transparent {
+    --bs-table-bg: transparent !important;
+}

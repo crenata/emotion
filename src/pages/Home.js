@@ -8,10 +8,11 @@ import {PieChart} from "@mui/x-charts";
 import toast from "react-hot-toast";
 import logo from "../images/logo.png";
 import bnb from "../images/bnb.png";
-import {LinearProgress} from "@mui/material";
+import {LinearProgress, Tooltip} from "@mui/material";
 import Modal from "@mui/joy/Modal";
 import ModalClose from "@mui/joy/ModalClose";
 import Sheet from "@mui/joy/Sheet";
+import CopyToClipboard from "../helpers/CopyToClipboard";
 
 class Home extends PureComponent {
     constructor(props) {
@@ -405,6 +406,31 @@ class Home extends PureComponent {
                                     }
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                    <div className="d-flex align-items-center justify-content-center mt-5">
+                        <div className="border box-shadow-primary rounded d-flex align-items-center px-3 py-2">
+                            <p className="m-0 text-white">Token Address : {this.context.token?.address}</p>
+                            <Tooltip title="Copy" arrow={true} placement="top" className="ms-1">
+                                <button
+                                    className="btn btn-sm text-white"
+                                    onClick={event => CopyToClipboard(this.context.token?.address)}
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        width="16"
+                                        height="16"
+                                        fill="currentColor"
+                                        className="bi bi-copy"
+                                        viewBox="0 0 16 16"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"
+                                        />
+                                    </svg>
+                                </button>
+                            </Tooltip>
                         </div>
                     </div>
                     <div id="staking" className="pt-5 mt-5">

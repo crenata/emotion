@@ -25,6 +25,7 @@ class App extends PureComponent {
             token: null,
             tokenSupply: 0,
             symbol: "",
+            decimals: 0,
             balance: 0,
             presale: null,
             price: 0.00001,
@@ -96,7 +97,7 @@ class App extends PureComponent {
                     }
                 });
             } else {
-                window.alert("Non-EVM browser detected. You should consider tyring Metamask!");
+                toast.error("Non-EVM browser detected. You should consider tyring Metamask!");
             }
         });
     }
@@ -200,6 +201,14 @@ class App extends PureComponent {
                                     this.state.token.symbol().then((value) => {
                                         this.setState({
                                             symbol: value
+                                        }, () => {
+                                            this.state.token.decimals().then((value) => {
+                                                this.setState({
+                                                    decimals: this.state.web3.utils.toNumber(value)
+                                                });
+                                            }).catch((error) => {
+                                                toast.error("Failed fetch token decimals.");
+                                            }).finally(() => {});
                                         });
                                     }).catch((error) => {
                                         toast.error("Failed fetch token symbol.");
