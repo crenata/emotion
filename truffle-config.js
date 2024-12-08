@@ -46,6 +46,13 @@ module.exports = {
             }),
             network_id: 3
         },
+        holesky: {
+            provider: () => new HDWalletProvider({
+                mnemonic: process.env.REACT_APP_MNEMONIC,
+                providerOrUrl: `https://holesky.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`
+            }),
+            network_id: 17000
+        },
         development: {
             host: "127.0.0.1",
             port: 7545,
