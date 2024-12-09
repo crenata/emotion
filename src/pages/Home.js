@@ -13,6 +13,7 @@ import Modal from "@mui/joy/Modal";
 import ModalClose from "@mui/joy/ModalClose";
 import Sheet from "@mui/joy/Sheet";
 import CopyToClipboard from "../helpers/CopyToClipboard";
+import ButtonLoading from "../helpers/loadings/ButtonLoading";
 
 class Home extends PureComponent {
     constructor(props) {
@@ -23,6 +24,10 @@ class Home extends PureComponent {
             amountStake: "",
             amountWithdraw: "",
             isEndSale: false,
+            isLoadingBuy: false,
+            isLoadingStake: false,
+            isLoadingWithdraw: false,
+            isLoadingClaim: false,
             countdownDate: new Date("Dec 31, 2024 20:00:00").getTime(),
             countdown: {
                 days: 0,
@@ -176,19 +181,25 @@ class Home extends PureComponent {
         if (Number(this.state.amountPrimary) <= Number(this.context.primaryBalance)) {
             if (Number(this.state.amountToken) > 0) {
                 if (!IsEmpty(this.context.presale)) {
-                    this.context.presale.buyTokens(this.context.web3.utils.toWei(Math.floor(this.state.amountToken).toString(), "ether"), {
-                        from: this.context.account,
-                        value: this.context.web3.utils.toWei((Math.floor(this.state.amountToken) * Number(this.context.price)).toString(), "ether")
-                    }).then((value) => {
-                        this.setState({
-                            amountPrimary: "",
-                            amountToken: ""
-                        }, () => {
-                            this.context.getPrimaryBalance();
+                    this.setState({
+                        isLoadingBuy: true
+                    }, () => {
+                        this.context.presale.buyTokens(this.context.web3.utils.toWei(Math.floor(this.state.amountToken).toString(), "ether"), {
+                            from: this.context.account,
+                            value: this.context.web3.utils.toWei((Math.floor(this.state.amountToken) * Number(this.context.price)).toString(), "ether")
+                        }).then((value) => {
+                            this.setState({
+                                amountPrimary: "",
+                                amountToken: ""
+                            }, () => {
+                                this.context.getPrimaryBalance();
+                            });
+                        }).catch((error) => {
+                            ErrorCallContract(error);
+                        }).finally(() => {
+                            this.setValue("isLoadingBuy", false);
                         });
-                    }).catch((error) => {
-                        ErrorCallContract(error);
-                    }).finally(() => {});
+                    });
                 } else {
                     toast.error("Failed fetch presale contract.");
                 }
@@ -204,28 +215,34 @@ class Home extends PureComponent {
         if (Number(this.state.amountStake) <= Number(this.context.balance)) {
             if (!IsEmpty(this.context.token)) {
                 if (!IsEmpty(this.context.staking)) {
-                    this.context.token.approve(
-                        this.context.staking.address,
-                        this.context.web3.utils.toWei(Math.floor(this.state.amountStake).toString(), "ether"),
-                        {
-                            from: this.context.account
-                        }
-                    ).then((value) => {
-                        this.context.staking.stake(this.context.web3.utils.toWei(Math.floor(this.state.amountStake).toString(), "ether"), {
-                            from: this.context.account
-                        }).then((value) => {
-                            this.setState({
-                                amountStake: "",
-                                modalStake: false
-                            }, () => {
-                                this.context.getPrimaryBalance();
+                    this.setState({
+                        isLoadingStake: true
+                    }, () => {
+                        this.context.token.approve(
+                            this.context.staking.address,
+                            this.context.web3.utils.toWei(Math.floor(this.state.amountStake).toString(), "ether"),
+                            {
+                                from: this.context.account
+                            }
+                        ).then((value) => {
+                            this.context.staking.stake(this.context.web3.utils.toWei(Math.floor(this.state.amountStake).toString(), "ether"), {
+                                from: this.context.account
+                            }).then((value) => {
+                                this.setState({
+                                    amountStake: "",
+                                    modalStake: false
+                                }, () => {
+                                    this.context.getPrimaryBalance();
+                                });
+                            }).catch((error) => {
+                                ErrorCallContract(error);
+                            }).finally(() => {
+                                this.setValue("isLoadingStake", false);
                             });
                         }).catch((error) => {
                             ErrorCallContract(error);
                         }).finally(() => {});
-                    }).catch((error) => {
-                        ErrorCallContract(error);
-                    }).finally(() => {});
+                    });
                 } else {
                     toast.error("Failed fetch staking contract.");
                 }
@@ -240,18 +257,24 @@ class Home extends PureComponent {
     withdraw() {
         if (Number(this.state.amountWithdraw) <= Number(this.context.staked)) {
             if (!IsEmpty(this.context.staking)) {
-                this.context.staking.withdraw(this.context.web3.utils.toWei(Math.floor(this.state.amountWithdraw).toString(), "ether"), {
-                    from: this.context.account
-                }).then((value) => {
-                    this.setState({
-                        amountWithdraw: "",
-                        modalWithdraw: false
-                    }, () => {
-                        this.context.getPrimaryBalance();
+                this.setState({
+                    isLoadingWithdraw: true
+                }, () => {
+                    this.context.staking.withdraw(this.context.web3.utils.toWei(Math.floor(this.state.amountWithdraw).toString(), "ether"), {
+                        from: this.context.account
+                    }).then((value) => {
+                        this.setState({
+                            amountWithdraw: "",
+                            modalWithdraw: false
+                        }, () => {
+                            this.context.getPrimaryBalance();
+                        });
+                    }).catch((error) => {
+                        ErrorCallContract(error);
+                    }).finally(() => {
+                        this.setValue("isLoadingWithdraw", false);
                     });
-                }).catch((error) => {
-                    ErrorCallContract(error);
-                }).finally(() => {});
+                });
             } else {
                 toast.error("Failed fetch staking contract.");
             }
@@ -263,13 +286,19 @@ class Home extends PureComponent {
     claim() {
         if (Number(this.context.totalCurrentRewards) > 0) {
             if (!IsEmpty(this.context.staking)) {
-                this.context.staking.claim({
-                    from: this.context.account
-                }).then((value) => {
-                    this.context.getPrimaryBalance();
-                }).catch((error) => {
-                    ErrorCallContract(error);
-                }).finally(() => {});
+                this.setState({
+                    isLoadingClaim: true
+                }, () => {
+                    this.context.staking.claim({
+                        from: this.context.account
+                    }).then((value) => {
+                        this.context.getPrimaryBalance();
+                    }).catch((error) => {
+                        ErrorCallContract(error);
+                    }).finally(() => {
+                        this.setValue("isLoadingClaim", false);
+                    });
+                });
             } else {
                 toast.error("Failed fetch staking contract.");
             }
@@ -392,11 +421,13 @@ class Home extends PureComponent {
                                                         className="btn text-white bgc-FFA500 btn-bubble"
                                                         onClick={this.context.loadWeb3}
                                                     >Connect Wallet</button> :
-                                                    <button
-                                                        className="btn btn-success"
-                                                        onClick={event => this.buy()}
-                                                        disabled={Number(this.state.amountPrimary) > Number(this.context.primaryBalance)}
-                                                    >Buy {this.context.symbol}</button>
+                                                    this.state.isLoadingBuy ?
+                                                        <ButtonLoading /> :
+                                                        <button
+                                                            className="btn btn-success"
+                                                            onClick={event => this.buy()}
+                                                            disabled={Number(this.state.amountPrimary) > Number(this.context.primaryBalance)}
+                                                        >Buy {this.context.symbol}</button>
                                                 }
                                             </div>
                                         </div> :
@@ -445,11 +476,13 @@ class Home extends PureComponent {
                                         className="btn text-white bgc-FFA500 btn-bubble"
                                         onClick={this.context.loadWeb3}
                                     >Connect Wallet</button> :
-                                    <button
-                                        className="btn btn-success"
-                                        onClick={event => this.setValue("modalWithdraw", true)}
-                                        disabled={Number(this.context.staked) <= 0}
-                                    >Withdraw Staked Tokens</button>
+                                    this.state.isLoadingWithdraw ?
+                                        <ButtonLoading /> :
+                                        <button
+                                            className="btn btn-success"
+                                            onClick={event => this.setValue("modalWithdraw", true)}
+                                            disabled={Number(this.context.staked) <= 0}
+                                        >Withdraw Staked Tokens</button>
                                 }
                             </div>
                         </div>
@@ -467,10 +500,12 @@ class Home extends PureComponent {
                                                     className="btn text-white bgc-FFA500 btn-bubble"
                                                     onClick={this.context.loadWeb3}
                                                 >Connect Wallet</button> :
-                                                <button
-                                                    className="btn btn-success"
-                                                    onClick={event => this.setValue("modalStake", true)}
-                                                >Stake</button>
+                                                this.state.isLoadingStake ?
+                                                    <ButtonLoading /> :
+                                                    <button
+                                                        className="btn btn-success"
+                                                        onClick={event => this.setValue("modalStake", true)}
+                                                    >Stake</button>
                                             }
                                         </div>
                                     </div>
@@ -501,11 +536,13 @@ class Home extends PureComponent {
                                                     className="btn text-white bgc-FFA500 btn-bubble"
                                                     onClick={this.context.loadWeb3}
                                                 >Connect Wallet</button> :
-                                                <button
-                                                    className="btn btn-success"
-                                                    onClick={event => this.claim()}
-                                                    disabled={Number(this.context.totalCurrentRewards) <= 0}
-                                                >Claim Rewards</button>
+                                                this.state.isLoadingClaim ?
+                                                    <ButtonLoading /> :
+                                                    <button
+                                                        className="btn btn-success"
+                                                        onClick={event => this.claim()}
+                                                        disabled={Number(this.context.totalCurrentRewards) <= 0}
+                                                    >Claim Rewards</button>
                                             }
                                         </div>
                                     </div>
@@ -547,7 +584,9 @@ class Home extends PureComponent {
 
                 <Modal
                     open={this.state.modalStake}
-                    onClose={event => this.setValue("modalStake", false)}
+                    onClose={event => {
+                        this.state.isLoadingStake ? event.preventDefault() : this.setValue("modalStake", false)
+                    }}
                     sx={{display: "flex", justifyContent: "center", alignItems: "center"}}
                 >
                     <Sheet
@@ -581,17 +620,27 @@ class Home extends PureComponent {
                             />
                         </div>
                         <div className="d-grid mt-3">
-                            <button
-                                className="btn btn-success"
-                                onClick={event => this.stake()}
-                                disabled={Number(this.state.amountStake) > Number(this.context.balance)}
-                            >Stake</button>
+                            {IsEmpty(this.context.account) ?
+                                <button
+                                    className="btn text-white bgc-FFA500 btn-bubble"
+                                    onClick={this.context.loadWeb3}
+                                >Connect Wallet</button> :
+                                this.state.isLoadingStake ?
+                                    <ButtonLoading /> :
+                                    <button
+                                        className="btn btn-success"
+                                        onClick={event => this.stake()}
+                                        disabled={Number(this.state.amountStake) > Number(this.context.balance)}
+                                    >Stake</button>
+                            }
                         </div>
                     </Sheet>
                 </Modal>
                 <Modal
                     open={this.state.modalWithdraw}
-                    onClose={event => this.setValue("modalWithdraw", false)}
+                    onClose={event => {
+                        this.state.isLoadingWithdraw ? event.preventDefault() : this.setValue("modalWithdraw", false)
+                    }}
                     sx={{display: "flex", justifyContent: "center", alignItems: "center"}}
                 >
                     <Sheet
@@ -625,11 +674,19 @@ class Home extends PureComponent {
                             />
                         </div>
                         <div className="d-grid mt-3">
-                            <button
-                                className="btn btn-success"
-                                onClick={event => this.withdraw()}
-                                disabled={Number(this.state.amountWithdraw) > Number(this.context.staked)}
-                            >Withdraw</button>
+                            {IsEmpty(this.context.account) ?
+                                <button
+                                    className="btn text-white bgc-FFA500 btn-bubble"
+                                    onClick={this.context.loadWeb3}
+                                >Connect Wallet</button> :
+                                this.state.isLoadingWithdraw ?
+                                    <ButtonLoading /> :
+                                    <button
+                                        className="btn btn-success"
+                                        onClick={event => this.withdraw()}
+                                        disabled={Number(this.state.amountWithdraw) > Number(this.context.staked)}
+                                    >Withdraw</button>
+                            }
                         </div>
                     </Sheet>
                 </Modal>

@@ -8,13 +8,17 @@ import toast from "react-hot-toast";
 import logo from "../images/logo.png";
 import CopyToClipboard from "../helpers/CopyToClipboard";
 import {Tooltip} from "@mui/material";
+import ButtonLoading from "../helpers/loadings/ButtonLoading";
 
 class Admin extends PureComponent {
     constructor(props) {
         super(props);
         this.state = {
             duration: "",
-            amountToken: ""
+            amountToken: "",
+            isLoadingEndPresale: false,
+            isLoadingDuration: false,
+            isLoadingNotifyReward: false
         };
     }
 
@@ -38,13 +42,19 @@ class Admin extends PureComponent {
 
     end() {
         if (!IsEmpty(this.context.presale)) {
-            this.context.presale.endSale({
-                from: this.context.account
-            }).then((value) => {
-                toast.success("Successfully end presale.");
-            }).catch((error) => {
-                ErrorCallContract(error);
-            }).finally(() => {});
+            this.setState({
+                isLoadingEndPresale: true
+            }, () => {
+                this.context.presale.endSale({
+                    from: this.context.account
+                }).then((value) => {
+                    toast.success("Successfully end presale.");
+                }).catch((error) => {
+                    ErrorCallContract(error);
+                }).finally(() => {
+                    this.setValue("isLoadingEndPresale", false);
+                });
+            });
         } else {
             toast.error("Failed fetch presale contract.");
         }
@@ -52,13 +62,20 @@ class Admin extends PureComponent {
 
     setDuration() {
         if (!IsEmpty(this.context.staking)) {
-            this.context.staking.setRewardDuration(this.state.duration, {
-                from: this.context.account
-            }).then((value) => {
-                toast.success("Successfully set duration.");
-            }).catch((error) => {
-                ErrorCallContract(error);
-            }).finally(() => {});
+            this.setState({
+                isLoadingDuration: true
+            }, () => {
+                this.context.staking.setRewardDuration(this.state.duration, {
+                    from: this.context.account
+                }).then((value) => {
+                    toast.success("Successfully set duration.");
+                    this.setValue("duration", "");
+                }).catch((error) => {
+                    ErrorCallContract(error);
+                }).finally(() => {
+                    this.setValue("isLoadingDuration", false);
+                });
+            });
         } else {
             toast.error("Failed fetch staking contract.");
         }
@@ -68,13 +85,20 @@ class Admin extends PureComponent {
         if (Number(this.context.stakingBalance) > 0) {
             if (Number(this.state.amountToken) > 0) {
                 if (!IsEmpty(this.context.staking)) {
-                    this.context.staking.notifyRewardAmount(this.context.web3.utils.toWei(Math.floor(this.state.amountToken).toString(), "ether"), {
-                        from: this.context.account
-                    }).then((value) => {
-                        toast.success("Successfully notify reward.");
-                    }).catch((error) => {
-                        ErrorCallContract(error);
-                    }).finally(() => {});
+                    this.setState({
+                        isLoadingNotifyReward: true
+                    }, () => {
+                        this.context.staking.notifyRewardAmount(this.context.web3.utils.toWei(Math.floor(this.state.amountToken).toString(), "ether"), {
+                            from: this.context.account
+                        }).then((value) => {
+                            toast.success("Successfully notify reward.");
+                            this.setValue("amountToken", "");
+                        }).catch((error) => {
+                            ErrorCallContract(error);
+                        }).finally(() => {
+                            this.setValue("isLoadingNotifyReward", false);
+                        });
+                    });
                 } else {
                     toast.error("Failed fetch staking contract.");
                 }
@@ -104,10 +128,12 @@ class Admin extends PureComponent {
                                             className="btn text-white bgc-FFA500 btn-bubble"
                                             onClick={this.context.loadWeb3}
                                         >Connect Wallet</button> :
-                                        <button
-                                            className="btn btn-success"
-                                            onClick={event => this.end()}
-                                        >End Presale</button>
+                                        this.state.isLoadingEndPresale ?
+                                            <ButtonLoading /> :
+                                            <button
+                                                className="btn btn-success"
+                                                onClick={event => this.end()}
+                                            >End Presale</button>
                                     }
                                 </div>
                             </div>
@@ -151,10 +177,12 @@ class Admin extends PureComponent {
                                                     className="btn text-white bgc-FFA500 btn-bubble"
                                                     onClick={this.context.loadWeb3}
                                                 >Connect Wallet</button> :
-                                                <button
-                                                    className="btn btn-success"
-                                                    onClick={event => this.setDuration()}
-                                                >Set Duration</button>
+                                                this.state.isLoadingDuration ?
+                                                    <ButtonLoading /> :
+                                                    <button
+                                                        className="btn btn-success"
+                                                        onClick={event => this.setDuration()}
+                                                    >Set Duration</button>
                                             }
                                         </div>
                                     </div>
@@ -187,10 +215,12 @@ class Admin extends PureComponent {
                                                     className="btn text-white bgc-FFA500 btn-bubble"
                                                     onClick={this.context.loadWeb3}
                                                 >Connect Wallet</button> :
-                                                <button
-                                                    className="btn btn-success"
-                                                    onClick={event => this.notifyReward()}
-                                                >Notify Reward</button>
+                                                this.state.isLoadingNotifyReward ?
+                                                    <ButtonLoading /> :
+                                                    <button
+                                                        className="btn btn-success"
+                                                        onClick={event => this.notifyReward()}
+                                                    >Notify Reward</button>
                                             }
                                         </div>
                                     </div>
