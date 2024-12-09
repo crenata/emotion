@@ -134,3 +134,8 @@ input[type=number] {
 .table-transparent {
     --bs-table-bg: transparent !important;
 }
+
+.spinner-border-xs {
+    --bs-spinner-width: 0.75rem !important;
+    --bs-spinner-height: 0.75rem !important;
+}

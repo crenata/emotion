@@ -212,74 +212,95 @@ class Home extends PureComponent {
     }
 
     stake() {
-        if (Number(this.state.amountStake) <= Number(this.context.balance)) {
-            if (!IsEmpty(this.context.token)) {
-                if (!IsEmpty(this.context.staking)) {
-                    this.setState({
-                        isLoadingStake: true
-                    }, () => {
-                        this.context.token.approve(
-                            this.context.staking.address,
-                            this.context.web3.utils.toWei(Math.floor(this.state.amountStake).toString(), "ether"),
-                            {
-                                from: this.context.account
-                            }
-                        ).then((value) => {
-                            this.context.staking.stake(this.context.web3.utils.toWei(Math.floor(this.state.amountStake).toString(), "ether"), {
-                                from: this.context.account
-                            }).then((value) => {
-                                this.setState({
-                                    amountStake: "",
-                                    modalStake: false
-                                }, () => {
-                                    this.context.getPrimaryBalance();
-                                });
+        if (Number(this.state.amountStake) > 0) {
+            if (Number(this.state.amountStake) <= Number(this.context.balance)) {
+                if (!IsEmpty(this.context.token)) {
+                    if (!IsEmpty(this.context.staking)) {
+                        this.setState({
+                            isLoadingStake: true
+                        }, () => {
+                            let approved = false;
+                            this.context.token.approve(
+                                this.context.staking.address,
+                                this.context.web3.utils.toWei(Math.floor(this.state.amountStake).toString(), "ether"),
+                                {
+                                    from: this.context.account
+                                }
+                            ).then((value) => {
+                                approved = true;
                             }).catch((error) => {
                                 ErrorCallContract(error);
                             }).finally(() => {
-                                this.setValue("isLoadingStake", false);
+                                this.setState({
+                                    isLoadingStake: false
+                                }, () => {
+                                    if (approved) {
+                                        this.setState({
+                                            isLoadingStake: true
+                                        }, () => {
+                                            this.context.staking.stake(this.context.web3.utils.toWei(Math.floor(this.state.amountStake).toString(), "ether"), {
+                                                from: this.context.account
+                                            }).then((value) => {
+                                                this.setState({
+                                                    amountStake: "",
+                                                    modalStake: false
+                                                }, () => {
+                                                    this.context.getPrimaryBalance();
+                                                });
+                                            }).catch((error) => {
+                                                ErrorCallContract(error);
+                                            }).finally(() => {
+                                                this.setValue("isLoadingStake", false);
+                                            });
+                                        });
+                                    }
+                                });
+                            });
+                        });
+                    } else {
+                        toast.error("Failed fetch staking contract.");
+                    }
+                } else {
+                    toast.error("Failed fetch token contract.");
+                }
+            } else {
+                toast.error(`You do not have enough ${this.context.symbol}.`);
+            }
+        } else {
+            toast.error("Please input amount you want to stake.");
+        }
+    }
+
+    withdraw() {
+        if (Number(this.state.amountWithdraw) > 0) {
+            if (Number(this.state.amountWithdraw) <= Number(this.context.staked)) {
+                if (!IsEmpty(this.context.staking)) {
+                    this.setState({
+                        isLoadingWithdraw: true
+                    }, () => {
+                        this.context.staking.withdraw(this.context.web3.utils.toWei(Math.floor(this.state.amountWithdraw).toString(), "ether"), {
+                            from: this.context.account
+                        }).then((value) => {
+                            this.setState({
+                                amountWithdraw: "",
+                                modalWithdraw: false
+                            }, () => {
+                                this.context.getPrimaryBalance();
                             });
                         }).catch((error) => {
                             ErrorCallContract(error);
-                        }).finally(() => {});
+                        }).finally(() => {
+                            this.setValue("isLoadingWithdraw", false);
+                        });
                     });
                 } else {
                     toast.error("Failed fetch staking contract.");
                 }
             } else {
-                toast.error("Failed fetch token contract.");
+                toast.error(`You do not have enough ${this.context.symbol} to be withdrawn.`);
             }
         } else {
-            toast.error(`You do not have enough ${this.context.symbol}.`);
-        }
-    }
-
-    withdraw() {
-        if (Number(this.state.amountWithdraw) <= Number(this.context.staked)) {
-            if (!IsEmpty(this.context.staking)) {
-                this.setState({
-                    isLoadingWithdraw: true
-                }, () => {
-                    this.context.staking.withdraw(this.context.web3.utils.toWei(Math.floor(this.state.amountWithdraw).toString(), "ether"), {
-                        from: this.context.account
-                    }).then((value) => {
-                        this.setState({
-                            amountWithdraw: "",
-                            modalWithdraw: false
-                        }, () => {
-                            this.context.getPrimaryBalance();
-                        });
-                    }).catch((error) => {
-                        ErrorCallContract(error);
-                    }).finally(() => {
-                        this.setValue("isLoadingWithdraw", false);
-                    });
-                });
-            } else {
-                toast.error("Failed fetch staking contract.");
-            }
-        } else {
-            toast.error(`You do not have enough ${this.context.symbol} to be withdrawn.`);
+            toast.error("Please input amount you want to withdraw.");
         }
     }
 
