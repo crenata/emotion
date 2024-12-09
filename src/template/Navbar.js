@@ -50,6 +50,9 @@ class Navbar extends PureComponent {
                             <li className="nav-item">
                                 <button className="nav-link text-white" onClick={event => this.scrollSmooth("#roadmap")}>Roadmap</button>
                             </li>
+                            <li className="nav-item">
+                                <Link to={Config.Links.Admin} className="nav-link text-white">Admin</Link>
+                            </li>
                         </ul>
                         <div className="ms-auto mt-1 mt-md-0">
                             {IsEmpty(this.context.account) ?

@@ -51,7 +51,9 @@ module.exports = {
                 mnemonic: process.env.REACT_APP_MNEMONIC,
                 providerOrUrl: `https://holesky.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`
             }),
-            network_id: 17000
+            network_id: 17000,
+            networkCheckTimeout: 10000,
+            timeoutBlocks: 200
         },
         development: {
             host: "127.0.0.1",

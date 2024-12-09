@@ -178,8 +178,8 @@ class App extends PureComponent {
 
     getBlockchainData() {
         this.loadToken();
-        this.loadPresale();
-        this.loadStaking();
+        // this.loadPresale();
+        // this.loadStaking();
     }
 
     loadToken() {
@@ -205,6 +205,8 @@ class App extends PureComponent {
                                             this.state.token.decimals().then((value) => {
                                                 this.setState({
                                                     decimals: this.state.web3.utils.toNumber(value)
+                                                }, () => {
+                                                    this.loadPresale();
                                                 });
                                             }).catch((error) => {
                                                 toast.error("Failed fetch token decimals.");
@@ -247,6 +249,8 @@ class App extends PureComponent {
                                     this.state.presale.tokensSold().then(value => {
                                         this.setState({
                                             sold: this.state.web3.utils.fromWei(value, "ether")
+                                        }, () => {
+                                            this.loadStaking();
                                         });
                                     }).catch((error) => {
                                         toast.error("Failed fetch tokens sold.");
