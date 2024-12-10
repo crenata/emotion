@@ -51,6 +51,9 @@ class Navbar extends PureComponent {
                                 <button className="nav-link text-white" onClick={event => this.scrollSmooth("#roadmap")}>Roadmap</button>
                             </li>
                             <li className="nav-item">
+                                <button className="nav-link text-white" onClick={event => this.scrollSmooth("#transactions")}>Transactions</button>
+                            </li>
+                            <li className="nav-item">
                                 <Link to={Config.Links.Admin} className="nav-link text-white">Admin</Link>
                             </li>
                         </ul>

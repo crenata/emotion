@@ -1,14 +1,15 @@
 import React, {PureComponent} from "react";
 import Template from "../template/Template";
 import Web3Context from "../contexts/Web3Context";
+import CopyToClipboard from "../helpers/CopyToClipboard";
 import ErrorCallContract from "../helpers/errors/ErrorCallContract";
 import InputFormat from "../helpers/InputFormat";
 import IsEmpty from "../helpers/IsEmpty";
+import ButtonLoading from "../helpers/loadings/ButtonLoading";
 import toast from "react-hot-toast";
 import logo from "../images/logo.png";
-import CopyToClipboard from "../helpers/CopyToClipboard";
 import {Tooltip} from "@mui/material";
-import ButtonLoading from "../helpers/loadings/ButtonLoading";
+import {NumericFormat} from "react-number-format";
 
 class Admin extends PureComponent {
     constructor(props) {
@@ -162,13 +163,14 @@ class Admin extends PureComponent {
                                                     />
                                                 </svg>
                                             </div>
-                                            <input
+                                            <NumericFormat
                                                 type="text"
+                                                thousandSeparator={true}
+                                                allowNegative={false}
+                                                decimalScale={5}
                                                 className="form-control border-start-0 bgc-white-opacity-15 text-white"
-                                                min="1"
-                                                pattern="[0-9]"
                                                 value={this.state.duration}
-                                                onChange={event => this.setValue("duration", InputFormat(event))}
+                                                onValueChange={(values, sourceInfo) => this.setValue("duration", InputFormat(values.value))}
                                             />
                                         </div>
                                         <div className="d-grid mt-3">
@@ -200,13 +202,14 @@ class Admin extends PureComponent {
                                                     height="24"
                                                 />
                                             </div>
-                                            <input
+                                            <NumericFormat
                                                 type="text"
+                                                thousandSeparator={true}
+                                                allowNegative={false}
+                                                decimalScale={5}
                                                 className="form-control border-start-0 bgc-white-opacity-15 text-white"
-                                                min="1"
-                                                pattern="[0-9]"
                                                 value={this.state.amountToken}
-                                                onChange={event => this.setValue("amountToken", InputFormat(event))}
+                                                onValueChange={(values, sourceInfo) => this.setValue("amountToken", InputFormat(values.value))}
                                             />
                                         </div>
                                         <div className="d-grid mt-3">

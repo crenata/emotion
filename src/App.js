@@ -19,6 +19,7 @@ class App extends PureComponent {
         this.initialState = {
             loading: false,
             web3: null,
+            block: 0,
             newBlockHeadersSubscription: null,
             account: "",
             primaryBalance: 0,
@@ -37,6 +38,7 @@ class App extends PureComponent {
             totalStaked: 0,
             rewardRate: 0,
             totalCurrentRewards: 0,
+            presaleTransactions: [],
             loadWeb3: () => false,
             getPrimaryBalance: () => false
         };
@@ -64,11 +66,6 @@ class App extends PureComponent {
         });
     }
 
-    initAccounts(accounts) {
-        this.getAccounts(accounts);
-        this.getListeners();
-    }
-
     loadWeb3() {
         this.setLoading(true, () => {
             let web3 = null;
@@ -77,6 +74,7 @@ class App extends PureComponent {
                 this.setState({
                     web3: web3
                 }, () => {
+                    this.getBlockNumber();
                     window.ethereum.request({method: "eth_requestAccounts"}).then((accounts) => {
                         this.initAccounts(accounts);
                     }).catch((error) => {
@@ -88,6 +86,7 @@ class App extends PureComponent {
                 this.setState({
                     web3: web3
                 }, () => {
+                    this.getBlockNumber();
                     if (!IsEmpty(window.ethereum)) {
                         window.ethereum.enable().then((accounts) => {
                             this.initAccounts(accounts);
@@ -100,6 +99,21 @@ class App extends PureComponent {
                 toast.error("Non-EVM browser detected. You should consider tyring Metamask!");
             }
         });
+    }
+
+    getBlockNumber() {
+        this.state.web3.eth.getBlockNumber().then(value => {
+            this.setState({
+                block: this.state.web3.utils.toNumber(value)
+            });
+        }).catch((error) => {
+            toast.error("Failed fetch block number.");
+        }).finally(() => {});
+    }
+
+    initAccounts(accounts) {
+        this.getAccounts(accounts);
+        this.getListeners();
     }
 
     getAccounts(accounts) {
@@ -263,6 +277,8 @@ class App extends PureComponent {
                     }).catch((error) => {
                         toast.error("Failed fetch presale balance.");
                     }).finally(() => {});
+
+                    this.presaleTransactions();
                 });
             }).catch((error) => {
                 ErrorNotDeployed(presale, error);
@@ -324,6 +340,18 @@ class App extends PureComponent {
                 ErrorNotDeployed(staking, error);
             }).finally(() => {});
         }
+    }
+
+    presaleTransactions() {
+        this.state.presale.getPastEvents("Sell", {
+            fromBlock: +this.state.block - 20
+        }).then((value) => {
+            this.setState({
+                presaleTransactions: value.reverse()
+            });
+        }).catch((error) => {
+            toast.error("Failed fetch presale events.");
+        }).finally(() => {});
     }
 
     render() {

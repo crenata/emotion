@@ -1,7 +1,5 @@
-const InputFormat = (event) => {
-    let value = event.target.value;
-
-    let [, sign, integer, decimals] = value.replace(/[^\d.-]/g, "") // invalid characters
+const InputFormat = (value) => {
+    let [, sign, integer, decimals] = value.toString().replace(/[^\d.-]/g, "") // invalid characters
         .replace(/(\..*?)\./g, "$1") // multiple dots
         .replace(/(.+)-/g, "$1") // invalid signs
         .match(/^(-?)(.*?)((?:\.\d*)?)$/);
