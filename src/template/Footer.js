@@ -27,7 +27,7 @@ class Footer extends PureComponent {
                             address: this.context.token?.address,
                             symbol: this.context.symbol,
                             decimals: this.context.decimals,
-                            image: "../images/logo.png",
+                            image: `${window.location.origin}/logo512.png`,
                         }
                     }
                 }).then((value) => {

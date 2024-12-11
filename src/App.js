@@ -343,8 +343,8 @@ class App extends PureComponent {
     }
 
     presaleTransactions() {
-        this.state.presale.getPastEvents("Sell", {
-            fromBlock: +this.state.block - 20
+        this.state.presale.getPastEvents("Buy", {
+            fromBlock: IsEmpty(this.state.block) ? 0 : Number(this.state.block) - 20
         }).then((value) => {
             this.setState({
                 presaleTransactions: value.reverse()

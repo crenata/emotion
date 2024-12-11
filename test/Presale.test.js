@@ -9,7 +9,7 @@ contract(Presale.contractName, (accounts) => {
         this.tokenSale = await Presale.deployed();
         this.tokenAddress = await this.token.address;
         this.tokenSaleAddress = await this.tokenSale.address;
-        this.tokenPrice = web3.utils.toWei("0.00001", "ether");
+        this.tokenPrice = 0.00001;
         let totalSupply = await this.token.totalSupply();
         this.totalSupply = web3.utils.fromWei(totalSupply, "ether");
         this.tokensAvailable = this.totalSupply * 75 / 100;
@@ -30,7 +30,7 @@ contract(Presale.contractName, (accounts) => {
         });
         it("Has the correct token price", async () => {
             let tokenPrice = await this.tokenSale.tokenPrice();
-            assert.equal(tokenPrice, this.tokenPrice);
+            assert.equal(web3.utils.fromWei(tokenPrice, "ether"), this.tokenPrice);
         });
         it("Transfer tokens to token sale contract", async () => {
             this.receipt = await this.token.transfer(this.tokenSaleAddress, web3.utils.toWei(this.tokensAvailable.toString(), "ether"), {
@@ -66,24 +66,24 @@ contract(Presale.contractName, (accounts) => {
         });
         it("Can't buy token with incorrect ether value", async () => {
             await Revert(async () => {
-                await this.tokenSale.buyTokens(this.tokensBought, {
+                await this.tokenSale.buyTokens(web3.utils.toWei(this.tokensBought.toString(), "ether"), {
                     from: this.buyer,
-                    value: this.etherValue - 10
+                    value: web3.utils.toWei((this.etherValue - 0.00001).toString(), "ether")
                 });
             });
         });
-        /*it("Can't buy more tokens than available", async () => {
+        it("Can't buy more tokens than available", async () => {
             await Revert(async () => {
-                await this.tokenSale.buyTokens((this.tokensAvailable + 1).toString(), {
+                await this.tokenSale.buyTokens(web3.utils.toWei((this.tokensAvailable + 1).toString(), "ether"), {
                     from: this.buyer,
-                    value: (this.tokensAvailable + 1) * this.tokenPrice
+                    value: web3.utils.toWei(((this.tokensAvailable + 1) * this.tokenPrice).toString(), "ether")
                 });
             });
-        });*/
+        });
         it("Buy tokens", async () => {
-            this.receipt = await this.tokenSale.buyTokens(this.tokensBought, {
+            this.receipt = await this.tokenSale.buyTokens(web3.utils.toWei(this.tokensBought.toString(), "ether"), {
                 from: this.buyer,
-                value: this.etherValue
+                value: web3.utils.toWei(this.etherValue.toString(), "ether")
             });
             let balance = await this.token.balanceOf(this.buyer);
             assert.equal(web3.utils.fromWei(balance, "ether"), this.tokensBought);
@@ -92,14 +92,17 @@ contract(Presale.contractName, (accounts) => {
             it("Triggers one event", async () => {
                 assert.equal(this.receipt.logs.length, 1);
             });
-            it("Should be the `Sell` event", async () => {
-                assert.equal(this.receipt.logs[0].event, "Sell");
+            it("Should be the `Buy` event", async () => {
+                assert.equal(this.receipt.logs[0].event, "Buy");
             });
             it("Has the correct `buyer` argument", async () => {
                 assert.equal(this.receipt.logs[0].args._buyer, this.buyer);
             });
-            it("Has the correct `amount` argument", async () => {
-                assert.equal(this.receipt.logs[0].args._amount, this.tokensBought);
+            it("Has the correct `amount primary` argument", async () => {
+                assert.equal(web3.utils.fromWei(this.receipt.logs[0].args._amountPrimary, "ether"), this.etherValue);
+            });
+            it("Has the correct `amount token` argument", async () => {
+                assert.equal(web3.utils.fromWei(this.receipt.logs[0].args._amountToken, "ether"), this.tokensBought);
             });
         });
         describe("Should buyer's amount decreased", () => {
@@ -117,7 +120,7 @@ contract(Presale.contractName, (accounts) => {
         describe("Should tokens sold increased", () => {
             it("Has the correct tokens sold", async () => {
                 let tokensSold = await this.tokenSale.tokensSold();
-                assert.equal(tokensSold.toNumber(), this.tokensBought);
+                assert.equal(web3.utils.fromWei(tokensSold, "ether"), this.tokensBought);
             });
         });
         describe("Should tokens available decreased", () => {

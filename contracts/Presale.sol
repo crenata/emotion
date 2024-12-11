@@ -20,7 +20,7 @@ contract Presale is Context, Ownable {
      * @param _amountToken Amount of token.
      * @param _timestamp Block timestamp.
      */
-    event Sell(address indexed _buyer, uint256 _amountPrimary, uint256 _amountToken, uint256 _timestamp);
+    event Buy(address indexed _buyer, uint256 _amountPrimary, uint256 _amountToken, uint256 _timestamp);
 
     /**
      * @param _tokenContract Token contract address.
@@ -40,7 +40,7 @@ contract Presale is Context, Ownable {
         require(tokenContract.balanceOf(address(this)) >= _numberOfTokens, "Token value is greater than presale contract balance.");
         require(tokenContract.transfer(_msgSender(), _numberOfTokens), "Failed transfer token to sender.");
         tokensSold += _numberOfTokens;
-        emit Sell(_msgSender(), _msgValue(), _numberOfTokens, block.timestamp);
+        emit Buy(_msgSender(), _msgValue(), _numberOfTokens, block.timestamp);
     }
 
     /**
