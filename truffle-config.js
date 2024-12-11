@@ -52,8 +52,12 @@ module.exports = {
                 providerOrUrl: `https://holesky.infura.io/v3/${process.env.REACT_APP_INFURA_API_KEY}`
             }),
             network_id: 17000,
-            networkCheckTimeout: 10000,
-            timeoutBlocks: 200
+            confirmations: 2,
+            timeoutBlocks: 200,
+            skipDryRun: true,
+            networkCheckTimeout: 9000000,
+            pollingInterval: 1800000,
+            disableConfirmationListener: true
         },
         development: {
             host: "127.0.0.1",

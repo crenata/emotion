@@ -4406,15 +4406,46 @@
           ],
           "name": "Sell",
           "type": "event"
+        },
+        "0xbeae048c6d270d9469f86cf6e8fedda3c60ad770f16c24c9fc131c8e9a09101d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_buyer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_amountPrimary",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_amountToken",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_timestamp",
+              "type": "uint256"
+            }
+          ],
+          "name": "Buy",
+          "type": "event"
         }
       },
       "links": {},
-      "address": "0x4278e71a3360b194b1Fe35661430965C16916A1D",
-      "transactionHash": "0x37df79ae77fde1dc1c265425a414a07ef18d12e8c22f8b20a575c54ca48ed26c"
+      "address": "0x799AD49c543f06d7c704947d815699193433FfB8",
+      "transactionHash": "0xd3227d6c16df0a799fc92f4f4f66c62aefd693a62f24d228e6eb66eeec45d1c7"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-12-11T07:39:40.180Z",
+  "updatedAt": "2024-12-11T10:10:42.628Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {
