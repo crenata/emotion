@@ -61,7 +61,7 @@ class Navbar extends PureComponent {
                             {IsEmpty(this.context.account) ?
                                 <button className="btn text-white bgc-FFA500 btn-bubble" onClick={this.context.loadWeb3}>Connect Wallet</button> :
                                 <div className="account d-flex align-items-center">
-                                    <TextGlow className="m-0 small" size={1}>{this.context.account}</TextGlow>
+                                    <TextGlow className="m-0 x-small" size={1}>{this.context.account}</TextGlow>
                                     <img
                                         src={`data:image/png;base64, ${new Identicon(this.context.account, 24).toString()}`}
                                         alt="Account"

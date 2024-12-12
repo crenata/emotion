@@ -119,7 +119,7 @@ class Admin extends PureComponent {
                         <h5 className="m-0 text-white">Maelyn</h5>
                         <h2 className="mt-3 mb-0 text-white">Leave Earth! and to the MOON!!!</h2>
                     </div>
-                    <div className="row mt-5">
+                    <div className="row g-4 mt-5">
                         <div className="col-12 col-md-6">
                             <div className="box-shadow-primary border rounded h-100 p-3">
                                 <h5 className="m-0 text-white text-center">Presale</h5>
@@ -139,10 +139,10 @@ class Admin extends PureComponent {
                                 </div>
                             </div>
                         </div>
-                        <div className="col-12 col-md-6 mt-5 mt-md-0">
+                        <div className="col-12 col-md-6">
                             <div className="box-shadow-primary border rounded h-100 p-3">
                                 <h5 className="m-0 text-white text-center">Staking</h5>
-                                <div className="row mt-3">
+                                <div className="row g-4 mt-3">
                                     <div className="col-12 col-md-6">
                                         <p className="m-0 text-white small">Duration (seconds)</p>
                                         <div className="input-group mt-1">

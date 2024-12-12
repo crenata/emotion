@@ -38,7 +38,9 @@ class App extends PureComponent {
             totalStaked: 0,
             rewardRate: 0,
             totalCurrentRewards: 0,
+            fromLastBlock: 100,
             presaleTransactions: [],
+            stakingTransactions: [],
             loadWeb3: () => false,
             getPrimaryBalance: () => false
         };
@@ -159,6 +161,8 @@ class App extends PureComponent {
                         toast.error("Failed to add network.");
                     }).finally(() => {});
                 }).finally(() => {});
+            } else {
+                if (!IsEmpty(callback) && typeof callback === "function") callback();
             }
         } else {
             toast.error("Non-EVM browser detected. You should consider tyring Metamask!");
@@ -389,6 +393,8 @@ class App extends PureComponent {
                     }).catch((error) => {
                         toast.error("Failed fetch staking token balance.");
                     }).finally(() => {});
+
+                    this.stakingTransactions();
                 });
             }).catch((error) => {
                 ErrorNotDeployed(staking, error);
@@ -398,13 +404,24 @@ class App extends PureComponent {
 
     presaleTransactions() {
         this.state.presale.getPastEvents("Buy", {
-            fromBlock: Math.max(Number(this.state.block) - 20, 0)
+            fromBlock: Math.max(Number(this.state.block) - this.state.fromLastBlock, 0)
         }).then((value) => {
             this.setState({
                 presaleTransactions: value.reverse()
             });
         }).catch((error) => {
-            console.log('ee', error)
+            toast.error("Failed fetch presale events.");
+        }).finally(() => {});
+    }
+
+    stakingTransactions() {
+        this.state.staking.getPastEvents("allEvents", {
+            fromBlock: Math.max(Number(this.state.block) - this.state.fromLastBlock, 0)
+        }).then((value) => {
+            this.setState({
+                stakingTransactions: value.reverse().filter((value) => ["Stake", "Withdraw"].includes(value.event))
+            });
+        }).catch((error) => {
             toast.error("Failed fetch presale events.");
         }).finally(() => {});
     }

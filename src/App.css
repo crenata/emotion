@@ -128,6 +128,9 @@ input[type=number] {
 .x-small {
     font-size: x-small;
 }
+.xx-small {
+    font-size: xx-small;
+}
 
 .staking-box {
     position: relative;
@@ -141,4 +144,13 @@ input[type=number] {
 .spinner-border-xs {
     --bs-spinner-width: 0.75rem !important;
     --bs-spinner-height: 0.75rem !important;
+}
+
+.transaction-amount {
+    font-size: small;
+}
+@media (min-width: 768px) {
+    .transaction-amount {
+        font-size: medium;
+    }
 }
