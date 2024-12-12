@@ -2,14 +2,14 @@ pragma solidity ^0.5.16;
 
 import "./Ownable.sol";
 import "./SafeMath.sol";
-import "./BEP20Token.sol";
+import "./ERC20Token.sol";
 
 contract Presale is Context, Ownable {
     using SafeMath for uint256;
 
     address payable ownerAddress;
 
-    BEP20Token public tokenContract;
+    ERC20Token public tokenContract;
 
     uint256 public tokenPrice;
     uint256 public tokensSold;
@@ -26,7 +26,7 @@ contract Presale is Context, Ownable {
      * @param _tokenContract Token contract address.
      * @param _tokenPrice Initial token price.
      */
-    constructor(BEP20Token _tokenContract, uint256 _tokenPrice) public {
+    constructor(ERC20Token _tokenContract, uint256 _tokenPrice) public {
         ownerAddress = _msgSender();
         tokenContract = _tokenContract;
         tokenPrice = _tokenPrice;

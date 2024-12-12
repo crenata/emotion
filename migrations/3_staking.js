@@ -1,6 +1,6 @@
-const BEP20Token = artifacts.require("BEP20Token");
+const ERC20Token = artifacts.require("ERC20Token");
 const Staking = artifacts.require("Staking");
 
 module.exports = (deployer) => {
-    deployer.deploy(Staking, BEP20Token.address, BEP20Token.address);
+    deployer.deploy(Staking, ERC20Token.address, ERC20Token.address);
 };

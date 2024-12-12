@@ -1,6 +1,6 @@
 pragma solidity ^0.5.16;
 
-interface IBEP20 {
+interface IERC20 {
     /**
      * @dev Returns the bep token owner.
      */

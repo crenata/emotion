@@ -1,11 +1,11 @@
-const BEP20Token = artifacts.require("BEP20Token");
+const ERC20Token = artifacts.require("ERC20Token");
 const Presale = artifacts.require("Presale");
 const Revert = require("./helpers/Revert");
 contract(Presale.contractName, (accounts) => {
     before(async () => {
         this.owner = accounts[0];
         this.buyer = accounts[1];
-        this.token = await BEP20Token.deployed();
+        this.token = await ERC20Token.deployed();
         this.tokenSale = await Presale.deployed();
         this.tokenAddress = await this.token.address;
         this.tokenSaleAddress = await this.tokenSale.address;

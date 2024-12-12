@@ -5,7 +5,7 @@ import IsEmpty from "./helpers/IsEmpty";
 import ErrorNotDeployed from "./helpers/errors/ErrorNotDeployed";
 import Web3 from "web3";
 import TruffleContract from "@truffle/contract";
-import Token from "./contracts/BEP20Token.json";
+import Token from "./contracts/ERC20Token.json";
 import Presale from "./contracts/Presale.json";
 import Staking from "./contracts/Staking.json";
 import toast from "react-hot-toast";
@@ -75,11 +75,15 @@ class App extends PureComponent {
                     web3: web3
                 }, () => {
                     this.getBlockNumber();
-                    window.ethereum.request({method: "eth_requestAccounts"}).then((accounts) => {
-                        this.initAccounts(accounts);
-                    }).catch((error) => {
-                        this.errorGettingAccounts();
-                    }).finally(() => {});
+                    this.networkWatcher(() => {
+                        window.ethereum.request({
+                            method: "eth_requestAccounts"
+                        }).then((accounts) => {
+                            this.initAccounts(accounts);
+                        }).catch((error) => {
+                            this.errorGettingAccounts();
+                        }).finally(() => {});
+                    });
                 });
             } else if (!IsEmpty(window.web3)) {
                 web3 = new Web3(window.web3.currentProvider);
@@ -87,13 +91,13 @@ class App extends PureComponent {
                     web3: web3
                 }, () => {
                     this.getBlockNumber();
-                    if (!IsEmpty(window.ethereum)) {
+                    this.networkWatcher(() => {
                         window.ethereum.enable().then((accounts) => {
                             this.initAccounts(accounts);
                         }).catch((error) => {
                             this.errorGettingAccounts();
                         }).finally(() => {});
-                    }
+                    });
                 });
             } else {
                 toast.error("Non-EVM browser detected. You should consider tyring Metamask!");
@@ -109,6 +113,56 @@ class App extends PureComponent {
         }).catch((error) => {
             toast.error("Failed fetch block number.");
         }).finally(() => {});
+    }
+
+    networkWatcher(callback) {
+        if (!IsEmpty(window.ethereum)) {
+            if (Number(window.ethereum.chainId) !== Number(process.env.REACT_APP_CHAIN_ID)) {
+                window.ethereum.request({
+                    method: "wallet_switchEthereumChain",
+                    params: [
+                        {
+                            chainId: this.state.web3.utils.toHex(Number(process.env.REACT_APP_CHAIN_ID))
+                        }
+                    ]
+                }).then((value) => {
+                    toast.success("Automatic switch network.");
+                    if (!IsEmpty(callback) && typeof callback === "function") callback();
+                }).catch((error) => {
+                    toast.error("Failed to automatic switch network, try automatic add network.");
+                    window.ethereum.request({
+                        method: "wallet_addEthereumChain",
+                        params: [
+                            {
+                                chainId: this.state.web3.utils.toHex(process.env.REACT_APP_CHAIN_ID),
+                                chainName: "Ethereum Mainnet",
+                                rpcUrls: [
+                                    "https://mainnet.infura.io"
+                                ],
+                                iconUrls: [
+                                    "https://etherscan.io/images/svg/brands/ethereum-original.svg"
+                                ],
+                                nativeCurrency: {
+                                    name: "Ethereum",
+                                    symbol: "ETH",
+                                    decimals: 18
+                                },
+                                blockExplorerUrls: [
+                                    "https://etherscan.io"
+                                ]
+                            }
+                        ],
+                    }).then((value) => {
+                        toast.success("Successfully add network.");
+                        if (!IsEmpty(callback) && typeof callback === "function") callback();
+                    }).catch((error) => {
+                        toast.error("Failed to add network.");
+                    }).finally(() => {});
+                }).finally(() => {});
+            }
+        } else {
+            toast.error("Non-EVM browser detected. You should consider tyring Metamask!");
+        }
     }
 
     initAccounts(accounts) {
@@ -344,12 +398,13 @@ class App extends PureComponent {
 
     presaleTransactions() {
         this.state.presale.getPastEvents("Buy", {
-            fromBlock: IsEmpty(this.state.block) ? 0 : Number(this.state.block) - 20
+            fromBlock: Math.max(Number(this.state.block) - 20, 0)
         }).then((value) => {
             this.setState({
                 presaleTransactions: value.reverse()
             });
         }).catch((error) => {
+            console.log('ee', error)
             toast.error("Failed fetch presale events.");
         }).finally(() => {});
     }

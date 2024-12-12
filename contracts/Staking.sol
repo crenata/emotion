@@ -1,15 +1,15 @@
 pragma solidity ^0.5.16;
 
 import "./Context.sol";
-import "./IBEP20.sol";
+import "./IERC20.sol";
 import "./Ownable.sol";
 import "./SafeMath.sol";
 
 contract Staking is Context, Ownable {
     using SafeMath for uint256;
 
-    IBEP20 public stakingToken;
-    IBEP20 public rewardToken;
+    IERC20 public stakingToken;
+    IERC20 public rewardToken;
 
     address public ownerAddress;
 
@@ -30,8 +30,8 @@ contract Staking is Context, Ownable {
      */
     constructor(address _stakingToken, address _rewardToken) public {
         ownerAddress = _msgSender();
-        stakingToken = IBEP20(_stakingToken);
-        rewardToken = IBEP20(_rewardToken);
+        stakingToken = IERC20(_stakingToken);
+        rewardToken = IERC20(_rewardToken);
     }
 
     /**

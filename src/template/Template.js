@@ -19,7 +19,7 @@ class Template extends PureComponent {
                     classNames="fade-out"
                 >
                     {this.context.loading ? <Loading /> : <BgOuterSpace className="app">
-                        <Toaster containerClassName="z-4" position="top-right" />
+                        <Toaster containerClassName="z-5" position="top-right" />
                         <Navbar />
                         <div className="position-absolute w-100 app-content z-3">
                             <div className="pb-5">
