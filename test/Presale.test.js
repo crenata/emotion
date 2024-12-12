@@ -6,9 +6,9 @@ contract(Presale.contractName, (accounts) => {
         this.owner = accounts[0];
         this.buyer = accounts[1];
         this.token = await ERC20Token.deployed();
-        this.tokenSale = await Presale.deployed();
+        this.presale = await Presale.deployed();
         this.tokenAddress = await this.token.address;
-        this.tokenSaleAddress = await this.tokenSale.address;
+        this.presaleAddress = await this.presale.address;
         this.tokenPrice = 0.00001;
         let totalSupply = await this.token.totalSupply();
         this.totalSupply = web3.utils.fromWei(totalSupply, "ether");
@@ -21,22 +21,22 @@ contract(Presale.contractName, (accounts) => {
             this.receipt = null;
         });
         it("Contract has been deployed successfully", async () => {
-            let address = await this.tokenSale.address;
+            let address = await this.presale.address;
             assert.notEqual(address, 0x0);
         });
         it("Has the correct token contract address", async () => {
-            let tokenSaleContract = await this.tokenSale.tokenContract();
-            assert.equal(tokenSaleContract, this.tokenAddress);
+            let tokenContract = await this.presale.tokenContract();
+            assert.equal(tokenContract, this.tokenAddress);
         });
         it("Has the correct token price", async () => {
-            let tokenPrice = await this.tokenSale.tokenPrice();
+            let tokenPrice = await this.presale.tokenPrice();
             assert.equal(web3.utils.fromWei(tokenPrice, "ether"), this.tokenPrice);
         });
-        it("Transfer tokens to token sale contract", async () => {
-            this.receipt = await this.token.transfer(this.tokenSaleAddress, web3.utils.toWei(this.tokensAvailable.toString(), "ether"), {
+        it("Transfer tokens to presale contract", async () => {
+            this.receipt = await this.token.transfer(this.presaleAddress, web3.utils.toWei(this.tokensAvailable.toString(), "ether"), {
                 from: this.owner
             });
-            let balance = await this.token.balanceOf(this.tokenSaleAddress);
+            let balance = await this.token.balanceOf(this.presaleAddress);
             assert.equal(web3.utils.fromWei(balance, "ether"), this.tokensAvailable);
         });
         describe("Event check", () => {
@@ -50,7 +50,7 @@ contract(Presale.contractName, (accounts) => {
                 assert.equal(this.receipt.logs[0].args.from, this.owner);
             });
             it("Has the correct `to` argument", async () => {
-                assert.equal(this.receipt.logs[0].args.to, this.tokenSaleAddress);
+                assert.equal(this.receipt.logs[0].args.to, this.presaleAddress);
             });
             it("Has the correct `value` argument", async () => {
                 assert.equal(this.receipt.logs[0].args.value, web3.utils.toWei(this.tokensAvailable.toString(), "ether"));
@@ -66,7 +66,7 @@ contract(Presale.contractName, (accounts) => {
         });
         it("Can't buy token with incorrect ether value", async () => {
             await Revert(async () => {
-                await this.tokenSale.buyTokens(web3.utils.toWei(this.tokensBought.toString(), "ether"), {
+                await this.presale.buyTokens(web3.utils.toWei(this.tokensBought.toString(), "ether"), {
                     from: this.buyer,
                     value: web3.utils.toWei((this.etherValue - 0.00001).toString(), "ether")
                 });
@@ -74,14 +74,14 @@ contract(Presale.contractName, (accounts) => {
         });
         it("Can't buy more tokens than available", async () => {
             await Revert(async () => {
-                await this.tokenSale.buyTokens(web3.utils.toWei((this.tokensAvailable + 1).toString(), "ether"), {
+                await this.presale.buyTokens(web3.utils.toWei((this.tokensAvailable + 1).toString(), "ether"), {
                     from: this.buyer,
                     value: web3.utils.toWei(((this.tokensAvailable + 1) * this.tokenPrice).toString(), "ether")
                 });
             });
         });
         it("Buy tokens", async () => {
-            this.receipt = await this.tokenSale.buyTokens(web3.utils.toWei(this.tokensBought.toString(), "ether"), {
+            this.receipt = await this.presale.buyTokens(web3.utils.toWei(this.tokensBought.toString(), "ether"), {
                 from: this.buyer,
                 value: web3.utils.toWei(this.etherValue.toString(), "ether")
             });
@@ -119,31 +119,31 @@ contract(Presale.contractName, (accounts) => {
         });
         describe("Should tokens sold increased", () => {
             it("Has the correct tokens sold", async () => {
-                let tokensSold = await this.tokenSale.tokensSold();
+                let tokensSold = await this.presale.tokensSold();
                 assert.equal(web3.utils.fromWei(tokensSold, "ether"), this.tokensBought);
             });
         });
         describe("Should tokens available decreased", () => {
             it("Has the correct tokens available", async () => {
-                let balance = await this.token.balanceOf(this.tokenSaleAddress);
+                let balance = await this.token.balanceOf(this.presaleAddress);
                 assert.equal(web3.utils.fromWei(balance, "ether"), this.tokensAvailable - this.tokensBought);
             });
         });
     });
 
-    describe("Ends Token Sale", () => {
+    describe("Ends Token Presale", () => {
         before(async () => {
             this.receipt = null;
         });
-        it("Prevents non-admin from updating end sale", async () => {
+        it("Prevents non-admin from updating end presale", async () => {
             await Revert(async () => {
-                await this.tokenSale.endSale({
+                await this.presale.endSale({
                     from: this.buyer
                 });
             });
         });
-        it("Allows admin from updating end sale", async () => {
-            this.receipt = await this.tokenSale.endSale({
+        it("Allows admin from updating end presale", async () => {
+            this.receipt = await this.presale.endSale({
                 from: this.owner
             });
         });
@@ -153,7 +153,7 @@ contract(Presale.contractName, (accounts) => {
         });
         it("Variables was reset", async () => {
             try {
-                await this.tokenSale.tokenPrice();
+                await this.presale.tokenPrice();
             } catch (error) {
                 assert(true);
             }

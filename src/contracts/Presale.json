@@ -4236,14 +4236,65 @@
   },
   "networks": {
     "5777": {
-      "events": {},
+      "events": {
+        "0xbeae048c6d270d9469f86cf6e8fedda3c60ad770f16c24c9fc131c8e9a09101d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "_buyer",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_amountPrimary",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_amountToken",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "_timestamp",
+              "type": "uint256"
+            }
+          ],
+          "name": "Buy",
+          "type": "event"
+        },
+        "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "previousOwner",
+              "type": "address"
+            },
+            {
+              "indexed": true,
+              "internalType": "address",
+              "name": "newOwner",
+              "type": "address"
+            }
+          ],
+          "name": "OwnershipTransferred",
+          "type": "event"
+        }
+      },
       "links": {},
-      "address": "0x21156D7D9717864ef45E0DC03CCc2Ea4A5DffAf2",
-      "transactionHash": "0x561eb113495b532b1452c992528503996a0ee0f164e7d3412b5aa79c81cd27ec"
+      "address": "0x808eE0D034595741CAaE8d855eac71D6b773B1AA",
+      "transactionHash": "0x473b9a11d0dcf0f2a98f0931dfd229d167a7572ecccc510ce1cda1437bdcc38b"
     }
   },
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-12-12T04:29:26.023Z",
+  "updatedAt": "2024-12-12T07:04:06.308Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {

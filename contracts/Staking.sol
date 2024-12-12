@@ -25,6 +25,20 @@ contract Staking is Context, Ownable {
     mapping(address => uint256) public balanceOf;
 
     /**
+     * @param _sender Sender's address.
+     * @param _amount Amount of token.
+     * @param _timestamp Block timestamp.
+     */
+    event Stake(address indexed _sender, uint256 _amount, uint256 _timestamp);
+
+    /**
+     * @param _sender Sender's address.
+     * @param _amount Amount of token.
+     * @param _timestamp Block timestamp.
+     */
+    event Withdraw(address indexed _sender, uint256 _amount, uint256 _timestamp);
+
+    /**
      * @param _stakingToken Staking token contract address.
      * @param _rewardToken Reward token contract address.
      */
@@ -88,6 +102,7 @@ contract Staking is Context, Ownable {
         require(stakingToken.transferFrom(_msgSender(), address(this), _amount), "Failed transfer token to staking contract.");
         balanceOf[_msgSender()] += _amount;
         totalStaked += _amount;
+        emit Stake(_msgSender(), _amount, block.timestamp);
     }
 
     /**
@@ -99,6 +114,7 @@ contract Staking is Context, Ownable {
         require(stakingToken.transfer(_msgSender(), _amount), "Failed transfer token to sender.");
         balanceOf[_msgSender()] -= _amount;
         totalStaked -= _amount;
+        emit Withdraw(_msgSender(), _amount, block.timestamp);
     }
 
     /**
