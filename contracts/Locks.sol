@@ -64,7 +64,7 @@ contract Locks is Context, ILocks, Ownable {
     function _lock(address beneficiary, uint256 amount, uint256 releaseTime) internal onlyOwner {
         require(beneficiary != address(0), "Locks: Beneficiary is the zero address");
         require(amount > 0, "Locks: Amount is equal or less than zero.");
-        require(_token.transferFrom(beneficiary, address(this), amount), "Locks: Failed transfer token to locks contract.");
+        require(_token.transferFrom(_msgSender(), address(this), amount), "Locks: Failed transfer token to locks contract.");
         locked[beneficiary] = Locked(beneficiary, amount, releaseTime);
         emit Lock(beneficiary, amount, releaseTime, block.timestamp);
     }

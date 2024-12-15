@@ -70,6 +70,7 @@ contract Presale is Context, IPresale, Ownable {
      * @param amount Amount of token to buy.
      */
     function _buyTokens(uint256 amount) internal {
+        require(_msgSender() != address(0), "Presale: Sender is the zero address");
         require(_msgValue() == (amount.div(1e18)).mul(_tokenPrice), "Presale: Value is not equal token value.");
         require(_token.balanceOf(address(this)) >= amount, "Presale: Token value is greater than presale contract balance.");
         require(_token.transfer(_msgSender(), amount), "Presale: Failed transfer token to sender.");

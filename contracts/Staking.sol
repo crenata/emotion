@@ -216,6 +216,7 @@ contract Staking is Context, IStaking, Ownable {
      * @param amount Amount of token to stake.
      */
     function _stake(uint256 amount) internal updateReward(_msgSender()) {
+        require(_msgSender() != address(0), "Staking: Sender is the zero address");
         require(amount > 0, "Staking: Amount is equal or less than zero.");
         require(_stakingToken.transferFrom(_msgSender(), address(this), amount), "Staking: Failed transfer token to staking contract.");
         _balances[_msgSender()] = _balances[_msgSender()].add(amount);
@@ -229,6 +230,7 @@ contract Staking is Context, IStaking, Ownable {
      * @param amount Amount of token to withdraw.
      */
     function _withdraw(uint256 amount) internal updateReward(_msgSender()) {
+        require(_msgSender() != address(0), "Staking: Sender is the zero address");
         require(amount > 0, "Staking: Amount is equal or less than zero.");
         require(amount <= _balances[_msgSender()], "Staking: Amount is greater than available balance.");
         require(_stakingToken.transfer(_msgSender(), amount), "Staking: Failed transfer token to sender.");
@@ -241,6 +243,7 @@ contract Staking is Context, IStaking, Ownable {
      * @dev Claim the token rewards.
      */
     function _claim() internal updateReward(_msgSender()) {
+        require(_msgSender() != address(0), "Staking: Sender is the zero address");
         uint256 reward = _rewards[_msgSender()];
         require(reward > 0, "Staking: Reward is equal or less than zero.");
         require(_rewardToken.transfer(_msgSender(), reward), "Staking: Failed transfer token to sender.");
