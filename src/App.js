@@ -31,7 +31,7 @@ class App extends PureComponent {
             decimals: 0,
             balance: 0,
             presale: null,
-            price: 0.00001,
+            price: 0.00125,
             presaleBalance: 0,
             sold: 0,
             staking: null,

@@ -15,7 +15,7 @@ class Footer extends PureComponent {
                                 alt="Brand"
                                 width="64"
                             />
-                            <p className="ms-3 mb-0 text-white">Maelyn</p>
+                            <p className="ms-3 mb-0 text-white">Emotion</p>
                         </div>
                         {this.context.isLoadingAddToken ?
                             <button className="box-shadow-primary border rounded bg-transparent text-white x-small text-nowrap px-2 py-1 mt-3" disabled>

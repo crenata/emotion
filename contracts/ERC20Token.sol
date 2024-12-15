@@ -17,16 +17,14 @@ contract ERC20Token is Context, IERC20, Ownable {
     uint256 private _totalSupply;
 
     constructor() public {
-        _name = "Maelyn";
-        _symbol = "MAE";
+        _name = "Emotion";
+        _symbol = "EMOTION";
         _decimals = 18;
-        _totalSupply = 10000000000 * 10 ** uint256(_decimals);
-        _balances[_msgSender()] = _totalSupply;
-        emit Transfer(address(0), _msgSender(), _totalSupply);
+        _mint(_msgSender(), 10000000000 * 10 ** uint256(_decimals));
     }
 
     /**
-     * @dev Returns the bep token owner.
+     * @dev Returns the erc token owner.
      */
     function getOwner() external view returns(address) {
         return owner();

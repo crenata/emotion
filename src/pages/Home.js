@@ -189,9 +189,9 @@ class Home extends PureComponent {
                     this.setState({
                         isLoadingBuy: true
                     }, () => {
-                        this.context.presale.buyTokens(this.context.web3.utils.toWei(Math.floor(this.state.amountToken).toString(), "ether"), {
+                        this.context.presale.buyTokens(this.context.web3.utils.toWei(this.state.amountToken, "ether"), {
                             from: this.context.account,
-                            value: this.context.web3.utils.toWei((Math.floor(this.state.amountToken) * Number(this.context.price)).toString(), "ether")
+                            value: this.context.web3.utils.toWei((Number(this.state.amountToken) * Number(this.context.price)).toString(), "ether")
                         }).then((value) => {
                             this.setState({
                                 amountPrimary: "",
@@ -338,8 +338,9 @@ class Home extends PureComponent {
             <Template>
                 <div className="container">
                     <div className="text-center mt-5">
-                        <h5 className="m-0 text-white">Maelyn</h5>
-                        <h2 className="mt-3 mb-0 text-white">Leave Earth! and to the MOON!!!</h2>
+                        <h5 className="m-0 text-white">Emotion</h5>
+                        <h2 className="mt-3 mb-0 text-white">Get ${this.context.symbol}! for more emotion controls.</h2>
+                        <p className="mt-3 mb-0 text-white">In trading, you will need to control your emotions. Lose control lose money!!! Get more ${this.context.symbol} and be ready for trades.</p>
                     </div>
                     <div className="row mt-5">
                         <div className="col-12 col-lg-6 col-xl-5">
@@ -387,7 +388,7 @@ class Home extends PureComponent {
                                 <div className="d-flex align-items-center justify-content-center justify-content-lg-between mt-4">
                                     <div className="d-none d-lg-block border-top w-25" />
                                     <p className="d-block d-lg-none m-0 text-white">♦</p>
-                                    <p className="mx-2 mb-0 text-white">1 ${this.context.symbol} = 0.00001 ${Currency().symbol}</p>
+                                    <p className="mx-2 mb-0 text-white text-nowrap">1 ${this.context.symbol} = 0.00125 ${Currency().symbol}</p>
                                     <p className="d-block d-lg-none m-0 text-white">♦</p>
                                     <div className="d-none d-lg-block border-top w-25" />
                                 </div>

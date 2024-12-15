@@ -27,19 +27,19 @@ class Navbar extends PureComponent {
                             width="36"
                             height="36"
                         />&nbsp;&nbsp;
-                        <TextNeon className="m-0 fw-bold fs-4" size={5}>Maelyn</TextNeon>
+                        <TextNeon className="m-0 fw-bold fs-4" size={5}>Emotion</TextNeon>
                     </Link>
                     <button
                         className="navbar-toggler"
                         data-bs-toggle="collapse"
-                        data-bs-target="#navbar-maelyn"
-                        aria-controls="navbar-maelyn"
+                        data-bs-target="#navbar-emotion"
+                        aria-controls="navbar-emotion"
                         aria-expanded="false"
                         aria-label="Toggle navigation"
                     >
                         <span className="navbar-toggler-icon" />
                     </button>
-                    <div className="collapse navbar-collapse p-3 p-md-0" id="navbar-maelyn">
+                    <div className="collapse navbar-collapse p-3 p-md-0" id="navbar-emotion">
                         <ul className="navbar-nav">
                             <li className="nav-item">
                                 <button className="nav-link text-white" onClick={event => this.scrollSmooth("#staking")}>Staking</button>

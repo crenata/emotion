@@ -9,7 +9,7 @@ contract(Presale.contractName, (accounts) => {
         this.presale = await Presale.deployed();
         this.tokenAddress = await this.token.address;
         this.presaleAddress = await this.presale.address;
-        this.tokenPrice = 0.00001;
+        this.tokenPrice = 0.00125;
         let totalSupply = await this.token.totalSupply();
         this.totalSupply = web3.utils.fromWei(totalSupply, "ether");
         this.tokensAvailable = this.totalSupply * 75 / 100;
@@ -68,7 +68,7 @@ contract(Presale.contractName, (accounts) => {
             await Revert(async () => {
                 await this.presale.buyTokens(web3.utils.toWei(this.tokensBought.toString(), "ether"), {
                     from: this.buyer,
-                    value: web3.utils.toWei((this.etherValue - 0.00001).toString(), "ether")
+                    value: web3.utils.toWei((this.etherValue - 0.00125).toString(), "ether")
                 });
             });
         });

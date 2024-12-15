@@ -116,7 +116,7 @@ class Admin extends PureComponent {
             <Template>
                 <div className="container">
                     <div className="text-center mt-5">
-                        <h5 className="m-0 text-white">Maelyn</h5>
+                        <h5 className="m-0 text-white">Emotion</h5>
                         <h2 className="mt-3 mb-0 text-white">Leave Earth! and to the MOON!!!</h2>
                     </div>
                     <div className="row g-4 mt-5">
