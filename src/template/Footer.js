@@ -2,16 +2,8 @@ import React, {PureComponent} from "react";
 import Web3Context from "../contexts/Web3Context";
 import logo from "../images/logo.png";
 import metamask from "../images/metamask.png";
-import "./Navbar.css";
 
 class Footer extends PureComponent {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isLoadingAddToken: false
-        };
-    }
-
     render() {
         return (
             <footer className="container py-5 border-top z-3">
