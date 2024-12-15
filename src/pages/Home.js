@@ -684,7 +684,7 @@ class Home extends PureComponent {
                                                     <div className="">
                                                         <div className="d-flex align-items-center">
                                                             <div className="d-flex align-items-center">
-                                                                <p className="m-0 text-white transaction-amount">{NumberFormat(this.context.web3.utils.fromWei(value.args._amountPrimary, "ether"))}</p>
+                                                                <p className="m-0 text-white transaction-amount">{NumberFormat(this.context.web3.utils.fromWei(value.args.amountPrimary, "ether"))}</p>
                                                                 <img
                                                                     src={Currency().image}
                                                                     alt={Currency().symbol}
@@ -707,7 +707,7 @@ class Home extends PureComponent {
                                                                 />
                                                             </svg>
                                                             <div className="d-flex align-items-center">
-                                                                <p className="m-0 text-white transaction-amount">{NumberFormat(this.context.web3.utils.fromWei(value.args._amountToken, "ether"))}</p>
+                                                                <p className="m-0 text-white transaction-amount">{NumberFormat(this.context.web3.utils.fromWei(value.args.amountToken, "ether"))}</p>
                                                                 <img
                                                                     src={logo}
                                                                     alt={this.context.symbol}
@@ -733,7 +733,7 @@ class Home extends PureComponent {
                                                                     d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"
                                                                 />
                                                             </svg>
-                                                            <p className="ms-2 mb-0 text-white x-small">{moment(this.context.web3.utils.toNumber(value.args._timestamp) * 1000).fromNow()}</p>
+                                                            <p className="ms-2 mb-0 text-white x-small">{moment(this.context.web3.utils.toNumber(value.args.timestamp) * 1000).fromNow()}</p>
                                                         </div>
                                                     </div>
                                                     <a
@@ -798,7 +798,7 @@ class Home extends PureComponent {
                                                 <div className="d-flex align-items-center justify-content-between">
                                                     <div className="">
                                                         <div className="d-flex align-items-center">
-                                                            <p className="m-0 text-white transaction-amount">{NumberFormat(this.context.web3.utils.fromWei(value.args._amount, "ether"))}</p>
+                                                            <p className="m-0 text-white transaction-amount">{NumberFormat(this.context.web3.utils.fromWei(value.args.amount, "ether"))}</p>
                                                             <img
                                                                 src={logo}
                                                                 alt={this.context.symbol}
@@ -823,7 +823,7 @@ class Home extends PureComponent {
                                                                     d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16m7-8A7 7 0 1 1 1 8a7 7 0 0 1 14 0"
                                                                 />
                                                             </svg>
-                                                            <p className="ms-2 mb-0 text-white x-small">{moment(this.context.web3.utils.toNumber(value.args._timestamp) * 1000).fromNow()}</p>
+                                                            <p className="ms-2 mb-0 text-white x-small">{moment(this.context.web3.utils.toNumber(value.args.timestamp) * 1000).fromNow()}</p>
                                                         </div>
                                                     </div>
                                                     <div className="d-flex align-items-center justify-content-end">

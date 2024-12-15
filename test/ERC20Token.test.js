@@ -5,7 +5,7 @@ contract(ERC20Token.contractName, (accounts) => {
         this.owner = accounts[0];
         this.token = await ERC20Token.deployed();
         this.name = "Emotion";
-        this.symbol = "MAE";
+        this.symbol = "EMOTION";
         this.decimals = 18;
         this.totalSupply = 10000000000 * 10 ** 18;
     });

@@ -25,8 +25,8 @@ contract(Presale.contractName, (accounts) => {
             assert.notEqual(address, 0x0);
         });
         it("Has the correct token contract address", async () => {
-            let tokenContract = await this.presale.tokenContract();
-            assert.equal(tokenContract, this.tokenAddress);
+            let token = await this.presale.token();
+            assert.equal(token, this.tokenAddress);
         });
         it("Has the correct token price", async () => {
             let tokenPrice = await this.presale.tokenPrice();
@@ -61,6 +61,7 @@ contract(Presale.contractName, (accounts) => {
     describe("Token Buying", () => {
         before(async () => {
             this.receipt = null;
+            this.presaleBalance = await web3.utils.fromWei(await web3.eth.getBalance(this.presaleAddress), "ether");
             this.buyerBalance = await web3.utils.fromWei(await web3.eth.getBalance(this.buyer), "ether");
             this.etherValue = this.tokensBought * this.tokenPrice;
         });
@@ -96,19 +97,29 @@ contract(Presale.contractName, (accounts) => {
                 assert.equal(this.receipt.logs[0].event, "Buy");
             });
             it("Has the correct `buyer` argument", async () => {
-                assert.equal(this.receipt.logs[0].args._buyer, this.buyer);
+                assert.equal(this.receipt.logs[0].args.buyer, this.buyer);
             });
             it("Has the correct `amount primary` argument", async () => {
-                assert.equal(web3.utils.fromWei(this.receipt.logs[0].args._amountPrimary, "ether"), this.etherValue);
+                assert.equal(web3.utils.fromWei(this.receipt.logs[0].args.amountPrimary, "ether"), this.etherValue);
             });
             it("Has the correct `amount token` argument", async () => {
-                assert.equal(web3.utils.fromWei(this.receipt.logs[0].args._amountToken, "ether"), this.tokensBought);
+                assert.equal(web3.utils.fromWei(this.receipt.logs[0].args.amountToken, "ether"), this.tokensBought);
             });
         });
         describe("Should buyer's amount decreased", () => {
-            it("Has the correct tokens sold", async () => {
-                let buyerBalanceUpdate = await web3.utils.fromWei(await web3.eth.getBalance(this.buyer), "ether");
-                assert.notEqual(buyerBalanceUpdate, this.buyerBalance);
+            it("Has the correct balance", async () => {
+                let balance = await web3.eth.getBalance(this.buyer);
+                assert.notEqual(web3.utils.fromWei(balance, "ether"), this.buyerBalance);
+            });
+        });
+        describe("Should presale's amount increased", () => {
+            it("Balance not equal from previous", async () => {
+                let balance = await web3.eth.getBalance(this.presaleAddress);
+                assert.notEqual(web3.utils.fromWei(balance, "ether"), this.presaleBalance);
+            });
+            it("Has the correct balance", async () => {
+                let balance = await web3.eth.getBalance(this.presaleAddress);
+                assert.equal(web3.utils.fromWei(balance, "ether"), this.etherValue);
             });
         });
         describe("Should buyer receive token", () => {

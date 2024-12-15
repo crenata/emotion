@@ -2,62 +2,111 @@ pragma solidity ^0.5.16;
 
 import "./Context.sol";
 import "./IERC20.sol";
+import "./IStaking.sol";
 import "./Ownable.sol";
 import "./SafeMath.sol";
 
-contract Staking is Context, Ownable {
+contract Staking is Context, IStaking, Ownable {
     using SafeMath for uint256;
+    
+    IERC20 private _stakingToken;
+    IERC20 private _rewardToken;
 
-    IERC20 public stakingToken;
-    IERC20 public rewardToken;
+    uint256 private _duration;
+    uint256 private _finishedAt;
+    uint256 private _updatedAt;
+    uint256 private _rewardRate;
+    uint256 private _rewardPerTokenStored;
+    uint256 private _totalStaked;
 
-    address public ownerAddress;
-
-    uint256 public duration;
-    uint256 public finishedAt;
-    uint256 public updatedAt;
-    uint256 public rewardRate;
-    uint256 public rewardPerTokenStored;
-    uint256 public totalStaked;
-
-    mapping(address => uint256) public userRewardPerTokenPaid;
-    mapping(address => uint256) public rewards;
-    mapping(address => uint256) public balanceOf;
+    mapping(address => uint256) private _userRewardPerTokenPaid;
+    mapping(address => uint256) private _rewards;
+    mapping(address => uint256) private _balances;
 
     /**
-     * @param _sender Sender's address.
-     * @param _amount Amount of token.
-     * @param _timestamp Block timestamp.
+     * @param stakingToken_ Staking token contract address.
+     * @param rewardToken_ Reward token contract address.
      */
-    event Stake(address indexed _sender, uint256 _amount, uint256 _timestamp);
-
-    /**
-     * @param _sender Sender's address.
-     * @param _amount Amount of token.
-     * @param _timestamp Block timestamp.
-     */
-    event Withdraw(address indexed _sender, uint256 _amount, uint256 _timestamp);
-
-    /**
-     * @param _stakingToken Staking token contract address.
-     * @param _rewardToken Reward token contract address.
-     */
-    constructor(address _stakingToken, address _rewardToken) public {
-        ownerAddress = _msgSender();
-        stakingToken = IERC20(_stakingToken);
-        rewardToken = IERC20(_rewardToken);
+    constructor(address stakingToken_, address rewardToken_) public {
+        _stakingToken = IERC20(stakingToken_);
+        _rewardToken = IERC20(rewardToken_);
     }
 
     /**
+     * @dev Returns the erc staking token address.
+     */
+    function stakingToken() external view returns(IERC20) {
+        return _stakingToken;
+    }
+
+    /**
+     * @dev Returns the erc reward token address.
+     */
+    function rewardToken() external view returns(IERC20) {
+        return _rewardToken;
+    }
+
+    /**
+     * @dev Returns the staking duration.
+     */
+    function duration() external view returns(uint256) {
+        return _duration;
+    }
+
+    /**
+     * @dev Returns the finish timestamp.
+     */
+    function finishedAt() external view returns(uint256) {
+        return _finishedAt;
+    }
+
+    /**
+     * @dev Returns the updated at timestamp.
+     */
+    function updatedAt() external view returns(uint256) {
+        return _updatedAt;
+    }
+
+    /**
+     * @dev Returns the reward rate in wei.
+     */
+    function rewardRate() external view returns(uint256) {
+        return _rewardRate;
+    }
+
+    /**
+     * @dev Returns the reward rate per token stored in wei.
+     */
+    function rewardPerTokenStored() external view returns(uint256) {
+        return _rewardPerTokenStored;
+    }
+
+    /**
+     * @dev Returns the total staked tokens in wei.
+     */
+    function totalStaked() external view returns(uint256) {
+        return _totalStaked;
+    }
+
+    /**
+     * @dev See {ERC20-balanceOf}.
+     */
+    function balanceOf(address account) external view returns(uint256) {
+        return _balances[account];
+    }
+
+    /**
+     * @dev Update reward every contract called.
+     *
      * @param _account address.
      */
     modifier updateReward(address _account) {
-        rewardPerTokenStored = rewardPerToken();
-        updatedAt = lastTimeRewardApplicable();
+        _rewardPerTokenStored = rewardPerToken();
+        _updatedAt = lastTimeRewardApplicable();
 
         if (_account != address(0)) {
-            rewards[_account] = earned();
-            userRewardPerTokenPaid[_account] = rewardPerTokenStored;
+            _rewards[_account] = earned();
+            _userRewardPerTokenPaid[_account] = _rewardPerTokenStored;
         }
 
         _;
@@ -74,97 +123,158 @@ contract Staking is Context, Ownable {
 
     /**
      * @dev Last time reward applicable.
+     *
      * @return uint256 Returns min value between finished at and block timestamp.
      */
     function lastTimeRewardApplicable() public view returns (uint256) {
-        return _min(finishedAt, block.timestamp);
+        return _min(_finishedAt, block.timestamp);
     }
 
     /**
      * @dev Amount of reward per token staked.
+     *
      * @return uint256 Returns calculated reward per token.
      */
     function rewardPerToken() public view returns (uint256) {
-        if (totalStaked == 0) return rewardPerTokenStored;
+        if (_totalStaked == 0) return _rewardPerTokenStored;
 
-        return rewardPerTokenStored + (
-            rewardRate * (
-                lastTimeRewardApplicable().sub(updatedAt)
+        return _rewardPerTokenStored + (
+            _rewardRate * (
+                lastTimeRewardApplicable().sub(_updatedAt)
             ) * 1e18
-        ) / totalStaked;
-    }
-
-    /**
-     * @param _amount Amount of token to be staked.
-     */
-    function stake(uint256 _amount) external updateReward(_msgSender()) {
-        require(_amount > 0, "Amount is equal or less than zero.");
-        require(stakingToken.transferFrom(_msgSender(), address(this), _amount), "Failed transfer token to staking contract.");
-        balanceOf[_msgSender()] += _amount;
-        totalStaked += _amount;
-        emit Stake(_msgSender(), _amount, block.timestamp);
-    }
-
-    /**
-     * @param _amount Amount of token to be withdrawal.
-     */
-    function withdraw(uint256 _amount) external updateReward(_msgSender()) {
-        require(_amount > 0, "Amount is equal or less than zero.");
-        require(_amount <= balanceOf[_msgSender()], "Amount is greater than available balance.");
-        require(stakingToken.transfer(_msgSender(), _amount), "Failed transfer token to sender.");
-        balanceOf[_msgSender()] -= _amount;
-        totalStaked -= _amount;
-        emit Withdraw(_msgSender(), _amount, block.timestamp);
+        ) / _totalStaked;
     }
 
     /**
      * @dev Total token has been earned.
+     *
      * @return uint256 Returns sender total earned.
      */
     function earned() public view returns (uint256) {
         return (
             (
-                balanceOf[_msgSender()] * (
-                    rewardPerToken().sub(userRewardPerTokenPaid[_msgSender()])
+                _balances[_msgSender()].mul(
+                    (
+                        rewardPerToken().sub(_userRewardPerTokenPaid[_msgSender()])
+                    )
                 )
-            ) / 1e18
-        ) + rewards[_msgSender()];
+            ).div(1e18)
+        ).add(_rewards[_msgSender()]);
+    }
+
+    /**
+     * @dev Transfers tokens from `buyer` to `staking` contract.
+     *
+     * @param amount Amount of token to stake.
+     */
+    function stake(uint256 amount) external updateReward(_msgSender()) returns(bool) {
+        _stake(amount);
+        return true;
+    }
+
+    /**
+     * @dev Transfers tokens from `staking` contract to `buyer`.
+     *
+     * @param amount Amount of token to withdraw.
+     */
+    function withdraw(uint256 amount) external updateReward(_msgSender()) returns(bool) {
+        _withdraw(amount);
+        return true;
     }
 
     /**
      * @dev Claim the token rewards.
      */
-    function claim() external updateReward(_msgSender()) {
-        uint256 reward = rewards[_msgSender()];
-        if (reward > 0) {
-            require(rewardToken.transfer(_msgSender(), reward));
-            rewards[_msgSender()] = 0;
-        }
+    function claim() external updateReward(_msgSender()) returns(bool) {
+        _claim();
+        return true;
     }
 
     /**
-     * @param _duration Duration of rewards to be paid out in seconds.
+     * @dev Set staking reward duration.
+     *
+     * @param duration_ Duration of rewards to be paid out in seconds.
      */
-    function setRewardDuration(uint256 _duration) external onlyOwner {
-        require(finishedAt < block.timestamp, "Reward duration is not finished.");
-        duration = _duration;
+    function setRewardDuration(uint256 duration_) external onlyOwner returns(bool) {
+        _setRewardDuration(duration_);
+        return true;
     }
 
     /**
-     * @param _amount Amount of token to be set as reward.
+     * @dev Start the rewards.
+     *
+     * @param amount Amount of token to be set as reward.
      */
-    function notifyRewardAmount(uint256 _amount) external onlyOwner updateReward(address(0)) {
-        if (block.timestamp > finishedAt) {
-            rewardRate = _amount.div(duration);
+    function notifyRewardAmount(uint256 amount) external onlyOwner updateReward(address(0)) returns(bool) {
+        _notifyRewardAmount(amount);
+        return true;
+    }
+
+    /**
+     * @dev Transfers tokens from `buyer` to `staking` contract.
+     *
+     * @param amount Amount of token to stake.
+     */
+    function _stake(uint256 amount) internal updateReward(_msgSender()) {
+        require(amount > 0, "Staking: Amount is equal or less than zero.");
+        require(_stakingToken.transferFrom(_msgSender(), address(this), amount), "Staking: Failed transfer token to staking contract.");
+        _balances[_msgSender()] = _balances[_msgSender()].add(amount);
+        _totalStaked = _totalStaked.add(amount);
+        emit Stake(_msgSender(), amount, block.timestamp);
+    }
+
+    /**
+     * @dev Transfers tokens from `staking` contract to `buyer`.
+     *
+     * @param amount Amount of token to withdraw.
+     */
+    function _withdraw(uint256 amount) internal updateReward(_msgSender()) {
+        require(amount > 0, "Staking: Amount is equal or less than zero.");
+        require(amount <= _balances[_msgSender()], "Staking: Amount is greater than available balance.");
+        require(_stakingToken.transfer(_msgSender(), amount), "Staking: Failed transfer token to sender.");
+        _balances[_msgSender()] = _balances[_msgSender()].sub(amount);
+        _totalStaked = _totalStaked.sub(amount);
+        emit Withdraw(_msgSender(), amount, block.timestamp);
+    }
+
+    /**
+     * @dev Claim the token rewards.
+     */
+    function _claim() internal updateReward(_msgSender()) {
+        uint256 reward = _rewards[_msgSender()];
+        require(reward > 0, "Staking: Reward is equal or less than zero.");
+        require(_rewardToken.transfer(_msgSender(), reward), "Staking: Failed transfer token to sender.");
+        _rewards[_msgSender()] = 0;
+        emit Claim(_msgSender(), reward, block.timestamp);
+    }
+
+    /**
+     * @dev Set staking reward duration.
+     *
+     * @param duration_ Duration of rewards to be paid out in seconds.
+     */
+    function _setRewardDuration(uint256 duration_) internal onlyOwner {
+        require(_finishedAt < block.timestamp, "Staking: Reward duration is not finished.");
+        _duration = duration_;
+    }
+
+    /**
+     * @dev Start the rewards.
+     *
+     * @param amount Amount of token to be set as reward.
+     */
+    function _notifyRewardAmount(uint256 amount) internal onlyOwner updateReward(address(0)) {
+        if (block.timestamp > _finishedAt) {
+            _rewardRate = amount.div(_duration);
         } else {
-            uint256 remainingRewards = (finishedAt.sub(block.timestamp)).mul(rewardRate);
-            rewardRate = (_amount.add(remainingRewards)).div(duration);
+            uint256 remainingRewards = (_finishedAt.sub(block.timestamp)).mul(_rewardRate);
+            _rewardRate = (amount.add(remainingRewards)).div(_duration);
         }
 
-        require(rewardRate > 0, "Reward rate is equal or less than zero.");
-        require(rewardRate.mul(duration) <= rewardToken.balanceOf(address(this)), "Reward amount is greater than available staking contract balance.");
+        require(_rewardRate > 0, "Staking: Reward rate is equal or less than zero.");
+        require(_rewardRate.mul(_duration) <= _rewardToken.balanceOf(address(this)), "Staking: Reward amount is greater than available staking contract balance.");
 
-        finishedAt = block.timestamp.add(duration);
-        updatedAt = block.timestamp;
+        _finishedAt = block.timestamp.add(_duration);
+        _updatedAt = block.timestamp;
     }
 }

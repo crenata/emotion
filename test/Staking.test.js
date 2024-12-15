@@ -137,10 +137,10 @@ contract(Staking.contractName, (accounts) => {
                 assert.equal(this.receipt.logs[0].event, "Stake");
             });
             it("Has the correct `sender` argument", async () => {
-                assert.equal(this.receipt.logs[0].args._sender, this.buyer);
+                assert.equal(this.receipt.logs[0].args.sender, this.buyer);
             });
             it("Has the correct `amount` argument", async () => {
-                assert.equal(web3.utils.fromWei(this.receipt.logs[0].args._amount, "ether"), this.tokensBought);
+                assert.equal(web3.utils.fromWei(this.receipt.logs[0].args.amount, "ether"), this.tokensBought);
             });
         });
         describe("Should buyer's token decreased", () => {
@@ -182,10 +182,10 @@ contract(Staking.contractName, (accounts) => {
                 assert.equal(this.receipt.logs[0].event, "Withdraw");
             });
             it("Has the correct `sender` argument", async () => {
-                assert.equal(this.receipt.logs[0].args._sender, this.buyer);
+                assert.equal(this.receipt.logs[0].args.sender, this.buyer);
             });
             it("Has the correct `amount` argument", async () => {
-                assert.equal(web3.utils.fromWei(this.receipt.logs[0].args._amount, "ether"), this.tokensBought);
+                assert.equal(web3.utils.fromWei(this.receipt.logs[0].args.amount, "ether"), this.tokensBought);
             });
         });
         describe("Should buyer's token increased", () => {
