@@ -14,7 +14,7 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "pragma solidity ^0.5.16;\n\n/**\n * @dev Provides information about the current execution context, including the\n * sender of the transaction and its data. While these are generally available\n * via msg.sender and msg.data, they should not be accessed in such a direct\n * manner, since when dealing with GSN meta-transactions the account sending and paying\n * for execution may not be the actual sender (as far as an application is concerned).\n *\n * This contract is only required for intermediate, library-like contracts.\n */\ncontract Context {\n    /**\n     * @dev Empty internal constructor, to prevent people from mistakenly deploying\n     * an instance of this contract, which should be used via inheritance.\n     */\n    constructor() internal {}\n\n    function _msgSender() internal view returns(address payable) {\n        return msg.sender;\n    }\n\n    function _msgValue() internal view returns(uint256) {\n        return msg.value;\n    }\n\n    function _msgData() internal view returns (bytes memory) {\n        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691\n        return msg.data;\n    }\n}",
-  "sourcePath": "/home/havea/Projects/maelyn/contracts/Context.sol",
+  "sourcePath": "/home/scranaver/Projects/maelyn/contracts/Context.sol",
   "ast": {
     "absolutePath": "project:/contracts/Context.sol",
     "exportedSymbols": {
@@ -96,7 +96,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1504,
+                      "referencedDeclaration": 1536,
                       "src": "831:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -192,7 +192,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1504,
+                      "referencedDeclaration": 1536,
                       "src": "923:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -285,7 +285,7 @@
                     "name": "this",
                     "nodeType": "Identifier",
                     "overloadedDeclarations": [],
-                    "referencedDeclaration": 1518,
+                    "referencedDeclaration": 1550,
                     "src": "1012:4:0",
                     "typeDescriptions": {
                       "typeIdentifier": "t_contract$_Context_$35",
@@ -305,7 +305,7 @@
                       "name": "msg",
                       "nodeType": "Identifier",
                       "overloadedDeclarations": [],
-                      "referencedDeclaration": 1504,
+                      "referencedDeclaration": 1536,
                       "src": "1152:3:0",
                       "typeDescriptions": {
                         "typeIdentifier": "t_magic_message",
@@ -573,7 +573,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1504,
+                              "referencedDeclaration": 1536,
                               "type": "msg",
                               "value": "msg"
                             },
@@ -686,7 +686,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1504,
+                              "referencedDeclaration": 1536,
                               "type": "msg",
                               "value": "msg"
                             },
@@ -784,7 +784,7 @@
                           "overloadedDeclarations": [
                             null
                           ],
-                          "referencedDeclaration": 1518,
+                          "referencedDeclaration": 1550,
                           "type": "contract Context",
                           "value": "this"
                         },
@@ -820,7 +820,7 @@
                               "overloadedDeclarations": [
                                 null
                               ],
-                              "referencedDeclaration": 1504,
+                              "referencedDeclaration": 1536,
                               "type": "msg",
                               "value": "msg"
                             },
@@ -864,7 +864,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-12-12T04:29:24.750Z",
+  "updatedAt": "2024-12-15T06:57:13.464Z",
   "devdoc": {
     "details": "Provides information about the current execution context, including the sender of the transaction and its data. While these are generally available via msg.sender and msg.data, they should not be accessed in such a direct manner, since when dealing with GSN meta-transactions the account sending and paying for execution may not be the actual sender (as far as an application is concerned). * This contract is only required for intermediate, library-like contracts.",
     "methods": {

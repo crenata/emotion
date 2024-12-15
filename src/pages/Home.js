@@ -2,6 +2,7 @@ import React, {PureComponent} from "react";
 import Template from "../template/Template";
 import Web3Context from "../contexts/Web3Context";
 import CopyToClipboard from "../helpers/CopyToClipboard";
+import Currency from "../helpers/Currency";
 import ErrorCallContract from "../helpers/errors/ErrorCallContract";
 import InputFormat from "../helpers/InputFormat";
 import IsEmpty from "../helpers/IsEmpty";
@@ -16,8 +17,8 @@ import moment from "moment";
 import {LinearProgress, Tooltip} from "@mui/material";
 import {NumericFormat} from "react-number-format";
 import logo from "../images/logo.png";
-import bnb from "../images/bnb.png";
 import "./Home.css";
+import metamask from "../images/metamask.png";
 
 class Home extends PureComponent {
     constructor(props) {
@@ -211,7 +212,7 @@ class Home extends PureComponent {
                 toast.error("Please input amount you want to buy.");
             }
         } else {
-            toast.error("You do not have enough BNB.");
+            toast.error(`You do not have enough ${Currency().symbol}.`);
         }
     }
 
@@ -386,7 +387,7 @@ class Home extends PureComponent {
                                 <div className="d-flex align-items-center justify-content-center justify-content-lg-between mt-4">
                                     <div className="d-none d-lg-block border-top w-25" />
                                     <p className="d-block d-lg-none m-0 text-white">♦</p>
-                                    <p className="mx-2 mb-0 text-white">1 ${this.context.symbol} = 0.00001 $BNB</p>
+                                    <p className="mx-2 mb-0 text-white">1 ${this.context.symbol} = 0.00001 ${Currency().symbol}</p>
                                     <p className="d-block d-lg-none m-0 text-white">♦</p>
                                     <div className="d-none d-lg-block border-top w-25" />
                                 </div>
@@ -402,8 +403,8 @@ class Home extends PureComponent {
                                                     <div className="input-group mt-1">
                                                         <div className="input-group-text border-end-0 bgc-white-opacity-15">
                                                             <img
-                                                                src={bnb}
-                                                                alt="BNB"
+                                                                src={Currency().image}
+                                                                alt={Currency().symbol}
                                                                 width="24"
                                                                 height="24"
                                                             />
@@ -490,12 +491,31 @@ class Home extends PureComponent {
                                     </button>
                                 </Tooltip>
                             </p>
-                            <div className="d-flex justify-content-center mt-3 mt-sm-2">
+                            <div className="d-flex align-items-center justify-content-center mt-3 mt-sm-2">
+                                {this.context.isLoadingAddToken ?
+                                    <button className="box-shadow-primary border rounded bg-transparent text-white x-small text-nowrap px-2 py-1" disabled>
+                                        <span className="spinner-border spinner-border-xs" aria-hidden="true" />
+                                        <span role="status" className="ms-2">Loading...</span>
+                                    </button> :
+                                    <button
+                                        className="box-shadow-primary border rounded bg-transparent text-white x-small text-nowrap px-2 py-1"
+                                        onClick={this.context.addToken}
+                                    >
+                                        <img
+                                            src={metamask}
+                                            alt="Metamask"
+                                            width="16"
+                                            height="16"
+                                            className="me-2"
+                                        />
+                                        Add ${this.context.symbol} Token
+                                    </button>
+                                }
                                 <a
                                     href={`${process.env.REACT_APP_BLOCKCHAIN_URL}/token/${this.context.token?.address}`}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="border box-shadow-primary rounded d-flex align-items-center text-decoration-none px-2 py-1"
+                                    className="border box-shadow-primary rounded d-flex align-items-center text-decoration-none px-2 py-1 ms-2"
                                 >
                                     <p className="m-0 text-white x-small">View on Blockchain</p>
                                     <svg
@@ -523,7 +543,7 @@ class Home extends PureComponent {
                         <h3 className="m-0 text-white text-center">Staking</h3>
                         <div className="row mt-3">
                             <div className="col-12 col-md-9 d-flex align-items-center">
-                                <p className="m-0 text-white">The distribution of ${this.context.symbol} token rewards will occur at a rate of {NumberFormat(this.context.rewardRate)} ${this.context.symbol} tokens per BNB block.</p>
+                                <p className="m-0 text-white">The distribution of ${this.context.symbol} token rewards will occur at a rate of {NumberFormat(this.context.rewardRate)} ${this.context.symbol} tokens per {Currency().symbol} block.</p>
                             </div>
                             <div className="col-12 col-md-3 d-flex align-items-center justify-content-start justify-content-md-end mt-3 mt-md-0">
                                 {IsEmpty(this.context.account) ?
@@ -665,8 +685,8 @@ class Home extends PureComponent {
                                                             <div className="d-flex align-items-center">
                                                                 <p className="m-0 text-white transaction-amount">{NumberFormat(this.context.web3.utils.fromWei(value.args._amountPrimary, "ether"))}</p>
                                                                 <img
-                                                                    src={bnb}
-                                                                    alt="BNB"
+                                                                    src={Currency().image}
+                                                                    alt={Currency().symbol}
                                                                     width="18"
                                                                     height="18"
                                                                     className="ms-2"

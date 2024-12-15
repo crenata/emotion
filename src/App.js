@@ -1,6 +1,7 @@
 import React, {PureComponent} from "react";
 import AppRoutes from "./AppRoutes";
 import Web3Context from "./contexts/Web3Context";
+import Currency from "./helpers/Currency";
 import IsEmpty from "./helpers/IsEmpty";
 import ErrorNotDeployed from "./helpers/errors/ErrorNotDeployed";
 import Web3 from "web3";
@@ -20,6 +21,7 @@ class App extends PureComponent {
             loading: false,
             web3: null,
             block: 0,
+            chainId: 0,
             newBlockHeadersSubscription: null,
             account: "",
             primaryBalance: 0,
@@ -41,6 +43,7 @@ class App extends PureComponent {
             fromLastBlock: 100,
             presaleTransactions: [],
             stakingTransactions: [],
+            isLoadingAddToken: false,
             loadWeb3: () => false,
             getPrimaryBalance: () => false
         };
@@ -49,12 +52,14 @@ class App extends PureComponent {
         };
         this.loadWeb3 = this.loadWeb3.bind(this);
         this.getPrimaryBalance = this.getPrimaryBalance.bind(this);
+        this.addToken = this.addToken.bind(this);
     }
 
     componentDidMount() {
         this.setState({
             loadWeb3: this.loadWeb3,
-            getPrimaryBalance: this.getPrimaryBalance
+            getPrimaryBalance: this.getPrimaryBalance,
+            addToken: this.addToken
         }, () => {
             this.loadWeb3();
         });
@@ -119,51 +124,61 @@ class App extends PureComponent {
 
     networkWatcher(callback) {
         if (!IsEmpty(window.ethereum)) {
-            if (Number(window.ethereum.chainId) !== Number(process.env.REACT_APP_CHAIN_ID)) {
-                window.ethereum.request({
-                    method: "wallet_switchEthereumChain",
-                    params: [
-                        {
-                            chainId: this.state.web3.utils.toHex(Number(process.env.REACT_APP_CHAIN_ID))
-                        }
-                    ]
-                }).then((value) => {
-                    toast.success("Automatic switch network.");
-                    if (!IsEmpty(callback) && typeof callback === "function") callback();
-                }).catch((error) => {
-                    toast.error("Failed to automatic switch network, try automatic add network.");
-                    window.ethereum.request({
-                        method: "wallet_addEthereumChain",
-                        params: [
-                            {
-                                chainId: this.state.web3.utils.toHex(process.env.REACT_APP_CHAIN_ID),
-                                chainName: "Ethereum Mainnet",
-                                rpcUrls: [
-                                    "https://mainnet.infura.io"
+            window.ethereum.request({
+                method: "eth_chainId"
+            }).then((value) => {
+                this.setState({
+                    chainId: Number(value)
+                }, () => {
+                    if (this.state.chainId !== Number(process.env.REACT_APP_CHAIN_ID)) {
+                        window.ethereum.request({
+                            method: "wallet_switchEthereumChain",
+                            params: [
+                                {
+                                    chainId: this.state.web3.utils.toHex(Number(process.env.REACT_APP_CHAIN_ID))
+                                }
+                            ]
+                        }).then((value) => {
+                            toast.success("Automatic switch network.");
+                            if (!IsEmpty(callback) && typeof callback === "function") callback();
+                        }).catch((error) => {
+                            toast.error("Failed to automatic switch network, try automatic add network.");
+                            window.ethereum.request({
+                                method: "wallet_addEthereumChain",
+                                params: [
+                                    {
+                                        chainId: this.state.web3.utils.toHex(process.env.REACT_APP_CHAIN_ID),
+                                        chainName: "Ethereum Mainnet",
+                                        rpcUrls: [
+                                            "https://mainnet.infura.io"
+                                        ],
+                                        iconUrls: [
+                                            "https://etherscan.io/images/svg/brands/ethereum-original.svg"
+                                        ],
+                                        nativeCurrency: {
+                                            name: "Ethereum",
+                                            symbol: "ETH",
+                                            decimals: 18
+                                        },
+                                        blockExplorerUrls: [
+                                            "https://etherscan.io"
+                                        ]
+                                    }
                                 ],
-                                iconUrls: [
-                                    "https://etherscan.io/images/svg/brands/ethereum-original.svg"
-                                ],
-                                nativeCurrency: {
-                                    name: "Ethereum",
-                                    symbol: "ETH",
-                                    decimals: 18
-                                },
-                                blockExplorerUrls: [
-                                    "https://etherscan.io"
-                                ]
-                            }
-                        ],
-                    }).then((value) => {
-                        toast.success("Successfully add network.");
+                            }).then((value) => {
+                                toast.success("Successfully add network.");
+                                if (!IsEmpty(callback) && typeof callback === "function") callback();
+                            }).catch((error) => {
+                                toast.error("Failed to add network.");
+                            }).finally(() => {});
+                        }).finally(() => {});
+                    } else {
                         if (!IsEmpty(callback) && typeof callback === "function") callback();
-                    }).catch((error) => {
-                        toast.error("Failed to add network.");
-                    }).finally(() => {});
-                }).finally(() => {});
-            } else {
-                if (!IsEmpty(callback) && typeof callback === "function") callback();
-            }
+                    }
+                });
+            }).catch((error) => {
+                toast.error("Failed fetch chain id.");
+            }).finally(() => {});
         } else {
             toast.error("Non-EVM browser detected. You should consider tyring Metamask!");
         }
@@ -193,10 +208,41 @@ class App extends PureComponent {
                     this.getBlockchainData();
                 });
             }).catch((error) => {
-                toast.error("Failed fetch BNB balance.");
+                toast.error(`Failed fetch ${Currency().symbol} balance.`);
             }).finally(() => {
                 this.setLoading(false);
             });
+        }
+    }
+
+    addToken() {
+        if (!IsEmpty(window.ethereum)) {
+            this.setState({
+                isLoadingAddToken: true
+            }, () => {
+                window.ethereum.request({
+                    method: "wallet_watchAsset",
+                    params: {
+                        type: "ERC20",
+                        options: {
+                            address: this.state.token?.address,
+                            symbol: this.state.symbol,
+                            decimals: this.state.decimals,
+                            image: `${window.location.origin}/logo512.png`,
+                        }
+                    }
+                }).then((value) => {
+                    toast.success("Added.");
+                }).catch((error) => {
+                    toast.error("Failed add token to wallet.");
+                }).finally(() => {
+                    this.setState({
+                        isLoadingAddToken: false
+                    });
+                });
+            });
+        } else {
+            toast.error("Non-EVM browser detected. You should consider tyring Metamask!");
         }
     }
 
