@@ -39,7 +39,8 @@ interface ILocks {
      *
      * @param beneficiary Beneficiary's address.
      * @param amount Amount of token.
+     * @param releaseTime Release timestamp.
      * @param timestamp Block timestamp.
      */
-    event Release(address indexed beneficiary, uint256 amount, uint256 timestamp);
+    event Release(address indexed beneficiary, uint256 amount, uint256 releaseTime, uint256 timestamp);
 }

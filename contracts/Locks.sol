@@ -64,6 +64,8 @@ contract Locks is Context, ILocks, Ownable {
     function _lock(address beneficiary, uint256 amount, uint256 releaseTime) internal onlyOwner {
         require(beneficiary != address(0), "Locks: Beneficiary is the zero address");
         require(amount > 0, "Locks: Amount is equal or less than zero.");
+        require(releaseTime >= block.timestamp, "Locks: Release time is before current time");
+        require(locked[beneficiary].amount == 0, "Locks: Beneficiary is already exists.");
         require(_token.transferFrom(_msgSender(), address(this), amount), "Locks: Failed transfer token to locks contract.");
         locked[beneficiary] = Locked(beneficiary, amount, releaseTime);
         emit Lock(beneficiary, amount, releaseTime, block.timestamp);
@@ -80,7 +82,7 @@ contract Locks is Context, ILocks, Ownable {
         require(block.timestamp >= _locked.releaseTime, "Locks: Current time is before release time");
         require(_token.balanceOf(address(this)) > 0, "Locks: No tokens to release");
         require(_token.transfer(beneficiary, _locked.amount), "Locks: Failed transfer token to beneficiary.");
+        emit Release(beneficiary, _locked.amount, _locked.releaseTime, block.timestamp);
         delete locked[beneficiary];
-        emit Release(beneficiary, _locked.amount, block.timestamp);
     }
 }
