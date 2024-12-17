@@ -1,9 +1,9 @@
 /* eslint-disable no-undef */
-const ERC20Token = artifacts.require("ERC20Token");
-contract(ERC20Token.contractName, (accounts) => {
+const ERC20 = artifacts.require("ERC20");
+contract(ERC20.contractName, (accounts) => {
     before(async () => {
         this.owner = accounts[0];
-        this.token = await ERC20Token.deployed();
+        this.token = await ERC20.deployed();
         this.name = "Emotion";
         this.symbol = "EMOTION";
         this.decimals = 18;

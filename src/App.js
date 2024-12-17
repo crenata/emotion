@@ -6,9 +6,10 @@ import IsEmpty from "./helpers/IsEmpty";
 import ErrorNotDeployed from "./helpers/errors/ErrorNotDeployed";
 import Web3 from "web3";
 import TruffleContract from "@truffle/contract";
-import Token from "./contracts/ERC20Token.json";
+import Token from "./contracts/ERC20.json";
 import Presale from "./contracts/Presale.json";
 import Staking from "./contracts/Staking.json";
+import Locks from "./contracts/Locks.json";
 import toast from "react-hot-toast";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -40,9 +41,66 @@ class App extends PureComponent {
             totalStaked: 0,
             rewardRate: 0,
             totalCurrentRewards: 0,
+            locks: null,
+            locksBalance: 0,
+            lockedTokens: [],
             fromLastBlock: 100,
             presaleTransactions: [],
             stakingTransactions: [],
+            tokenomics: [
+                {
+                    innerRadius: 30,
+                    outerRadius: 140,
+                    paddingAngle: 5,
+                    cornerRadius: 5,
+                    cx: 140,
+                    valueFormatter: (item) => `${item.value}%`,
+                    data: [
+                        {
+                            id: 1,
+                            value: 20,
+                            label: "Development",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#5320DB"
+                        },
+                        {
+                            id: 2,
+                            value: 7,
+                            label: "Team & Advisors",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#20DBA6"
+                        },
+                        {
+                            id: 3,
+                            value: 10,
+                            label: "Marketing",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#242D1B"
+                        },
+                        {
+                            id: 4,
+                            value: 13,
+                            label: "Liquidity",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#9D135B"
+                        },
+                        {
+                            id: 5,
+                            value: 30,
+                            label: "Presale",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#D27F73"
+                        },
+                        {
+                            id: 6,
+                            value: 20,
+                            label: "Staking",
+                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
+                            color: "#172F14"
+                        }
+                    ]
+                }
+            ],
             isLoadingAddToken: false,
             loadWeb3: () => false,
             getPrimaryBalance: () => false
@@ -419,6 +477,8 @@ class App extends PureComponent {
                                                     }).then(value => {
                                                         this.setState({
                                                             totalCurrentRewards: this.state.web3.utils.fromWei(value, "ether")
+                                                        }, () => {
+                                                            this.loadLocks();
                                                         });
                                                     }).catch((error) => {
                                                         toast.error("Failed fetch total current rewards.");
@@ -444,6 +504,38 @@ class App extends PureComponent {
                 });
             }).catch((error) => {
                 ErrorNotDeployed(staking, error);
+            }).finally(() => {});
+        }
+    }
+
+    loadLocks() {
+        if (!IsEmpty(this.state.web3)) {
+            const locks = TruffleContract(Locks);
+            locks.setProvider(this.state.web3.currentProvider);
+            locks.deployed().then((data) => {
+                this.setState({
+                    locks: data
+                }, () => {
+                    this.state.token.balanceOf(this.state.locks.address).then(value => {
+                        this.setState({
+                            locksBalance: this.state.web3.utils.fromWei(value, "ether")
+                        }, () => {
+                            this.state.locks.lockedTokens().then(value => {
+                                console.log('lockedTokens', value)
+                                this.setState({
+                                    lockedTokens: value
+                                });
+                            }).catch((error) => {
+                                console.log(error)
+                                toast.error("Failed fetch total tokens locked.");
+                            }).finally(() => {});
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch locks token balance.");
+                    }).finally(() => {});
+                });
+            }).catch((error) => {
+                ErrorNotDeployed(locks, error);
             }).finally(() => {});
         }
     }

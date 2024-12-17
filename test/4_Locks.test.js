@@ -1,4 +1,4 @@
-const ERC20Token = artifacts.require("ERC20Token");
+const ERC20 = artifacts.require("ERC20");
 const Locks = artifacts.require("Locks");
 const Revert = require("./helpers/Revert");
 const Sleep = require("./helpers/Sleep");
@@ -7,7 +7,7 @@ contract(Locks.contractName, (accounts) => {
         this.owner = accounts[0];
         this.beneficiary = accounts[1];
         this.developerWallet = accounts[2];
-        this.token = await ERC20Token.deployed();
+        this.token = await ERC20.deployed();
         this.locks = await Locks.deployed();
         this.tokenAddress = await this.token.address;
         this.locksAddress = await this.locks.address;
@@ -16,6 +16,7 @@ contract(Locks.contractName, (accounts) => {
         this.tokensLock = this.totalSupply * 20 / 100;
         this.tokensDeveloper = this.totalSupply * 10 / 100;
         this.timestamp = Math.floor(new Date().getTime() / 1000);
+        this.lockName = "Developer";
     });
 
     describe("Init", () => {
@@ -35,7 +36,7 @@ contract(Locks.contractName, (accounts) => {
         });
         it("Can't lock without approve token first", async () => {
             await Revert(async () => {
-                await this.locks.lock(this.beneficiary, web3.utils.toWei(this.tokensLock.toString(), "ether"), this.timestamp + 3, {
+                await this.locks.lock(this.beneficiary, this.lockName, web3.utils.toWei(this.tokensLock.toString(), "ether"), this.timestamp + 3, {
                     from: this.owner
                 });
             });
@@ -51,17 +52,17 @@ contract(Locks.contractName, (accounts) => {
         });
         it("Can't lock more tokens than available", async () => {
             await Revert(async () => {
-                await this.locks.lock(this.beneficiary, web3.utils.toWei((this.tokensLock + 1).toString(), "ether"), this.timestamp + 3, {
+                await this.locks.lock(this.beneficiary, this.lockName, web3.utils.toWei((this.tokensLock + 1).toString(), "ether"), this.timestamp + 3, {
                     from: this.owner
                 });
             });
         });
         it("Lock tokens", async () => {
-            this.receipt = await this.locks.lock(this.beneficiary, web3.utils.toWei(this.tokensLock.toString(), "ether"), this.timestamp + 3, {
+            this.receipt = await this.locks.lock(this.beneficiary, this.lockName, web3.utils.toWei(this.tokensLock.toString(), "ether"), this.timestamp + 3, {
                 from: this.owner
             });
-            let locked = await this.locks.locked(this.beneficiary);
-            assert.equal(web3.utils.fromWei(locked.amount, "ether"), this.tokensLock);
+            let lockedTokens = await this.locks.lockedTokens(this.beneficiary);
+            assert.equal(web3.utils.fromWei(lockedTokens.amount, "ether"), this.tokensLock);
         });
         describe("Event check", () => {
             it("Triggers one event", async () => {
@@ -72,6 +73,9 @@ contract(Locks.contractName, (accounts) => {
             });
             it("Has the correct `beneficiary` argument", async () => {
                 assert.equal(this.receipt.logs[0].args.beneficiary, this.beneficiary);
+            });
+            it("Has the correct `name` argument", async () => {
+                assert.equal(this.receipt.logs[0].args.name, this.lockName);
             });
             it("Has the correct `amount` argument", async () => {
                 assert.equal(web3.utils.fromWei(this.receipt.logs[0].args.amount, "ether"), this.tokensLock);
@@ -129,6 +133,9 @@ contract(Locks.contractName, (accounts) => {
             });
             it("Has the correct `beneficiary` argument", async () => {
                 assert.equal(this.receipt.logs[0].args.beneficiary, this.beneficiary);
+            });
+            it("Has the correct `name` argument", async () => {
+                assert.equal(this.receipt.logs[0].args.name, this.lockName);
             });
             it("Has the correct `amount` argument", async () => {
                 assert.equal(web3.utils.fromWei(this.receipt.logs[0].args.amount, "ether"), this.tokensLock);

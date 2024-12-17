@@ -12,10 +12,11 @@ interface ILocks {
      * @dev Transfers tokens to be held in period of time.
      *
      * @param beneficiary Beneficiary's address.
+     * @param name Name of locked tokens.
      * @param amount Amount of token to be staked.
      * @param releaseTime Release timestamp.
      */
-    function lock(address beneficiary, uint256 amount, uint256 releaseTime) external returns(bool);
+    function lock(address beneficiary, string calldata name, uint256 amount, uint256 releaseTime) external returns(bool);
 
     /**
      * @dev Transfers tokens held by the time lock to the beneficiary. Will only succeed if invoked after the release time.
@@ -28,19 +29,21 @@ interface ILocks {
      * @dev Emitted when tokens are locked.
      *
      * @param beneficiary Beneficiary's address.
+     * @param name Name of locked tokens.
      * @param amount Amount of token.
      * @param releaseTime Release timestamp.
      * @param timestamp Block timestamp.
      */
-    event Lock(address indexed beneficiary, uint256 amount, uint256 releaseTime, uint256 timestamp);
+    event Lock(address indexed beneficiary, string name, uint256 amount, uint256 releaseTime, uint256 timestamp);
 
     /**
      * @dev Emitted when tokens are released.
      *
      * @param beneficiary Beneficiary's address.
+     * @param name Name of locked tokens.
      * @param amount Amount of token.
      * @param releaseTime Release timestamp.
      * @param timestamp Block timestamp.
      */
-    event Release(address indexed beneficiary, uint256 amount, uint256 releaseTime, uint256 timestamp);
+    event Release(address indexed beneficiary, string name, uint256 amount, uint256 releaseTime, uint256 timestamp);
 }

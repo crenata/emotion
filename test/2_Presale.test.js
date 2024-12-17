@@ -1,11 +1,11 @@
-const ERC20Token = artifacts.require("ERC20Token");
+const ERC20 = artifacts.require("ERC20");
 const Presale = artifacts.require("Presale");
 const Revert = require("./helpers/Revert");
 contract(Presale.contractName, (accounts) => {
     before(async () => {
         this.owner = accounts[0];
         this.buyer = accounts[1];
-        this.token = await ERC20Token.deployed();
+        this.token = await ERC20.deployed();
         this.presale = await Presale.deployed();
         this.tokenAddress = await this.token.address;
         this.presaleAddress = await this.presale.address;

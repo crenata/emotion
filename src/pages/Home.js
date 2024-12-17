@@ -41,60 +41,6 @@ class Home extends PureComponent {
                 seconds: 0
             },
             interval: null,
-            tokenomics: [
-                {
-                    innerRadius: 30,
-                    outerRadius: 140,
-                    paddingAngle: 5,
-                    cornerRadius: 5,
-                    cx: 140,
-                    valueFormatter: (item) => `${item.value}%`,
-                    data: [
-                        {
-                            id: 1,
-                            value: 20,
-                            label: "Development",
-                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
-                            color: "#5320DB"
-                        },
-                        {
-                            id: 2,
-                            value: 7,
-                            label: "Team & Advisors",
-                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
-                            color: "#20DBA6"
-                        },
-                        {
-                            id: 3,
-                            value: 10,
-                            label: "Marketing",
-                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
-                            color: "#242D1B"
-                        },
-                        {
-                            id: 4,
-                            value: 13,
-                            label: "Liquidity",
-                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
-                            color: "#9D135B"
-                        },
-                        {
-                            id: 5,
-                            value: 30,
-                            label: "Presale",
-                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
-                            color: "#D27F73"
-                        },
-                        {
-                            id: 6,
-                            value: 20,
-                            label: "Staking",
-                            description: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Architecto consequatur dolorem ipsa minima officia, quae quas quos totam voluptate voluptatem! Aliquam, consectetur dolor expedita incidunt nobis placeat quia similique ullam!",
-                            color: "#172F14"
-                        }
-                    ]
-                }
-            ],
             modalStake: false,
             modalWithdraw: false
         };
@@ -114,7 +60,7 @@ class Home extends PureComponent {
         this.setState({
             [name]: value
         }, () => {
-            if (callback && typeof callback === "function") callback();
+            if (!IsEmpty(callback) && typeof callback === "function") callback();
         });
     }
 
@@ -380,8 +326,8 @@ class Home extends PureComponent {
                                 <div className="border box-shadow-primary rounded p-3 mt-4">
                                     <div className="d-flex align-items-center">
                                         <p className="m-0 text-white small">{NumberFormat(this.context.sold)}</p>
-                                        <LinearProgress variant="buffer" color="warning" value={this.context.sold / (this.context.tokenSupply * this.state.tokenomics[0].data.find((value) => value.label === "Presale").value / 100) * 100} valueBuffer={0} className="w-100 mx-3" />
-                                        <p className="m-0 text-white small">{NumberFormat(this.context.tokenSupply * this.state.tokenomics[0].data.find((value) => value.label === "Presale").value / 100)}</p>
+                                        <LinearProgress variant="buffer" color="warning" value={this.context.sold / (this.context.tokenSupply * this.context.tokenomics[0].data.find((value) => value.label === "Presale").value / 100) * 100} valueBuffer={0} className="w-100 mx-3" />
+                                        <p className="m-0 text-white small">{NumberFormat(this.context.tokenSupply * this.context.tokenomics[0].data.find((value) => value.label === "Presale").value / 100)}</p>
                                     </div>
                                 </div>
                                 <p className="mt-4 mb-0 text-white small">My Balance : {NumberFormat(this.context.balance)} ${this.context.symbol}</p>
@@ -631,7 +577,7 @@ class Home extends PureComponent {
                         <div className="row g-3 mt-5">
                             <div className="col-12 col-lg-4">
                                 <PieChart
-                                    series={this.state.tokenomics}
+                                    series={this.context.tokenomics}
                                     height={300}
                                     legend={{
                                         hidden: true
@@ -640,7 +586,7 @@ class Home extends PureComponent {
                             </div>
                             <div className="col-12 col-lg-8">
                                 <div className="row g-4">
-                                    {this.state.tokenomics[0].data.map((value) => (
+                                    {this.context.tokenomics[0].data.map((value) => (
                                         <div className="col-12 col-sm-6 col-lg-4" key={value.id}>
                                             <div className="box-shadow-primary border rounded p-3">
                                                 <div className="d-flex align-items-center justify-content-between">
@@ -924,7 +870,10 @@ class Home extends PureComponent {
                                     <button
                                         className="btn btn-success"
                                         onClick={event => this.stake()}
-                                        disabled={Number(this.state.amountStake) > Number(this.context.balance)}
+                                        disabled={
+                                            IsEmpty(this.state.amountStake) ||
+                                            Number(this.state.amountStake) > Number(this.context.balance)
+                                        }
                                     >Stake</button>
                             }
                         </div>

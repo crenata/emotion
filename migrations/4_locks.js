@@ -1,6 +1,6 @@
-const ERC20Token = artifacts.require("ERC20Token");
+const ERC20 = artifacts.require("ERC20");
 const Locks = artifacts.require("Locks");
 
 module.exports = (deployer) => {
-    deployer.deploy(Locks, ERC20Token.address);
+    deployer.deploy(Locks, ERC20.address);
 };
