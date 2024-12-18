@@ -1,4 +1,5 @@
-pragma solidity ^0.5.16;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
 
 import "./Context.sol";
 import "./IERC20.sol";
@@ -9,8 +10,6 @@ import "./SafeMath.sol";
 contract Presale is Context, IPresale, Ownable {
     using SafeMath for uint256;
 
-    address payable ownerAddress;
-
     IERC20 private _token;
     uint256 private _tokenPrice;
     uint256 private _tokensSold;
@@ -19,8 +18,7 @@ contract Presale is Context, IPresale, Ownable {
      * @param token_ Token contract address.
      * @param tokenPrice_ Initial token price.
      */
-    constructor(address token_, uint256 tokenPrice_) public {
-        ownerAddress = _msgSender();
+    constructor(address token_, uint256 tokenPrice_) {
         _token = IERC20(token_);
         _tokenPrice = tokenPrice_;
     }
@@ -83,8 +81,8 @@ contract Presale is Context, IPresale, Ownable {
      */
     function _endSale() internal onlyOwner {
         uint256 amount = _token.balanceOf(address(this));
-        if (amount > 0) require(_token.transfer(ownerAddress, amount), "Presale: Failed transfer token to owner.");
-        emit End(ownerAddress, address(this).balance, amount, block.timestamp);
-        selfdestruct(ownerAddress);
+        if (amount > 0) require(_token.transfer(owner(), amount), "Presale: Failed transfer token to owner.");
+        emit End(owner(), address(this).balance, amount, block.timestamp);
+        selfdestruct(payable(owner()));
     }
 }

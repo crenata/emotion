@@ -61,6 +61,7 @@ contract(Presale.contractName, (accounts) => {
     describe("Token Buying", () => {
         before(async () => {
             this.receipt = null;
+            this.ownerBalance = await web3.utils.fromWei(await web3.eth.getBalance(this.owner), "ether");
             this.presaleBalance = await web3.utils.fromWei(await web3.eth.getBalance(this.presaleAddress), "ether");
             this.buyerBalance = await web3.utils.fromWei(await web3.eth.getBalance(this.buyer), "ether");
             this.etherValue = this.tokensBought * this.tokenPrice;
@@ -109,13 +110,13 @@ contract(Presale.contractName, (accounts) => {
         describe("Should buyer's amount decreased", () => {
             it("Has the correct balance", async () => {
                 let balance = await web3.eth.getBalance(this.buyer);
-                assert.notEqual(web3.utils.fromWei(balance, "ether"), this.buyerBalance);
+                assert(Number(web3.utils.fromWei(balance, "ether")) < this.buyerBalance);
             });
         });
         describe("Should presale's amount increased", () => {
             it("Balance not equal from previous", async () => {
                 let balance = await web3.eth.getBalance(this.presaleAddress);
-                assert.notEqual(web3.utils.fromWei(balance, "ether"), this.presaleBalance);
+                assert(Number(web3.utils.fromWei(balance, "ether")) > this.presaleBalance);
             });
             it("Has the correct balance", async () => {
                 let balance = await web3.eth.getBalance(this.presaleAddress);
@@ -161,6 +162,10 @@ contract(Presale.contractName, (accounts) => {
         it("Returns all unsold tokens to owner", async () => {
             let balance = await this.token.balanceOf(this.owner);
             assert.equal(web3.utils.fromWei(balance, "ether"), this.totalSupply - this.tokensBought);
+        });
+        it("Should owner's amount increased", async () => {
+            let balance = await web3.eth.getBalance(this.owner);
+            assert(Number(web3.utils.fromWei(balance, "ether")) > this.ownerBalance);
         });
         it("Variables was reset", async () => {
             try {

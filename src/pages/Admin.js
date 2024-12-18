@@ -15,6 +15,7 @@ import {NumericFormat} from "react-number-format";
 import Modal from "@mui/joy/Modal";
 import Sheet from "@mui/joy/Sheet";
 import ModalClose from "@mui/joy/ModalClose";
+import moment from "moment";
 
 class Admin extends PureComponent {
     constructor(props) {
@@ -25,6 +26,7 @@ class Admin extends PureComponent {
             amountToken: "",
             lockBeneficiary: "",
             lockName: "",
+            lockDescription: "",
             lockAmount: "",
             lockReleaseTime: "",
             isLoadingEndPresale: false,
@@ -157,6 +159,10 @@ class Admin extends PureComponent {
             toast.error("Name field is required.");
             return false;
         }
+        if (IsEmpty(this.state.lockDescription)) {
+            toast.error("Description field is required.");
+            return false;
+        }
         if (IsEmpty(this.state.lockAmount)) {
             toast.error("Amount field is required.");
             return false;
@@ -167,13 +173,13 @@ class Admin extends PureComponent {
         }
         if (Number(this.state.lockAmount) <= Number(this.context.balance)) {
             if (!IsEmpty(this.context.token)) {
-                if (!IsEmpty(this.context.locks)) {
+                if (!IsEmpty(this.context.tokenLock)) {
                     this.setState({
                         isLoadingLock: true
                     }, () => {
                         let approved = false;
                         this.context.token.approve(
-                            this.context.locks.address,
+                            this.context.tokenLock.address,
                             this.context.web3.utils.toWei(Math.floor(this.state.lockAmount).toString(), "ether"),
                             {
                                 from: this.context.account
@@ -190,9 +196,10 @@ class Admin extends PureComponent {
                                     this.setState({
                                         isLoadingLock: true
                                     }, () => {
-                                        this.context.locks.lock(
+                                        this.context.tokenLock.lock(
                                             this.state.lockBeneficiary,
                                             this.state.lockName,
+                                            this.state.lockDescription,
                                             this.context.web3.utils.toWei(Math.floor(this.state.lockAmount).toString(), "ether"),
                                             Math.floor(new Date(this.state.lockReleaseTime).getTime() / 1000),
                                             {
@@ -203,6 +210,7 @@ class Admin extends PureComponent {
                                             this.setState({
                                                 lockBeneficiary: "",
                                                 lockName: "",
+                                                lockDescription: "",
                                                 lockAmount: "",
                                                 lockReleaseTime: "",
                                                 modalLock: false
@@ -220,13 +228,34 @@ class Admin extends PureComponent {
                         });
                     });
                 } else {
-                    toast.error("Failed fetch locks contract.");
+                    toast.error("Failed fetch tokenLock contract.");
                 }
             } else {
                 toast.error("Failed fetch token contract.");
             }
         } else {
             toast.error(`You do not have enough ${this.context.symbol}.`);
+        }
+    }
+
+    release(index) {
+        if (!IsEmpty(this.context.tokenLock)) {
+            this.setState({
+                isLoadingRelease: true
+            }, () => {
+                this.context.tokenLock.release(index, {
+                    from: this.context.account
+                }).then((value) => {
+                    toast.success("Successfully released.");
+                    this.context.getPrimaryBalance();
+                }).catch((error) => {
+                    ErrorCallContract(error);
+                }).finally(() => {
+                    this.setValue("isLoadingRelease", false);
+                });
+            });
+        } else {
+            toast.error("Failed fetch tokenLock contract.");
         }
     }
 
@@ -308,6 +337,33 @@ class Admin extends PureComponent {
                                                     <button
                                                         className="btn btn-sm text-white"
                                                         onClick={event => CopyToClipboard(this.context.staking?.address)}
+                                                    >
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="16"
+                                                            height="16"
+                                                            fill="currentColor"
+                                                            className="bi bi-copy"
+                                                            viewBox="0 0 16 16"
+                                                        >
+                                                            <path
+                                                                fillRule="evenodd"
+                                                                d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"
+                                                            />
+                                                        </svg>
+                                                    </button>
+                                                </Tooltip>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td className="text-white text-nowrap p-0">TokenLock Address</td>
+                                            <td className="text-white text-nowrap py-0 px-2">:</td>
+                                            <td className="text-white text-nowrap p-0 d-flex align-items-center">
+                                                <p className="m-0">{this.context.tokenLock?.address}</p>
+                                                <Tooltip title="Copy" arrow={true} placement="top" className="ms-1">
+                                                    <button
+                                                        className="btn btn-sm text-white"
+                                                        onClick={event => CopyToClipboard(this.context.tokenLock?.address)}
                                                     >
                                                         <svg
                                                             xmlns="http://www.w3.org/2000/svg"
@@ -453,10 +509,10 @@ class Admin extends PureComponent {
                         </div>
                     </div>
                     <div className="mt-5">
-                        <h3 className="m-0 text-white text-center">Locks</h3>
+                        <h3 className="m-0 text-white text-center">Locked Tokens</h3>
                         <div className="row mt-3">
                             <div className="col-12 col-md-9 d-flex align-items-center">
-                                <p className="m-0 text-white">Current total ${this.context.symbol} tokens locked : {NumberFormat(this.context.locksBalance)} ${this.context.symbol} tokens.</p>
+                                <p className="m-0 text-white">Current total ${this.context.symbol} tokens locked : {NumberFormat(this.context.tokenLockBalance)} ${this.context.symbol} tokens.</p>
                             </div>
                             <div className="col-12 col-md-3 d-flex align-items-center justify-content-start justify-content-md-end mt-3 mt-md-0">
                                 {IsEmpty(this.context.account) ?
@@ -474,67 +530,101 @@ class Admin extends PureComponent {
                             </div>
                         </div>
                         <div className="row g-3 mt-5">
-                            <div className="col-12 col-sm-6 col-lg-3">
-                                <div className="box-shadow-primary border rounded staking-box">
-                                    <div className="p-3">
-                                        <p className="m-0 text-white">Your ${this.context.symbol} Staked</p>
-                                        <p className="mt-3 mb-0 text-white small">{NumberFormat(this.context.staked)} <span className="x-small">${this.context.symbol}</span></p>
-                                    </div>
-                                    <div className="position-absolute w-100 bottom-0 p-3">
-                                        <div className="d-grid">
-                                            {IsEmpty(this.context.account) ?
-                                                <button
-                                                    className="btn text-white bgc-FFA500 btn-bubble"
-                                                    onClick={this.context.loadWeb3}
-                                                >Connect Wallet</button> :
-                                                this.state.isLoadingLock ?
-                                                    <ButtonLoading /> :
-                                                    <button
-                                                        className="btn btn-success"
-                                                        onClick={event => this.setValue("modalLock", true)}
-                                                    >Stake</button>
-                                            }
+                            {this.context.lockedTokens.map((value, index, array) => (
+                                <>
+                                    {Number(value.amount) > 0 &&
+                                        <div className="col-12 col-sm-6 col-lg-4" key={index}>
+                                            <div className="box-shadow-primary border rounded lock-box">
+                                                <div className="p-3">
+                                                    <div className="d-flex align-items-center">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="16"
+                                                            height="16"
+                                                            fill="white"
+                                                            className="bi bi-caret-right-fill"
+                                                            viewBox="0 0 16 16"
+                                                        >
+                                                            <path
+                                                                d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"
+                                                            />
+                                                        </svg>
+                                                        <p className="ms-2 mb-0 text-white">{value.name}</p>
+                                                    </div>
+                                                    <p className="m-0 text-white text-break xx-small">{value.beneficiary}
+                                                        <Tooltip title="Copy" arrow={true} placement="top" className="ms-1">
+                                                            <button
+                                                                className="btn btn-sm text-white"
+                                                                onClick={event => CopyToClipboard(value.beneficiary)}
+                                                            >
+                                                                <svg
+                                                                    xmlns="http://www.w3.org/2000/svg"
+                                                                    width="10"
+                                                                    height="10"
+                                                                    fill="currentColor"
+                                                                    className="bi bi-copy"
+                                                                    viewBox="0 0 16 16"
+                                                                >
+                                                                    <path
+                                                                        fillRule="evenodd"
+                                                                        d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"
+                                                                    />
+                                                                </svg>
+                                                            </button>
+                                                        </Tooltip>
+                                                    </p>
+                                                    <div className="d-flex align-items-center mt-3">
+                                                        <img
+                                                            src={logo}
+                                                            alt={this.context.symbol}
+                                                            width="16"
+                                                            height="16"
+                                                        />
+                                                        <p className="ms-2 mb-0 text-white small">{NumberFormat(this.context.web3.utils.fromWei(value.amount, "ether"))} <span className="x-small">${this.context.symbol}</span></p>
+                                                    </div>
+                                                    <div className="d-flex align-items-center mt-2">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            width="16"
+                                                            height="16"
+                                                            fill="white"
+                                                            className="bi bi-alarm"
+                                                            viewBox="0 0 16 16"
+                                                        >
+                                                            <path
+                                                                d="M8.5 5.5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9z"
+                                                            />
+                                                            <path
+                                                                d="M6.5 0a.5.5 0 0 0 0 1H7v1.07a7.001 7.001 0 0 0-3.273 12.474l-.602.602a.5.5 0 0 0 .707.708l.746-.746A6.97 6.97 0 0 0 8 16a6.97 6.97 0 0 0 3.422-.892l.746.746a.5.5 0 0 0 .707-.708l-.601-.602A7.001 7.001 0 0 0 9 2.07V1h.5a.5.5 0 0 0 0-1zm1.038 3.018a6 6 0 0 1 .924 0 6 6 0 1 1-.924 0M0 3.5c0 .753.333 1.429.86 1.887A8.04 8.04 0 0 1 4.387 1.86 2.5 2.5 0 0 0 0 3.5M13.5 1c-.753 0-1.429.333-1.887.86a8.04 8.04 0 0 1 3.527 3.527A2.5 2.5 0 0 0 13.5 1"
+                                                            />
+                                                        </svg>
+                                                        <p className="ms-2 mb-0 text-white small">{moment.unix(value.releaseTime).format("DD MMM YYYY HH:mm")}</p>
+                                                    </div>
+                                                    <div className="mt-4 overflow-auto lock-description">
+                                                        <p className="m-0 text-white small">{value.description}</p>
+                                                    </div>
+                                                </div>
+                                                <div className="position-absolute w-100 bottom-0 p-3">
+                                                    <div className="d-grid">
+                                                        {IsEmpty(this.context.account) ?
+                                                            <button
+                                                                className="btn text-white bgc-FFA500 btn-bubble"
+                                                                onClick={this.context.loadWeb3}
+                                                            >Connect Wallet</button> :
+                                                            this.state.isLoadingRelease ?
+                                                                <ButtonLoading /> :
+                                                                <button
+                                                                    className="btn btn-success"
+                                                                    onClick={event => this.release(index)}
+                                                                >Release</button>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-12 col-sm-6 col-lg-3">
-                                <div className="box-shadow-primary border rounded staking-box p-3">
-                                    <p className="m-0 text-white">Total Staked</p>
-                                    <p className="mt-3 mb-0 text-white small">{NumberFormat(this.context.totalStaked)} <span className="x-small">${this.context.symbol}</span></p>
-                                </div>
-                            </div>
-                            <div className="col-12 col-sm-6 col-lg-3">
-                                <div className="box-shadow-primary border rounded staking-box p-3">
-                                    <p className="m-0 text-white">Reward Rate</p>
-                                    <p className="mt-3 mb-0 text-white small">{NumberFormat(this.context.rewardRate)} <span className="x-small">${this.context.symbol}</span></p>
-                                </div>
-                            </div>
-                            <div className="col-12 col-sm-6 col-lg-3">
-                                <div className="box-shadow-primary border rounded staking-box">
-                                    <div className="p-3">
-                                        <p className="m-0 text-white">Total Current Rewards</p>
-                                        <p className="mt-3 mb-0 text-white small">{NumberFormat(this.context.totalCurrentRewards)} <span className="x-small">${this.context.symbol}</span></p>
-                                    </div>
-                                    <div className="position-absolute w-100 bottom-0 p-3">
-                                        <div className="d-grid">
-                                            {IsEmpty(this.context.account) ?
-                                                <button
-                                                    className="btn text-white bgc-FFA500 btn-bubble"
-                                                    onClick={this.context.loadWeb3}
-                                                >Connect Wallet</button> :
-                                                this.state.isLoadingClaim ?
-                                                    <ButtonLoading /> :
-                                                    <button
-                                                        className="btn btn-success"
-                                                        onClick={event => this.claim()}
-                                                        disabled={Number(this.context.totalCurrentRewards) <= 0}
-                                                    >Claim Rewards</button>
-                                            }
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                    }
+                                </>
+                            ))}
                         </div>
                     </div>
                 </div>
@@ -612,6 +702,15 @@ class Admin extends PureComponent {
                             </div>
                         </div>
                         <div className="mt-3">
+                            <p className="m-0 text-white small">Description</p>
+                            <textarea
+                                rows="3"
+                                className="form-control bgc-white-opacity-15 text-white mt-1"
+                                value={this.state.lockDescription}
+                                onChange={(event) => this.setValue("lockDescription", event.target.value)}
+                            />
+                        </div>
+                        <div className="mt-3">
                             <div className="d-flex align-items-center justify-content-between">
                                 <p className="m-0 text-white small">Amount to Lock</p>
                                 <p className="m-0 text-info small cursor-pointer" onClick={event => this.setMaxAmountToLock()}>Max</p>
@@ -679,6 +778,7 @@ class Admin extends PureComponent {
                                         disabled={
                                             IsEmpty(this.state.lockBeneficiary) ||
                                             IsEmpty(this.state.lockName) ||
+                                            IsEmpty(this.state.lockDescription) ||
                                             IsEmpty(this.state.lockAmount) ||
                                             Number(this.state.lockAmount) > Number(this.context.balance) ||
                                             IsEmpty(this.state.lockReleaseTime)

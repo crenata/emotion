@@ -1,4 +1,5 @@
-pragma solidity ^0.5.16;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
 
 import "./Context.sol";
 import "./IERC20.sol";
@@ -16,7 +17,7 @@ contract ERC20 is Context, IERC20, Ownable {
     uint8 private _decimals;
     uint256 private _totalSupply;
 
-    constructor() public {
+    constructor() {
         _name = "Emotion";
         _symbol = "EMOTION";
         _decimals = 18;

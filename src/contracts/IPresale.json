@@ -64,7 +64,6 @@
       "type": "event"
     },
     {
-      "constant": true,
       "inputs": [],
       "name": "token",
       "outputs": [
@@ -74,12 +73,10 @@
           "type": "address"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "constant": true,
       "inputs": [],
       "name": "tokenPrice",
       "outputs": [
@@ -89,12 +86,10 @@
           "type": "uint256"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "constant": true,
       "inputs": [],
       "name": "tokensSold",
       "outputs": [
@@ -104,12 +99,10 @@
           "type": "uint256"
         }
       ],
-      "payable": false,
       "stateMutability": "view",
       "type": "function"
     },
     {
-      "constant": false,
       "inputs": [
         {
           "internalType": "uint256",
@@ -125,12 +118,10 @@
           "type": "bool"
         }
       ],
-      "payable": true,
       "stateMutability": "payable",
       "type": "function"
     },
     {
-      "constant": false,
       "inputs": [],
       "name": "endSale",
       "outputs": [
@@ -140,145 +131,177 @@
           "type": "bool"
         }
       ],
-      "payable": false,
       "stateMutability": "nonpayable",
       "type": "function"
     }
   ],
-  "metadata": "{\"compiler\":{\"version\":\"0.5.16+commit.9c3226ce\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"buyer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountPrimary\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountToken\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"Buy\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"End\",\"type\":\"event\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"buyTokens\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"endSale\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokenPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"tokensSold\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{\"buyTokens(uint256)\":{\"details\":\"Transfers tokens bought by buyer.\",\"params\":{\"amount\":\"Amount of token to buy.\"}},\"endSale()\":{\"details\":\"End the presale.\"},\"token()\":{\"details\":\"Returns the erc token address.\"},\"tokenPrice()\":{\"details\":\"Returns the token price.\"},\"tokensSold()\":{\"details\":\"Returns the tokens sold.\"}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"project:/contracts/IPresale.sol\":\"IPresale\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/IERC20.sol\":{\"keccak256\":\"0x52d2b796ace5127a57998e26fb466d855868d7f0d61f1b4e52416cfe4e78d971\",\"urls\":[\"bzz-raw://c72a6ed80ca1679855127b39ded4e570dab1cb57a0af67afb643d88b379005ec\",\"dweb:/ipfs/QmSHx75R17yR85WKBGs1XdKJNEC148eCNeaDMFQq7dSj8z\"]},\"project:/contracts/IPresale.sol\":{\"keccak256\":\"0x3c35d4c343725ae29b8853de14cadd991614842987fc920077a2c5753ea50db2\",\"urls\":[\"bzz-raw://6a644faeca4c99f52d0d1be29e9068a4aab9ad6442adc24ccb4df2ba2b0bf29d\",\"dweb:/ipfs/QmPnGgTSiLjyKc3Z9L65pVJcxAZPnBXtez46rMYrB5pM6T\"]}},\"version\":1}",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.17+commit.8df45f5f\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"buyer\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountPrimary\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amountToken\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"Buy\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"balance\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"timestamp\",\"type\":\"uint256\"}],\"name\":\"End\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"buyTokens\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"endSale\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"token\",\"outputs\":[{\"internalType\":\"contract IERC20\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"tokenPrice\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"tokensSold\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"events\":{\"Buy(address,uint256,uint256,uint256)\":{\"details\":\"Emitted when tokens bought.\",\"params\":{\"amountPrimary\":\"Amount of primary.\",\"amountToken\":\"Amount of token.\",\"buyer\":\"Buyer's address.\",\"timestamp\":\"Block timestamp.\"}},\"End(address,uint256,uint256,uint256)\":{\"details\":\"Emitted when presale end triggered.\",\"params\":{\"amount\":\"Amount of token.\",\"balance\":\"Contract's balance.\",\"owner\":\"Owner's address.\",\"timestamp\":\"Block timestamp.\"}}},\"kind\":\"dev\",\"methods\":{\"buyTokens(uint256)\":{\"details\":\"Transfers tokens bought by buyer.\",\"params\":{\"amount\":\"Amount of token to buy.\"}},\"endSale()\":{\"details\":\"End the presale.\"},\"token()\":{\"details\":\"Returns the erc token address.\"},\"tokenPrice()\":{\"details\":\"Returns the token price.\"},\"tokensSold()\":{\"details\":\"Returns the tokens sold.\"}},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"project:/contracts/IPresale.sol\":\"IPresale\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"project:/contracts/IERC20.sol\":{\"keccak256\":\"0xa50d370948b23a55362767067fafd07246b495b0187070cb0804af9179f16aa3\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://706b1158887ae99165673477343c41dc7331c51a09724a538d8b567d40bd3eb4\",\"dweb:/ipfs/Qme9t3Eric1zcuKhx5ayJ6NZGS5aef2JNA5Uf7bupBGUsM\"]},\"project:/contracts/IPresale.sol\":{\"keccak256\":\"0xec8f173cd0b759a2461150b8383ac53ecdf630413c5d9a506f53d6744ff8d716\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://e0e9fb7a0a5415062a5790587940912defdcb5c3ebfa189bf9c87be35fe4f3e9\",\"dweb:/ipfs/QmX8ugeLUZfaHpc4Mqor3szWGU3hUSBzm6S6StuEe1rfCh\"]}},\"version\":1}",
   "bytecode": "0x",
   "deployedBytecode": "0x",
+  "immutableReferences": {},
+  "generatedSources": [],
+  "deployedGeneratedSources": [],
   "sourceMap": "",
   "deployedSourceMap": "",
-  "source": "pragma solidity ^0.5.16;\n\nimport \"./IERC20.sol\";\n\ninterface IPresale {\n    /**\n     * @dev Returns the erc token address.\n     */\n    function token() external view returns(IERC20);\n\n    /**\n     * @dev Returns the token price.\n     */\n    function tokenPrice() external view returns(uint256);\n\n    /**\n     * @dev Returns the tokens sold.\n     */\n    function tokensSold() external view returns(uint256);\n\n    /**\n     * @dev Transfers tokens bought by buyer.\n     *\n     * @param amount Amount of token to buy.\n     */\n    function buyTokens(uint256 amount) external payable returns(bool);\n\n    /**\n     * @dev End the presale.\n     */\n    function endSale() external returns(bool);\n\n    /**\n     * @dev Emitted when tokens bought.\n     *\n     * @param buyer Buyer's address.\n     * @param amountPrimary Amount of primary.\n     * @param amountToken Amount of token.\n     * @param timestamp Block timestamp.\n     */\n    event Buy(address indexed buyer, uint256 amountPrimary, uint256 amountToken, uint256 timestamp);\n\n    /**\n     * @dev Emitted when presale end triggered.\n     *\n     * @param owner Owner's address.\n     * @param balance Contract's balance.\n     * @param amount Amount of token.\n     * @param timestamp Block timestamp.\n     */\n    event End(address indexed owner, uint256 balance, uint256 amount, uint256 timestamp);\n}",
-  "sourcePath": "/home/havea/Projects/emotion/contracts/IPresale.sol",
+  "source": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.17;\n\nimport \"./IERC20.sol\";\n\ninterface IPresale {\n    /**\n     * @dev Returns the erc token address.\n     */\n    function token() external view returns(IERC20);\n\n    /**\n     * @dev Returns the token price.\n     */\n    function tokenPrice() external view returns(uint256);\n\n    /**\n     * @dev Returns the tokens sold.\n     */\n    function tokensSold() external view returns(uint256);\n\n    /**\n     * @dev Transfers tokens bought by buyer.\n     *\n     * @param amount Amount of token to buy.\n     */\n    function buyTokens(uint256 amount) external payable returns(bool);\n\n    /**\n     * @dev End the presale.\n     */\n    function endSale() external returns(bool);\n\n    /**\n     * @dev Emitted when tokens bought.\n     *\n     * @param buyer Buyer's address.\n     * @param amountPrimary Amount of primary.\n     * @param amountToken Amount of token.\n     * @param timestamp Block timestamp.\n     */\n    event Buy(address indexed buyer, uint256 amountPrimary, uint256 amountToken, uint256 timestamp);\n\n    /**\n     * @dev Emitted when presale end triggered.\n     *\n     * @param owner Owner's address.\n     * @param balance Contract's balance.\n     * @param amount Amount of token.\n     * @param timestamp Block timestamp.\n     */\n    event End(address indexed owner, uint256 balance, uint256 amount, uint256 timestamp);\n}",
+  "sourcePath": "/home/scranaver/Projects/emotion/contracts/IPresale.sol",
   "ast": {
     "absolutePath": "project:/contracts/IPresale.sol",
     "exportedSymbols": {
+      "IERC20": [
+        952
+      ],
       "IPresale": [
-        713
+        1101
       ]
     },
-    "id": 714,
+    "id": 1102,
+    "license": "MIT",
     "nodeType": "SourceUnit",
     "nodes": [
       {
-        "id": 664,
+        "id": 1044,
         "literals": [
           "solidity",
           "^",
-          "0.5",
-          ".16"
+          "0.8",
+          ".17"
         ],
         "nodeType": "PragmaDirective",
-        "src": "0:24:4"
+        "src": "32:24:5"
       },
       {
         "absolutePath": "project:/contracts/IERC20.sol",
         "file": "./IERC20.sol",
-        "id": 665,
+        "id": 1045,
+        "nameLocation": "-1:-1:-1",
         "nodeType": "ImportDirective",
-        "scope": 714,
-        "sourceUnit": 618,
-        "src": "26:22:4",
+        "scope": 1102,
+        "sourceUnit": 953,
+        "src": "58:22:5",
         "symbolAliases": [],
         "unitAlias": ""
       },
       {
+        "abstract": false,
         "baseContracts": [],
+        "canonicalName": "IPresale",
         "contractDependencies": [],
         "contractKind": "interface",
-        "documentation": null,
         "fullyImplemented": false,
-        "id": 713,
+        "id": 1101,
         "linearizedBaseContracts": [
-          713
+          1101
         ],
         "name": "IPresale",
+        "nameLocation": "92:8:5",
         "nodeType": "ContractDefinition",
         "nodes": [
           {
-            "body": null,
-            "documentation": "@dev Returns the erc token address.",
-            "id": 670,
+            "documentation": {
+              "id": 1046,
+              "nodeType": "StructuredDocumentation",
+              "src": "107:54:5",
+              "text": " @dev Returns the erc token address."
+            },
+            "functionSelector": "fc0c546a",
+            "id": 1052,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "token",
+            "nameLocation": "175:5:5",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 666,
+              "id": 1047,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "148:2:4"
+              "src": "180:2:5"
             },
             "returnParameters": {
-              "id": 669,
+              "id": 1051,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 668,
+                  "id": 1050,
+                  "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 670,
-                  "src": "173:6:4",
+                  "scope": 1052,
+                  "src": "205:6:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
-                    "typeIdentifier": "t_contract$_IERC20_$617",
+                    "typeIdentifier": "t_contract$_IERC20_$952",
                     "typeString": "contract IERC20"
                   },
                   "typeName": {
-                    "contractScope": null,
-                    "id": 667,
-                    "name": "IERC20",
+                    "id": 1049,
                     "nodeType": "UserDefinedTypeName",
-                    "referencedDeclaration": 617,
-                    "src": "173:6:4",
+                    "pathNode": {
+                      "id": 1048,
+                      "name": "IERC20",
+                      "nameLocations": [
+                        "205:6:5"
+                      ],
+                      "nodeType": "IdentifierPath",
+                      "referencedDeclaration": 952,
+                      "src": "205:6:5"
+                    },
+                    "referencedDeclaration": 952,
+                    "src": "205:6:5",
                     "typeDescriptions": {
-                      "typeIdentifier": "t_contract$_IERC20_$617",
+                      "typeIdentifier": "t_contract$_IERC20_$952",
                       "typeString": "contract IERC20"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 }
               ],
-              "src": "172:8:4"
+              "src": "204:8:5"
             },
-            "scope": 713,
-            "src": "134:47:4",
+            "scope": 1101,
+            "src": "166:47:5",
             "stateMutability": "view",
-            "superFunction": null,
+            "virtual": false,
             "visibility": "external"
           },
           {
-            "body": null,
-            "documentation": "@dev Returns the token price.",
-            "id": 675,
+            "documentation": {
+              "id": 1053,
+              "nodeType": "StructuredDocumentation",
+              "src": "219:48:5",
+              "text": " @dev Returns the token price."
+            },
+            "functionSelector": "7ff9b596",
+            "id": 1058,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "tokenPrice",
+            "nameLocation": "281:10:5",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 671,
+              "id": 1054,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "259:2:4"
+              "src": "291:2:5"
             },
             "returnParameters": {
-              "id": 674,
+              "id": 1057,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 673,
+                  "id": 1056,
+                  "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 675,
-                  "src": "284:7:4",
+                  "scope": 1058,
+                  "src": "316:7:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -286,53 +309,60 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 672,
+                    "id": 1055,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "284:7:4",
+                    "src": "316:7:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 }
               ],
-              "src": "283:9:4"
+              "src": "315:9:5"
             },
-            "scope": 713,
-            "src": "240:53:4",
+            "scope": 1101,
+            "src": "272:53:5",
             "stateMutability": "view",
-            "superFunction": null,
+            "virtual": false,
             "visibility": "external"
           },
           {
-            "body": null,
-            "documentation": "@dev Returns the tokens sold.",
-            "id": 680,
+            "documentation": {
+              "id": 1059,
+              "nodeType": "StructuredDocumentation",
+              "src": "331:48:5",
+              "text": " @dev Returns the tokens sold."
+            },
+            "functionSelector": "518ab2a8",
+            "id": 1064,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "tokensSold",
+            "nameLocation": "393:10:5",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 676,
+              "id": 1060,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "371:2:4"
+              "src": "403:2:5"
             },
             "returnParameters": {
-              "id": 679,
+              "id": 1063,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 678,
+                  "id": 1062,
+                  "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 680,
-                  "src": "396:7:4",
+                  "scope": 1064,
+                  "src": "428:7:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -340,47 +370,54 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 677,
+                    "id": 1061,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "396:7:4",
+                    "src": "428:7:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 }
               ],
-              "src": "395:9:4"
+              "src": "427:9:5"
             },
-            "scope": 713,
-            "src": "352:53:4",
+            "scope": 1101,
+            "src": "384:53:5",
             "stateMutability": "view",
-            "superFunction": null,
+            "virtual": false,
             "visibility": "external"
           },
           {
-            "body": null,
-            "documentation": "@dev Transfers tokens bought by buyer.\n     * @param amount Amount of token to buy.",
-            "id": 687,
+            "documentation": {
+              "id": 1065,
+              "nodeType": "StructuredDocumentation",
+              "src": "443:109:5",
+              "text": " @dev Transfers tokens bought by buyer.\n @param amount Amount of token to buy."
+            },
+            "functionSelector": "3610724e",
+            "id": 1072,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "buyTokens",
+            "nameLocation": "566:9:5",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 683,
+              "id": 1068,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 682,
+                  "id": 1067,
+                  "mutability": "mutable",
                   "name": "amount",
+                  "nameLocation": "584:6:5",
                   "nodeType": "VariableDeclaration",
-                  "scope": 687,
-                  "src": "544:14:4",
+                  "scope": 1072,
+                  "src": "576:14:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -388,32 +425,33 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 681,
+                    "id": 1066,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "544:7:4",
+                    "src": "576:7:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 }
               ],
-              "src": "543:16:4"
+              "src": "575:16:5"
             },
             "returnParameters": {
-              "id": 686,
+              "id": 1071,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 685,
+                  "id": 1070,
+                  "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 687,
-                  "src": "585:4:4",
+                  "scope": 1072,
+                  "src": "617:4:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -421,53 +459,60 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 684,
+                    "id": 1069,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "585:4:4",
+                    "src": "617:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 }
               ],
-              "src": "584:6:4"
+              "src": "616:6:5"
             },
-            "scope": 713,
-            "src": "525:66:4",
+            "scope": 1101,
+            "src": "557:66:5",
             "stateMutability": "payable",
-            "superFunction": null,
+            "virtual": false,
             "visibility": "external"
           },
           {
-            "body": null,
-            "documentation": "@dev End the presale.",
-            "id": 692,
+            "documentation": {
+              "id": 1073,
+              "nodeType": "StructuredDocumentation",
+              "src": "629:40:5",
+              "text": " @dev End the presale."
+            },
+            "functionSelector": "380d831b",
+            "id": 1078,
             "implemented": false,
             "kind": "function",
             "modifiers": [],
             "name": "endSale",
+            "nameLocation": "683:7:5",
             "nodeType": "FunctionDefinition",
             "parameters": {
-              "id": 688,
+              "id": 1074,
               "nodeType": "ParameterList",
               "parameters": [],
-              "src": "658:2:4"
+              "src": "690:2:5"
             },
             "returnParameters": {
-              "id": 691,
+              "id": 1077,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 690,
+                  "id": 1076,
+                  "mutability": "mutable",
                   "name": "",
+                  "nameLocation": "-1:-1:-1",
                   "nodeType": "VariableDeclaration",
-                  "scope": 692,
-                  "src": "678:4:4",
+                  "scope": 1078,
+                  "src": "710:4:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -475,45 +520,53 @@
                     "typeString": "bool"
                   },
                   "typeName": {
-                    "id": 689,
+                    "id": 1075,
                     "name": "bool",
                     "nodeType": "ElementaryTypeName",
-                    "src": "678:4:4",
+                    "src": "710:4:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_bool",
                       "typeString": "bool"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 }
               ],
-              "src": "677:6:4"
+              "src": "709:6:5"
             },
-            "scope": 713,
-            "src": "642:42:4",
+            "scope": 1101,
+            "src": "674:42:5",
             "stateMutability": "nonpayable",
-            "superFunction": null,
+            "virtual": false,
             "visibility": "external"
           },
           {
             "anonymous": false,
-            "documentation": "@dev Emitted when tokens bought.\n     * @param buyer Buyer's address.\n@param amountPrimary Amount of primary.\n@param amountToken Amount of token.\n@param timestamp Block timestamp.",
-            "id": 702,
+            "documentation": {
+              "id": 1079,
+              "nodeType": "StructuredDocumentation",
+              "src": "722:226:5",
+              "text": " @dev Emitted when tokens bought.\n @param buyer Buyer's address.\n @param amountPrimary Amount of primary.\n @param amountToken Amount of token.\n @param timestamp Block timestamp."
+            },
+            "eventSelector": "beae048c6d270d9469f86cf6e8fedda3c60ad770f16c24c9fc131c8e9a09101d",
+            "id": 1089,
             "name": "Buy",
+            "nameLocation": "959:3:5",
             "nodeType": "EventDefinition",
             "parameters": {
-              "id": 701,
+              "id": 1088,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 694,
+                  "id": 1081,
                   "indexed": true,
+                  "mutability": "mutable",
                   "name": "buyer",
+                  "nameLocation": "979:5:5",
                   "nodeType": "VariableDeclaration",
-                  "scope": 702,
-                  "src": "931:21:4",
+                  "scope": 1089,
+                  "src": "963:21:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -521,27 +574,28 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 693,
+                    "id": 1080,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "931:7:4",
+                    "src": "963:7:5",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 },
                 {
                   "constant": false,
-                  "id": 696,
+                  "id": 1083,
                   "indexed": false,
+                  "mutability": "mutable",
                   "name": "amountPrimary",
+                  "nameLocation": "994:13:5",
                   "nodeType": "VariableDeclaration",
-                  "scope": 702,
-                  "src": "954:21:4",
+                  "scope": 1089,
+                  "src": "986:21:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -549,26 +603,27 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 695,
+                    "id": 1082,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "954:7:4",
+                    "src": "986:7:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 },
                 {
                   "constant": false,
-                  "id": 698,
+                  "id": 1085,
                   "indexed": false,
+                  "mutability": "mutable",
                   "name": "amountToken",
+                  "nameLocation": "1017:11:5",
                   "nodeType": "VariableDeclaration",
-                  "scope": 702,
-                  "src": "977:19:4",
+                  "scope": 1089,
+                  "src": "1009:19:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -576,26 +631,27 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 697,
+                    "id": 1084,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "977:7:4",
+                    "src": "1009:7:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 },
                 {
                   "constant": false,
-                  "id": 700,
+                  "id": 1087,
                   "indexed": false,
+                  "mutability": "mutable",
                   "name": "timestamp",
+                  "nameLocation": "1038:9:5",
                   "nodeType": "VariableDeclaration",
-                  "scope": 702,
-                  "src": "998:17:4",
+                  "scope": 1089,
+                  "src": "1030:17:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -603,41 +659,49 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 699,
+                    "id": 1086,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "998:7:4",
+                    "src": "1030:7:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 }
               ],
-              "src": "930:86:4"
+              "src": "962:86:5"
             },
-            "src": "921:96:4"
+            "src": "953:96:5"
           },
           {
             "anonymous": false,
-            "documentation": "@dev Emitted when presale end triggered.\n     * @param owner Owner's address.\n@param balance Contract's balance.\n@param amount Amount of token.\n@param timestamp Block timestamp.",
-            "id": 712,
+            "documentation": {
+              "id": 1090,
+              "nodeType": "StructuredDocumentation",
+              "src": "1055:224:5",
+              "text": " @dev Emitted when presale end triggered.\n @param owner Owner's address.\n @param balance Contract's balance.\n @param amount Amount of token.\n @param timestamp Block timestamp."
+            },
+            "eventSelector": "14a8b16f13989fb57e56abb86b639d4c514f22fd4eab3d884631398676077b3a",
+            "id": 1100,
             "name": "End",
+            "nameLocation": "1290:3:5",
             "nodeType": "EventDefinition",
             "parameters": {
-              "id": 711,
+              "id": 1099,
               "nodeType": "ParameterList",
               "parameters": [
                 {
                   "constant": false,
-                  "id": 704,
+                  "id": 1092,
                   "indexed": true,
+                  "mutability": "mutable",
                   "name": "owner",
+                  "nameLocation": "1310:5:5",
                   "nodeType": "VariableDeclaration",
-                  "scope": 712,
-                  "src": "1262:21:4",
+                  "scope": 1100,
+                  "src": "1294:21:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -645,27 +709,28 @@
                     "typeString": "address"
                   },
                   "typeName": {
-                    "id": 703,
+                    "id": 1091,
                     "name": "address",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1262:7:4",
+                    "src": "1294:7:5",
                     "stateMutability": "nonpayable",
                     "typeDescriptions": {
                       "typeIdentifier": "t_address",
                       "typeString": "address"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 },
                 {
                   "constant": false,
-                  "id": 706,
+                  "id": 1094,
                   "indexed": false,
+                  "mutability": "mutable",
                   "name": "balance",
+                  "nameLocation": "1325:7:5",
                   "nodeType": "VariableDeclaration",
-                  "scope": 712,
-                  "src": "1285:15:4",
+                  "scope": 1100,
+                  "src": "1317:15:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -673,26 +738,27 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 705,
+                    "id": 1093,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1285:7:4",
+                    "src": "1317:7:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 },
                 {
                   "constant": false,
-                  "id": 708,
+                  "id": 1096,
                   "indexed": false,
+                  "mutability": "mutable",
                   "name": "amount",
+                  "nameLocation": "1342:6:5",
                   "nodeType": "VariableDeclaration",
-                  "scope": 712,
-                  "src": "1302:14:4",
+                  "scope": 1100,
+                  "src": "1334:14:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -700,26 +766,27 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 707,
+                    "id": 1095,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1302:7:4",
+                    "src": "1334:7:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 },
                 {
                   "constant": false,
-                  "id": 710,
+                  "id": 1098,
                   "indexed": false,
+                  "mutability": "mutable",
                   "name": "timestamp",
+                  "nameLocation": "1358:9:5",
                   "nodeType": "VariableDeclaration",
-                  "scope": 712,
-                  "src": "1318:17:4",
+                  "scope": 1100,
+                  "src": "1350:17:5",
                   "stateVariable": false,
                   "storageLocation": "default",
                   "typeDescriptions": {
@@ -727,714 +794,59 @@
                     "typeString": "uint256"
                   },
                   "typeName": {
-                    "id": 709,
+                    "id": 1097,
                     "name": "uint256",
                     "nodeType": "ElementaryTypeName",
-                    "src": "1318:7:4",
+                    "src": "1350:7:5",
                     "typeDescriptions": {
                       "typeIdentifier": "t_uint256",
                       "typeString": "uint256"
                     }
                   },
-                  "value": null,
                   "visibility": "internal"
                 }
               ],
-              "src": "1261:75:4"
+              "src": "1293:75:5"
             },
-            "src": "1252:85:4"
+            "src": "1284:85:5"
           }
         ],
-        "scope": 714,
-        "src": "50:1289:4"
+        "scope": 1102,
+        "src": "82:1289:5",
+        "usedErrors": []
       }
     ],
-    "src": "0:1339:4"
-  },
-  "legacyAST": {
-    "attributes": {
-      "absolutePath": "project:/contracts/IPresale.sol",
-      "exportedSymbols": {
-        "IPresale": [
-          713
-        ]
-      }
-    },
-    "children": [
-      {
-        "attributes": {
-          "literals": [
-            "solidity",
-            "^",
-            "0.5",
-            ".16"
-          ]
-        },
-        "id": 664,
-        "name": "PragmaDirective",
-        "src": "0:24:4"
-      },
-      {
-        "attributes": {
-          "SourceUnit": 618,
-          "absolutePath": "project:/contracts/IERC20.sol",
-          "file": "./IERC20.sol",
-          "scope": 714,
-          "symbolAliases": [
-            null
-          ],
-          "unitAlias": ""
-        },
-        "id": 665,
-        "name": "ImportDirective",
-        "src": "26:22:4"
-      },
-      {
-        "attributes": {
-          "baseContracts": [
-            null
-          ],
-          "contractDependencies": [
-            null
-          ],
-          "contractKind": "interface",
-          "documentation": null,
-          "fullyImplemented": false,
-          "linearizedBaseContracts": [
-            713
-          ],
-          "name": "IPresale",
-          "scope": 714
-        },
-        "children": [
-          {
-            "attributes": {
-              "body": null,
-              "documentation": "@dev Returns the erc token address.",
-              "implemented": false,
-              "isConstructor": false,
-              "kind": "function",
-              "modifiers": [
-                null
-              ],
-              "name": "token",
-              "scope": 713,
-              "stateMutability": "view",
-              "superFunction": null,
-              "visibility": "external"
-            },
-            "children": [
-              {
-                "attributes": {
-                  "parameters": [
-                    null
-                  ]
-                },
-                "children": [],
-                "id": 666,
-                "name": "ParameterList",
-                "src": "148:2:4"
-              },
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "name": "",
-                      "scope": 670,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "contract IERC20",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "contractScope": null,
-                          "name": "IERC20",
-                          "referencedDeclaration": 617,
-                          "type": "contract IERC20"
-                        },
-                        "id": 667,
-                        "name": "UserDefinedTypeName",
-                        "src": "173:6:4"
-                      }
-                    ],
-                    "id": 668,
-                    "name": "VariableDeclaration",
-                    "src": "173:6:4"
-                  }
-                ],
-                "id": 669,
-                "name": "ParameterList",
-                "src": "172:8:4"
-              }
-            ],
-            "id": 670,
-            "name": "FunctionDefinition",
-            "src": "134:47:4"
-          },
-          {
-            "attributes": {
-              "body": null,
-              "documentation": "@dev Returns the token price.",
-              "implemented": false,
-              "isConstructor": false,
-              "kind": "function",
-              "modifiers": [
-                null
-              ],
-              "name": "tokenPrice",
-              "scope": 713,
-              "stateMutability": "view",
-              "superFunction": null,
-              "visibility": "external"
-            },
-            "children": [
-              {
-                "attributes": {
-                  "parameters": [
-                    null
-                  ]
-                },
-                "children": [],
-                "id": 671,
-                "name": "ParameterList",
-                "src": "259:2:4"
-              },
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "name": "",
-                      "scope": 675,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint256",
-                          "type": "uint256"
-                        },
-                        "id": 672,
-                        "name": "ElementaryTypeName",
-                        "src": "284:7:4"
-                      }
-                    ],
-                    "id": 673,
-                    "name": "VariableDeclaration",
-                    "src": "284:7:4"
-                  }
-                ],
-                "id": 674,
-                "name": "ParameterList",
-                "src": "283:9:4"
-              }
-            ],
-            "id": 675,
-            "name": "FunctionDefinition",
-            "src": "240:53:4"
-          },
-          {
-            "attributes": {
-              "body": null,
-              "documentation": "@dev Returns the tokens sold.",
-              "implemented": false,
-              "isConstructor": false,
-              "kind": "function",
-              "modifiers": [
-                null
-              ],
-              "name": "tokensSold",
-              "scope": 713,
-              "stateMutability": "view",
-              "superFunction": null,
-              "visibility": "external"
-            },
-            "children": [
-              {
-                "attributes": {
-                  "parameters": [
-                    null
-                  ]
-                },
-                "children": [],
-                "id": 676,
-                "name": "ParameterList",
-                "src": "371:2:4"
-              },
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "name": "",
-                      "scope": 680,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint256",
-                          "type": "uint256"
-                        },
-                        "id": 677,
-                        "name": "ElementaryTypeName",
-                        "src": "396:7:4"
-                      }
-                    ],
-                    "id": 678,
-                    "name": "VariableDeclaration",
-                    "src": "396:7:4"
-                  }
-                ],
-                "id": 679,
-                "name": "ParameterList",
-                "src": "395:9:4"
-              }
-            ],
-            "id": 680,
-            "name": "FunctionDefinition",
-            "src": "352:53:4"
-          },
-          {
-            "attributes": {
-              "body": null,
-              "documentation": "@dev Transfers tokens bought by buyer.\n     * @param amount Amount of token to buy.",
-              "implemented": false,
-              "isConstructor": false,
-              "kind": "function",
-              "modifiers": [
-                null
-              ],
-              "name": "buyTokens",
-              "scope": 713,
-              "stateMutability": "payable",
-              "superFunction": null,
-              "visibility": "external"
-            },
-            "children": [
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "name": "amount",
-                      "scope": 687,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint256",
-                          "type": "uint256"
-                        },
-                        "id": 681,
-                        "name": "ElementaryTypeName",
-                        "src": "544:7:4"
-                      }
-                    ],
-                    "id": 682,
-                    "name": "VariableDeclaration",
-                    "src": "544:14:4"
-                  }
-                ],
-                "id": 683,
-                "name": "ParameterList",
-                "src": "543:16:4"
-              },
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "name": "",
-                      "scope": 687,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "bool",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "bool",
-                          "type": "bool"
-                        },
-                        "id": 684,
-                        "name": "ElementaryTypeName",
-                        "src": "585:4:4"
-                      }
-                    ],
-                    "id": 685,
-                    "name": "VariableDeclaration",
-                    "src": "585:4:4"
-                  }
-                ],
-                "id": 686,
-                "name": "ParameterList",
-                "src": "584:6:4"
-              }
-            ],
-            "id": 687,
-            "name": "FunctionDefinition",
-            "src": "525:66:4"
-          },
-          {
-            "attributes": {
-              "body": null,
-              "documentation": "@dev End the presale.",
-              "implemented": false,
-              "isConstructor": false,
-              "kind": "function",
-              "modifiers": [
-                null
-              ],
-              "name": "endSale",
-              "scope": 713,
-              "stateMutability": "nonpayable",
-              "superFunction": null,
-              "visibility": "external"
-            },
-            "children": [
-              {
-                "attributes": {
-                  "parameters": [
-                    null
-                  ]
-                },
-                "children": [],
-                "id": 688,
-                "name": "ParameterList",
-                "src": "658:2:4"
-              },
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "name": "",
-                      "scope": 692,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "bool",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "bool",
-                          "type": "bool"
-                        },
-                        "id": 689,
-                        "name": "ElementaryTypeName",
-                        "src": "678:4:4"
-                      }
-                    ],
-                    "id": 690,
-                    "name": "VariableDeclaration",
-                    "src": "678:4:4"
-                  }
-                ],
-                "id": 691,
-                "name": "ParameterList",
-                "src": "677:6:4"
-              }
-            ],
-            "id": 692,
-            "name": "FunctionDefinition",
-            "src": "642:42:4"
-          },
-          {
-            "attributes": {
-              "anonymous": false,
-              "documentation": "@dev Emitted when tokens bought.\n     * @param buyer Buyer's address.\n@param amountPrimary Amount of primary.\n@param amountToken Amount of token.\n@param timestamp Block timestamp.",
-              "name": "Buy"
-            },
-            "children": [
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "indexed": true,
-                      "name": "buyer",
-                      "scope": 702,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "address",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "address",
-                          "stateMutability": "nonpayable",
-                          "type": "address"
-                        },
-                        "id": 693,
-                        "name": "ElementaryTypeName",
-                        "src": "931:7:4"
-                      }
-                    ],
-                    "id": 694,
-                    "name": "VariableDeclaration",
-                    "src": "931:21:4"
-                  },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "indexed": false,
-                      "name": "amountPrimary",
-                      "scope": 702,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint256",
-                          "type": "uint256"
-                        },
-                        "id": 695,
-                        "name": "ElementaryTypeName",
-                        "src": "954:7:4"
-                      }
-                    ],
-                    "id": 696,
-                    "name": "VariableDeclaration",
-                    "src": "954:21:4"
-                  },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "indexed": false,
-                      "name": "amountToken",
-                      "scope": 702,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint256",
-                          "type": "uint256"
-                        },
-                        "id": 697,
-                        "name": "ElementaryTypeName",
-                        "src": "977:7:4"
-                      }
-                    ],
-                    "id": 698,
-                    "name": "VariableDeclaration",
-                    "src": "977:19:4"
-                  },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "indexed": false,
-                      "name": "timestamp",
-                      "scope": 702,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint256",
-                          "type": "uint256"
-                        },
-                        "id": 699,
-                        "name": "ElementaryTypeName",
-                        "src": "998:7:4"
-                      }
-                    ],
-                    "id": 700,
-                    "name": "VariableDeclaration",
-                    "src": "998:17:4"
-                  }
-                ],
-                "id": 701,
-                "name": "ParameterList",
-                "src": "930:86:4"
-              }
-            ],
-            "id": 702,
-            "name": "EventDefinition",
-            "src": "921:96:4"
-          },
-          {
-            "attributes": {
-              "anonymous": false,
-              "documentation": "@dev Emitted when presale end triggered.\n     * @param owner Owner's address.\n@param balance Contract's balance.\n@param amount Amount of token.\n@param timestamp Block timestamp.",
-              "name": "End"
-            },
-            "children": [
-              {
-                "children": [
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "indexed": true,
-                      "name": "owner",
-                      "scope": 712,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "address",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "address",
-                          "stateMutability": "nonpayable",
-                          "type": "address"
-                        },
-                        "id": 703,
-                        "name": "ElementaryTypeName",
-                        "src": "1262:7:4"
-                      }
-                    ],
-                    "id": 704,
-                    "name": "VariableDeclaration",
-                    "src": "1262:21:4"
-                  },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "indexed": false,
-                      "name": "balance",
-                      "scope": 712,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint256",
-                          "type": "uint256"
-                        },
-                        "id": 705,
-                        "name": "ElementaryTypeName",
-                        "src": "1285:7:4"
-                      }
-                    ],
-                    "id": 706,
-                    "name": "VariableDeclaration",
-                    "src": "1285:15:4"
-                  },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "indexed": false,
-                      "name": "amount",
-                      "scope": 712,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint256",
-                          "type": "uint256"
-                        },
-                        "id": 707,
-                        "name": "ElementaryTypeName",
-                        "src": "1302:7:4"
-                      }
-                    ],
-                    "id": 708,
-                    "name": "VariableDeclaration",
-                    "src": "1302:14:4"
-                  },
-                  {
-                    "attributes": {
-                      "constant": false,
-                      "indexed": false,
-                      "name": "timestamp",
-                      "scope": 712,
-                      "stateVariable": false,
-                      "storageLocation": "default",
-                      "type": "uint256",
-                      "value": null,
-                      "visibility": "internal"
-                    },
-                    "children": [
-                      {
-                        "attributes": {
-                          "name": "uint256",
-                          "type": "uint256"
-                        },
-                        "id": 709,
-                        "name": "ElementaryTypeName",
-                        "src": "1318:7:4"
-                      }
-                    ],
-                    "id": 710,
-                    "name": "VariableDeclaration",
-                    "src": "1318:17:4"
-                  }
-                ],
-                "id": 711,
-                "name": "ParameterList",
-                "src": "1261:75:4"
-              }
-            ],
-            "id": 712,
-            "name": "EventDefinition",
-            "src": "1252:85:4"
-          }
-        ],
-        "id": 713,
-        "name": "ContractDefinition",
-        "src": "50:1289:4"
-      }
-    ],
-    "id": 714,
-    "name": "SourceUnit",
-    "src": "0:1339:4"
+    "src": "32:1339:5"
   },
   "compiler": {
     "name": "solc",
-    "version": "0.5.16+commit.9c3226ce.Emscripten.clang"
+    "version": "0.8.17+commit.8df45f5f.Emscripten.clang"
   },
   "networks": {},
   "schemaVersion": "3.4.16",
-  "updatedAt": "2024-12-16T05:34:39.969Z",
+  "updatedAt": "2024-12-18T16:19:56.490Z",
   "devdoc": {
+    "events": {
+      "Buy(address,uint256,uint256,uint256)": {
+        "details": "Emitted when tokens bought.",
+        "params": {
+          "amountPrimary": "Amount of primary.",
+          "amountToken": "Amount of token.",
+          "buyer": "Buyer's address.",
+          "timestamp": "Block timestamp."
+        }
+      },
+      "End(address,uint256,uint256,uint256)": {
+        "details": "Emitted when presale end triggered.",
+        "params": {
+          "amount": "Amount of token.",
+          "balance": "Contract's balance.",
+          "owner": "Owner's address.",
+          "timestamp": "Block timestamp."
+        }
+      }
+    },
+    "kind": "dev",
     "methods": {
       "buyTokens(uint256)": {
         "details": "Transfers tokens bought by buyer.",
@@ -1454,9 +866,12 @@
       "tokensSold()": {
         "details": "Returns the tokens sold."
       }
-    }
+    },
+    "version": 1
   },
   "userdoc": {
-    "methods": {}
+    "kind": "user",
+    "methods": {},
+    "version": 1
   }
 }

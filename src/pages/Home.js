@@ -572,6 +572,91 @@ class Home extends PureComponent {
                             </div>
                         </div>
                     </div>
+                    <div id="locked-tokens" className="pt-5 mt-5">
+                        <h3 className="m-0 text-white text-center">Locked Tokens</h3>
+                        <p className="mt-3 mb-0 text-white">Current total ${this.context.symbol} tokens locked : {NumberFormat(this.context.tokenLockBalance)} ${this.context.symbol} tokens.</p>
+                        <div className="row g-3 mt-5">
+                            {this.context.lockedTokens.map((value, index, array) => (
+                                <>
+                                    {Number(value.amount) > 0 &&
+                                    <div className="col-12 col-sm-6 col-lg-4" key={index}>
+                                        <div className="box-shadow-primary border rounded lock-box">
+                                            <div className="p-3">
+                                                <div className="d-flex align-items-center">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="16"
+                                                        height="16"
+                                                        fill="white"
+                                                        className="bi bi-caret-right-fill"
+                                                        viewBox="0 0 16 16"
+                                                    >
+                                                        <path
+                                                            d="m12.14 8.753-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z"
+                                                        />
+                                                    </svg>
+                                                    <p className="ms-2 mb-0 text-white">{value.name}</p>
+                                                </div>
+                                                <p className="m-0 text-white text-break xx-small">{value.beneficiary}
+                                                    <Tooltip title="Copy" arrow={true} placement="top" className="ms-1">
+                                                        <button
+                                                            className="btn btn-sm text-white"
+                                                            onClick={event => CopyToClipboard(value.beneficiary)}
+                                                        >
+                                                            <svg
+                                                                xmlns="http://www.w3.org/2000/svg"
+                                                                width="10"
+                                                                height="10"
+                                                                fill="currentColor"
+                                                                className="bi bi-copy"
+                                                                viewBox="0 0 16 16"
+                                                            >
+                                                                <path
+                                                                    fillRule="evenodd"
+                                                                    d="M4 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1zM2 5a1 1 0 0 0-1 1v8a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1v-1h1v1a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h1v1z"
+                                                                />
+                                                            </svg>
+                                                        </button>
+                                                    </Tooltip>
+                                                </p>
+                                                <div className="d-flex align-items-center mt-3">
+                                                    <img
+                                                        src={logo}
+                                                        alt={this.context.symbol}
+                                                        width="16"
+                                                        height="16"
+                                                    />
+                                                    <p className="ms-2 mb-0 text-white small">{NumberFormat(this.context.web3.utils.fromWei(value.amount, "ether"))} <span className="x-small">${this.context.symbol}</span></p>
+                                                </div>
+                                                <div className="d-flex align-items-center mt-2">
+                                                    <svg
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        width="16"
+                                                        height="16"
+                                                        fill="white"
+                                                        className="bi bi-alarm"
+                                                        viewBox="0 0 16 16"
+                                                    >
+                                                        <path
+                                                            d="M8.5 5.5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9z"
+                                                        />
+                                                        <path
+                                                            d="M6.5 0a.5.5 0 0 0 0 1H7v1.07a7.001 7.001 0 0 0-3.273 12.474l-.602.602a.5.5 0 0 0 .707.708l.746-.746A6.97 6.97 0 0 0 8 16a6.97 6.97 0 0 0 3.422-.892l.746.746a.5.5 0 0 0 .707-.708l-.601-.602A7.001 7.001 0 0 0 9 2.07V1h.5a.5.5 0 0 0 0-1zm1.038 3.018a6 6 0 0 1 .924 0 6 6 0 1 1-.924 0M0 3.5c0 .753.333 1.429.86 1.887A8.04 8.04 0 0 1 4.387 1.86 2.5 2.5 0 0 0 0 3.5M13.5 1c-.753 0-1.429.333-1.887.86a8.04 8.04 0 0 1 3.527 3.527A2.5 2.5 0 0 0 13.5 1"
+                                                        />
+                                                    </svg>
+                                                    <p className="ms-2 mb-0 text-white small">{moment.unix(value.releaseTime).format("DD MMM YYYY HH:mm")}</p>
+                                                </div>
+                                                <div className="mt-4 overflow-auto lock-description">
+                                                    <p className="m-0 text-white small">{value.description}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    }
+                                </>
+                            ))}
+                        </div>
+                    </div>
                     <div id="tokenomics" className="pt-5 mt-5">
                         <h3 className="m-0 text-white text-center">Tokenomics</h3>
                         <div className="row g-3 mt-5">
@@ -604,7 +689,7 @@ class Home extends PureComponent {
                     </div>
                     <div id="transactions" className="pt-5 mt-5">
                         <h3 className="m-0 text-white text-center">Transactions</h3>
-                        <p className="mt-3 mb-0 text-white">Showing up real-time transactions from last {NumberFormat(this.context.fromLastBlock)} blocks.</p>
+                        <p className="mt-3 mb-0 text-white">Showing up real-time transactions from last {NumberFormat(this.context.fromLastBlock)} btokenLock.</p>
                         <div className="row g-4 mt-5">
                             <div className="col-12 col-md-6">
                                 <div className="d-flex align-items-center">

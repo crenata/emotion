@@ -45,6 +45,9 @@ class Navbar extends PureComponent {
                                 <button className="nav-link text-white" onClick={event => this.scrollSmooth("#staking")}>Staking</button>
                             </li>
                             <li className="nav-item">
+                                <button className="nav-link text-white" onClick={event => this.scrollSmooth("#locked-tokens")}>Locked Tokens</button>
+                            </li>
+                            <li className="nav-item">
                                 <button className="nav-link text-white" onClick={event => this.scrollSmooth("#tokenomics")}>Tokenomics</button>
                             </li>
                             <li className="nav-item">

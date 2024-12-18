@@ -9,7 +9,7 @@ import TruffleContract from "@truffle/contract";
 import Token from "./contracts/ERC20.json";
 import Presale from "./contracts/Presale.json";
 import Staking from "./contracts/Staking.json";
-import Locks from "./contracts/Locks.json";
+import ERC20Lock from "./contracts/ERC20Lock.json";
 import toast from "react-hot-toast";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -41,8 +41,8 @@ class App extends PureComponent {
             totalStaked: 0,
             rewardRate: 0,
             totalCurrentRewards: 0,
-            locks: null,
-            locksBalance: 0,
+            tokenLock: null,
+            tokenLockBalance: 0,
             lockedTokens: [],
             fromLastBlock: 100,
             presaleTransactions: [],
@@ -369,36 +369,36 @@ class App extends PureComponent {
                     this.state.token.balanceOf(this.state.account).then((value) => {
                         this.setState({
                             balance: this.state.web3.utils.fromWei(value, "ether")
-                        }, () => {
-                            this.state.token.totalSupply().then((value) => {
-                                this.setState({
-                                    tokenSupply: this.state.web3.utils.fromWei(value, "ether")
-                                }, () => {
-                                    this.state.token.symbol().then((value) => {
-                                        this.setState({
-                                            symbol: value
-                                        }, () => {
-                                            this.state.token.decimals().then((value) => {
-                                                this.setState({
-                                                    decimals: this.state.web3.utils.toNumber(value)
-                                                }, () => {
-                                                    this.loadPresale();
-                                                });
-                                            }).catch((error) => {
-                                                toast.error("Failed fetch token decimals.");
-                                            }).finally(() => {});
-                                        });
-                                    }).catch((error) => {
-                                        toast.error("Failed fetch token symbol.");
-                                    }).finally(() => {});
-                                });
-                            }).catch((error) => {
-                                toast.error("Failed fetch token supply.");
-                            }).finally(() => {});
                         });
                     }).catch((error) => {
                         toast.error("Failed fetch token balance.");
                     }).finally(() => {});
+
+                    this.state.token.totalSupply().then((value) => {
+                        this.setState({
+                            tokenSupply: this.state.web3.utils.fromWei(value, "ether")
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch token supply.");
+                    }).finally(() => {});
+
+                    this.state.token.symbol().then((value) => {
+                        this.setState({
+                            symbol: value
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch token symbol.");
+                    }).finally(() => {});
+
+                    this.state.token.decimals().then((value) => {
+                        this.setState({
+                            decimals: this.state.web3.utils.toNumber(value)
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch token decimals.");
+                    }).finally(() => {});
+
+                    this.loadPresale();
                 });
             }).catch((error) => {
                 ErrorNotDeployed(token, error);
@@ -417,29 +417,28 @@ class App extends PureComponent {
                     this.state.token.balanceOf(this.state.presale.address).then((value) => {
                         this.setState({
                             presaleBalance: this.state.web3.utils.fromWei(value, "ether")
-                        }, () => {
-                            this.state.presale.tokenPrice().then(value => {
-                                this.setState({
-                                    price: this.state.web3.utils.fromWei(value, "ether")
-                                }, () => {
-                                    this.state.presale.tokensSold().then(value => {
-                                        this.setState({
-                                            sold: this.state.web3.utils.fromWei(value, "ether")
-                                        }, () => {
-                                            this.loadStaking();
-                                        });
-                                    }).catch((error) => {
-                                        toast.error("Failed fetch tokens sold.");
-                                    }).finally(() => {});
-                                });
-                            }).catch((error) => {
-                                toast.error("Failed fetch token price.");
-                            }).finally(() => {});
                         });
                     }).catch((error) => {
                         toast.error("Failed fetch presale balance.");
                     }).finally(() => {});
 
+                    this.state.presale.tokenPrice().then(value => {
+                        this.setState({
+                            price: this.state.web3.utils.fromWei(value, "ether")
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch token price.");
+                    }).finally(() => {});
+
+                    this.state.presale.tokensSold().then(value => {
+                        this.setState({
+                            sold: this.state.web3.utils.fromWei(value, "ether")
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch tokens sold.");
+                    }).finally(() => {});
+
+                    this.loadStaking();
                     this.presaleTransactions();
                 });
             }).catch((error) => {
@@ -459,47 +458,46 @@ class App extends PureComponent {
                     this.state.token.balanceOf(this.state.staking.address).then(value => {
                         this.setState({
                             stakingBalance: this.state.web3.utils.fromWei(value, "ether")
-                        }, () => {
-                            this.state.staking.balanceOf(this.state.account).then(value => {
-                                this.setState({
-                                    staked: this.state.web3.utils.fromWei(value, "ether")
-                                }, () => {
-                                    this.state.staking.totalStaked().then(value => {
-                                        this.setState({
-                                            totalStaked: this.state.web3.utils.fromWei(value, "ether")
-                                        }, () => {
-                                            this.state.staking.rewardRate().then(value => {
-                                                this.setState({
-                                                    rewardRate: Number(this.state.web3.utils.fromWei(value, "ether")).toFixed(2)
-                                                }, () => {
-                                                    this.state.staking.earned({
-                                                        from: this.state.account
-                                                    }).then(value => {
-                                                        this.setState({
-                                                            totalCurrentRewards: this.state.web3.utils.fromWei(value, "ether")
-                                                        }, () => {
-                                                            this.loadLocks();
-                                                        });
-                                                    }).catch((error) => {
-                                                        toast.error("Failed fetch total current rewards.");
-                                                    }).finally(() => {});
-                                                });
-                                            }).catch((error) => {
-                                                toast.error("Failed fetch staking rewards rate.");
-                                            }).finally(() => {});
-                                        });
-                                    }).catch((error) => {
-                                        toast.error("Failed fetch total token staked.");
-                                    }).finally(() => {});
-                                });
-                            }).catch((error) => {
-                                toast.error("Failed fetch token staked.");
-                            }).finally(() => {});
                         });
                     }).catch((error) => {
                         toast.error("Failed fetch staking token balance.");
                     }).finally(() => {});
 
+                    this.state.staking.balanceOf(this.state.account).then(value => {
+                        this.setState({
+                            staked: this.state.web3.utils.fromWei(value, "ether")
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch token staked.");
+                    }).finally(() => {});
+
+                    this.state.staking.totalStaked().then(value => {
+                        this.setState({
+                            totalStaked: this.state.web3.utils.fromWei(value, "ether")
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch total token staked.");
+                    }).finally(() => {});
+
+                    this.state.staking.rewardRate().then(value => {
+                        this.setState({
+                            rewardRate: Number(this.state.web3.utils.fromWei(value, "ether")).toFixed(2)
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch staking rewards rate.");
+                    }).finally(() => {});
+
+                    this.state.staking.earned({
+                        from: this.state.account
+                    }).then(value => {
+                        this.setState({
+                            totalCurrentRewards: this.state.web3.utils.fromWei(value, "ether")
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch total current rewards.");
+                    }).finally(() => {});
+
+                    this.loadTokenLock();
                     this.stakingTransactions();
                 });
             }).catch((error) => {
@@ -508,34 +506,32 @@ class App extends PureComponent {
         }
     }
 
-    loadLocks() {
+    loadTokenLock() {
         if (!IsEmpty(this.state.web3)) {
-            const locks = TruffleContract(Locks);
-            locks.setProvider(this.state.web3.currentProvider);
-            locks.deployed().then((data) => {
+            const tokenLock = TruffleContract(ERC20Lock);
+            tokenLock.setProvider(this.state.web3.currentProvider);
+            tokenLock.deployed().then((data) => {
                 this.setState({
-                    locks: data
+                    tokenLock: data
                 }, () => {
-                    this.state.token.balanceOf(this.state.locks.address).then(value => {
+                    this.state.token.balanceOf(this.state.tokenLock.address).then(value => {
                         this.setState({
-                            locksBalance: this.state.web3.utils.fromWei(value, "ether")
-                        }, () => {
-                            this.state.locks.lockedTokens().then(value => {
-                                console.log('lockedTokens', value)
-                                this.setState({
-                                    lockedTokens: value
-                                });
-                            }).catch((error) => {
-                                console.log(error)
-                                toast.error("Failed fetch total tokens locked.");
-                            }).finally(() => {});
+                            tokenLockBalance: this.state.web3.utils.fromWei(value, "ether")
                         });
                     }).catch((error) => {
-                        toast.error("Failed fetch locks token balance.");
+                        toast.error("Failed fetch tokenLock token balance.");
+                    }).finally(() => {});
+
+                    this.state.tokenLock.lockedTokens().then(value => {
+                        this.setState({
+                            lockedTokens: value
+                        });
+                    }).catch((error) => {
+                        toast.error("Failed fetch total tokens locked.");
                     }).finally(() => {});
                 });
             }).catch((error) => {
-                ErrorNotDeployed(locks, error);
+                ErrorNotDeployed(tokenLock, error);
             }).finally(() => {});
         }
     }

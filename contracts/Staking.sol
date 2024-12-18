@@ -1,4 +1,5 @@
-pragma solidity ^0.5.16;
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.17;
 
 import "./Context.sol";
 import "./IERC20.sol";
@@ -27,7 +28,7 @@ contract Staking is Context, IStaking, Ownable {
      * @param stakingToken_ Staking token contract address.
      * @param rewardToken_ Reward token contract address.
      */
-    constructor(address stakingToken_, address rewardToken_) public {
+    constructor(address stakingToken_, address rewardToken_) {
         _stakingToken = IERC20(stakingToken_);
         _rewardToken = IERC20(rewardToken_);
     }

@@ -137,6 +137,17 @@ input[type=number] {
     height: 12rem;
 }
 
+.lock-box {
+    position: relative;
+    height: 18rem;
+}
+.lock-description {
+    height: 4rem;
+}
+#locked-tokens .lock-description {
+    height: 7rem;
+}
+
 .table-transparent {
     --bs-table-bg: transparent !important;
 }
