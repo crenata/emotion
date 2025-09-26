@@ -140,9 +140,13 @@ contract Staking is Context, IStaking, Ownable {
         if (_totalStaked == 0) return _rewardPerTokenStored;
 
         return _rewardPerTokenStored + (
-            _rewardRate * (
-                lastTimeRewardApplicable().sub(_updatedAt)
-            ) * 1e18
+            (
+                _rewardRate.mul(
+                    (
+                        lastTimeRewardApplicable().sub(_updatedAt)
+                    )
+                )
+            ).mul(1e18)
         ) / _totalStaked;
     }
 

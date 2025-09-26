@@ -1,70 +1,133 @@
-# Getting Started with Create React App
+<div align="center">
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+![GitHub top language](https://img.shields.io/github/languages/top/crenata/emotion)
+![GitHub all releases](https://img.shields.io/github/downloads/crenata/emotion/total)
+![GitHub issues](https://img.shields.io/github/issues/crenata/emotion)
+![GitHub](https://img.shields.io/github/license/crenata/emotion)
+![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/crenata/emotion?display_name=tag&include_prereleases)
 
-## Available Scripts
+</div>
 
-In the project directory, you can run:
+# Emotion
+A DeFi project related to pre-sale and staking.
+Someone could buy tokens directly from the website at a price set during smart contract deployment,
+and then you can stake them on the website.
 
-### `npm start`
+The owner could execute the end-sale, and the amount of ETH (EVM) invested in the pre-sale smart contract would be transferred to owner's wallet.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+The owner could also set the staking amount and duration,
+and owner could lock the tokens for token reputation.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tech Stacks
+- [Truffle](https://archive.trufflesuite.com/docs/truffle)
+- [Web3](https://web3js.readthedocs.io)
+- [React](https://react.dev)
 
-### `npm test`
+## Features
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Token Creation & Deployment
+Contents :
+- Create a ERC20 Token (Using standard ERC20)
+- Define Token Name
+- Define Token Symbol
+- Define Token Decimals
+- Define Token Total Supply
 
-### `npm run build`
+References :
+- [ERC20.sol](https://github.com/crenata/emotion/blob/master/contracts/ERC20.sol)
+- [ERC20 Migration](https://github.com/crenata/emotion/blob/master/migrations/1_erc20.js)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+---
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### Presale Contract
+Contents :
+- Define Token Contract (Set token address for pre-sale)
+- Define Token Price (Set pre-sale token price on deployment)
+- Tokens Sold (Information of tokens sold)
+- Buy Tokens (Someone could buy tokens with this contract)
+- End Sale (Only owner could execute end-sale)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+References :
+- [Presale.sol](https://github.com/crenata/emotion/blob/master/contracts/Presale.sol)
+- [Presale Migration](https://github.com/crenata/emotion/blob/master/migrations/2_presale.js)
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Staking Contract
+Contents :
+- Define Token Contract (Set token address for staking)
+- Define Token Reward Contract (Set token address for staking reward)
+- Set Reward Duration (Only owner can set the staking duration)
+- Set Reward Amount (Only owner can set the amount of staking rewards)
+- Stake (Someone can stake their tokens to contract)
+- Withdraw (Staker can unstake/withdraw their tokens from contract)
+- Claim (Staker can claim their rewards of staked tokens)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+References :
+- [Staking.sol](https://github.com/crenata/emotion/blob/master/contracts/Staking.sol)
+- [Staking Migration](https://github.com/crenata/emotion/blob/master/migrations/3_staking.js)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Token Locks
+Contents :
+- Define Token Contract (Set token address for token locks)
+- Lock (Owner can lock some amount of token and the duration)
+- Release (Owner can release the locked tokens to beneficiary after lock duration ended)
 
-## Learn More
+References :
+- [ERC20Lock.sol](https://github.com/crenata/emotion/blob/master/contracts/ERC20Lock.sol)
+- [ERC20Lock Migration](https://github.com/crenata/emotion/blob/master/migrations/4_erc20lock.js)
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Usage
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Installation
+Install project dependencies.
 
-### Code Splitting
+```bash
+npm install
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+If you don't have truffle installed, run :
 
-### Analyzing the Bundle Size
+```bash
+npm install -g truffle
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Migrate / Deploy Smart Contract
+It's optional, you don't have to execute this.
+Because, when migrating the smart contracts automatically compile the smart contracts.
+To compile your smart contracts, run :
 
-### Making a Progressive Web App
+```bash
+truffle compile
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+To migrate or deploy smart contracts, run :
 
-### Advanced Configuration
+```bash
+truffle migrate
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+To deploy specify networks :
 
-### Deployment
+```bash
+truffle migrate --network <network name>
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+### Run the Project
+To run the project, run :
 
-### `npm run build` fails to minify
+```bash
+npm start
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Build the Project
+To build the project, run :
+
+```bash
+npm run build
+```
+
+## Authors
+- [Crenata](mailto:acacia.malaccensis@gmail.com)

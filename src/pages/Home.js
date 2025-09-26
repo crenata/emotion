@@ -33,7 +33,7 @@ class Home extends PureComponent {
             isLoadingStake: false,
             isLoadingWithdraw: false,
             isLoadingClaim: false,
-            countdownDate: new Date("Dec 31, 2024 20:00:00").getTime(),
+            countdownDate: new Date("Dec 31, 2025 20:00:00").getTime(),
             countdown: {
                 days: 0,
                 hours: 0,
